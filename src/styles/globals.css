@@ -1,0 +1,438 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS VARIABLES
+   ============================================================ */
+:root {
+  --gold: #F5B800;
+  --gold-dim: rgba(245,184,0,0.12);
+  --gold-medium: rgba(245,184,0,0.25);
+  --void-1000: #060608;
+  --void-950: #0D0D10;
+  --void-900: #141418;
+  --void-800: #1C1C22;
+  --void-700: #3f3e50;
+  --void-400: #7e7d91;
+  --green: #00E676;
+  --red: #FF4444;
+  --blue: #4D9FFF;
+  --purple: #9C6FE4;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--void-1000);
+  color: #F0EDE6;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, opacity 0.2s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(245,184,0,0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+}
+.cursor-hover #cursor       { width: 6px; height: 6px; }
+.cursor-hover #cursor-ring  { width: 56px; height: 56px; border-color: var(--gold); }
+.cursor-click #cursor-ring  { width: 24px; height: 24px; border-color: white; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+.font-display   { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+.font-heading   { font-family: 'Barlow Condensed', sans-serif; }
+.font-body      { font-family: 'Barlow', sans-serif; }
+.font-mono      { font-family: 'JetBrains Mono', monospace; }
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar              { width: 4px; height: 4px; }
+::-webkit-scrollbar-track        { background: var(--void-950); }
+::-webkit-scrollbar-thumb        { background: rgba(245,184,0,0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover  { background: rgba(245,184,0,0.6); }
+
+/* ============================================================
+   SELECTION
+   ============================================================ */
+::selection { background: rgba(245,184,0,0.25); color: #fff; }
+
+/* ============================================================
+   NOISE TEXTURE OVERLAY
+   ============================================================ */
+.noise-overlay {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   GLASS MORPHISM COMPONENTS
+   ============================================================ */
+.glass {
+  background: rgba(20, 20, 24, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.glass-gold {
+  background: rgba(20, 20, 24, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(245,184,0,0.15);
+}
+.glass-dark {
+  background: rgba(10, 10, 12, 0.8);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* ============================================================
+   PREMIUM CARD
+   ============================================================ */
+.card {
+  background: var(--void-900);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+.card:hover {
+  border-color: rgba(245,184,0,0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(245,184,0,0.04);
+  transform: translateY(-4px);
+}
+.card-inner {
+  background: linear-gradient(135deg, rgba(28,28,34,0.9) 0%, rgba(20,20,24,0.7) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  border-radius: 8px; border: none; cursor: none;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.2s ease;
+  position: relative; overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+.btn:hover::before { left: 150%; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn-gold {
+  background: var(--gold);
+  color: #000;
+  font-size: 14px; padding: 13px 24px;
+}
+.btn-gold:hover { box-shadow: 0 12px 40px rgba(245,184,0,0.45); }
+
+.btn-gold-lg {
+  background: var(--gold);
+  color: #000;
+  font-size: 16px; padding: 16px 32px;
+}
+.btn-gold-lg:hover { box-shadow: 0 16px 48px rgba(245,184,0,0.5); }
+
+.btn-outline {
+  background: transparent; color: #F0EDE6;
+  font-size: 14px; padding: 12px 24px;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+.btn-outline:hover {
+  border-color: rgba(245,184,0,0.4) !important;
+  color: var(--gold);
+  box-shadow: 0 8px 24px rgba(245,184,0,0.08);
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.05); color: #F0EDE6;
+  font-size: 13px; padding: 10px 20px;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.08); }
+
+.btn-danger {
+  background: rgba(255,68,68,0.15); color: #FF6B6B;
+  font-size: 13px; padding: 10px 20px;
+  border: 1px solid rgba(255,68,68,0.2) !important;
+}
+.btn-danger:hover { background: rgba(255,68,68,0.25); }
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+}
+.badge-gold   { background: rgba(245,184,0,0.12); color: var(--gold);   border: 1px solid rgba(245,184,0,0.25); }
+.badge-green  { background: rgba(0,230,118,0.1);  color: #00E676;       border: 1px solid rgba(0,230,118,0.2); }
+.badge-blue   { background: rgba(77,159,255,0.12); color: #4D9FFF;      border: 1px solid rgba(77,159,255,0.25); }
+.badge-red    { background: rgba(255,68,68,0.12);  color: #FF6B6B;      border: 1px solid rgba(255,68,68,0.2); }
+.badge-purple { background: rgba(156,107,228,0.12); color: #B48BF5;     border: 1px solid rgba(156,107,228,0.25); }
+.badge-teal   { background: rgba(0,191,165,0.1);   color: #00BFA5;      border: 1px solid rgba(0,191,165,0.2); }
+.badge-gray   { background: rgba(255,255,255,0.06); color: #888;        border: 1px solid rgba(255,255,255,0.1); }
+
+.badge-vip    { background: rgba(245,184,0,0.15); color: var(--gold); border: 1px solid rgba(245,184,0,0.3); }
+.badge-admin  { background: rgba(255,68,68,0.15); color: #FF6B6B;     border: 1px solid rgba(255,68,68,0.3); }
+.badge-free   { background: rgba(255,255,255,0.06); color: #888;      border: 1px solid rgba(255,255,255,0.1); }
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+.input {
+  width: 100%;
+  background: rgba(28,28,34,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: #F0EDE6;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+.input:focus {
+  border-color: rgba(245,184,0,0.4);
+  box-shadow: 0 0 0 3px rgba(245,184,0,0.06);
+}
+.input::placeholder { color: rgba(126,125,145,0.6); }
+.input-label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(126,125,145,0.8);
+  margin-bottom: 6px;
+}
+
+/* ============================================================
+   GOLD GRADIENT TEXT
+   ============================================================ */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #F5B800 0%, #FFD54F 50%, #C8950A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-white {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   GLOW EFFECTS
+   ============================================================ */
+.glow-gold  { box-shadow: 0 0 40px rgba(245,184,0,0.2); }
+.glow-green { box-shadow: 0 0 20px rgba(0,230,118,0.2); }
+.glow-text  { text-shadow: 0 0 30px rgba(245,184,0,0.6); }
+
+/* ============================================================
+   ANIMATED BORDER
+   ============================================================ */
+.border-animated {
+  position: relative;
+  border: 1px solid transparent;
+}
+.border-animated::before {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent 0%, rgba(245,184,0,0.4) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: borderSlide 3s linear infinite;
+}
+@keyframes borderSlide {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================================
+   SHIMMER LOADING
+   ============================================================ */
+.shimmer {
+  background: linear-gradient(90deg,
+    var(--void-900) 0%,
+    rgba(255,255,255,0.04) 50%,
+    var(--void-900) 100%);
+  background-size: 200% 100%;
+  animation: shimmerMove 1.8s infinite;
+}
+@keyframes shimmerMove {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================================
+   LIVE DOT
+   ============================================================ */
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,230,118,0.4); }
+  50%      { box-shadow: 0 0 0 5px rgba(0,230,118,0); }
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.04em;
+  color: rgba(126,125,145,0.8);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  position: relative; cursor: none;
+}
+.sidebar-link:hover { background: rgba(255,255,255,0.05); color: #F0EDE6; }
+.sidebar-link.active {
+  background: rgba(245,184,0,0.08);
+  color: var(--gold);
+  border: 1px solid rgba(245,184,0,0.12);
+}
+.sidebar-link.active::before {
+  content: '';
+  position: absolute; left: -1px; top: 20%; bottom: 20%;
+  width: 2px; border-radius: 2px;
+  background: var(--gold);
+}
+
+/* ============================================================
+   STAT CARD
+   ============================================================ */
+.stat-card {
+  background: var(--void-900);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px; padding: 24px;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.stat-card:hover {
+  border-color: rgba(245,184,0,0.15);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   VIP LOCK OVERLAY
+   ============================================================ */
+.vip-locked {
+  position: relative; overflow: hidden;
+}
+.vip-locked::after {
+  content: '👑 VIP';
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,12,0.7);
+  backdrop-filter: blur(4px);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: 2px;
+  color: var(--gold);
+  border-radius: inherit;
+}
+
+/* ============================================================
+   TICKER
+   ============================================================ */
+.ticker-wrap { overflow: hidden; }
+.ticker-track {
+  display: flex; white-space: nowrap;
+  animation: tickerMove 30s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes tickerMove {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   PROFIT NUMBER
+   ============================================================ */
+.profit-positive { color: #00E676; font-weight: 700; }
+.profit-neutral  { color: var(--gold); font-weight: 700; }
+.profit-percent  { color: #00E676; font-weight: 700; }
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.premium-table { width: 100%; border-collapse: collapse; }
+.premium-table th {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(126,125,145,0.7);
+  padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.premium-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 14px; color: #D0CCC6;
+}
+.premium-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ============================================================
+   RESPONSIVE UTILITIES
+   ============================================================ */
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+}
+@media (min-width: 769px) {
+  .show-mobile-only { display: none !important; }
+}
