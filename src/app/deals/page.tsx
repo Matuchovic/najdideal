@@ -36,9 +36,22 @@ export default async function DealsPage({ searchParams }: Props) {
   const role = profile?.role ?? 'free'
   const isVip = role === 'vip' || role === 'vip_pro' || role === 'vip_ultra' || role === 'vip_max' || role === 'admin'
 
+  const isPremium = role === 'vip_pro' || role === 'vip_ultra' || role === 'vip_max' || role === 'admin'
+  const isStandard = role === 'vip' || isPremium
+
   let query = supabase.from('deals').select('*').in('status', ['active', 'featured'])
   if (searchParams.cat) query = query.eq('category', searchParams.cat)
-  if (!isVip) query = query.neq('access_level', 'vip')
+  
+  // Přístupy ke kategoriím podle plánu
+  if (!isStandard && !isPremium) {
+    // FREE - jen základní kategorie
+    query = query.in('category', ['marketplace_flip', 'trend_product', 'other'])
+    query = query.eq('access_level', 'free')
+  } else if (isStandard && !isPremium) {
+    // STANDARD - vše kromě AI příležitostí a profit alertů
+    query = query.not('category', 'in', '("ai_opportunity","profit_alert")')
+  }
+  // PREMIUM a ADMIN vidí vše
 
   const sortMap: Record<string, { col: string; asc: boolean }> = {
     newest:   { col: 'created_at',    asc: false },

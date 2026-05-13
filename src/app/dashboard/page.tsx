@@ -21,12 +21,12 @@ const G = {
 /* ═══════════ VIP SYSTEM ═══════════ */
 type Role = 'free' | 'vip' | 'vip_pro' | 'vip_ultra' | 'vip_max' | 'admin'
 const VIP_TIERS: Record<Role, { level: number; label: string; color: string; emoji: string; nextPlan?: string; nextPrice?: string; nextBenefit?: string }> = {
-  free:      { level: 1, label: 'FREE',      color: G.mut,  emoji: '🔓', nextPlan: 'VIP',       nextPrice: '499 Kč/měsíc',   nextBenefit: 'Exkluzivní dealy, rychlé alerty, soukromá komunita' },
-  vip:       { level: 2, label: 'VIP',       color: G.gold, emoji: '👑', nextPlan: 'VIP PRO',   nextPrice: '999 Kč/měsíc',   nextBenefit: 'AI deep scan, trend predictions, dedikovaný support' },
-  vip_pro:   { level: 3, label: 'VIP PRO',   color: G.blu,  emoji: '🚀', nextPlan: 'VIP ULTRA', nextPrice: '1 999 Kč/měsíc', nextBenefit: 'Ultra alerty 24/7, AI profit scoring, priority support' },
-  vip_ultra: { level: 4, label: 'VIP ULTRA', color: G.pur,  emoji: '⚡', nextPlan: 'VIP MAX',   nextPrice: '2 799 Kč/měsíc', nextBenefit: 'Osobní konzultace, mastermind, first-access all deals' },
-  vip_max:   { level: 5, label: 'VIP MAX',   color: G.org,  emoji: '💎' },
-  admin:     { level: 99, label: 'ADMIN',    color: G.gold, emoji: '🔧' },
+  free:      { level: 1, label: 'ZDARMA',   color: G.mut,  emoji: '🔓', nextPlan: 'STANDARD', nextPrice: '299 Kč/měsíc', nextBenefit: 'Okamžitá upozornění, kontakt na prodejce, marketplace' },
+  vip:       { level: 2, label: 'STANDARD', color: G.gold, emoji: '⭐', nextPlan: 'PREMIUM',  nextPrice: '699 Kč/měsíc', nextBenefit: 'AI příležitosti, alerty jako první, boost inzerátů' },
+  vip_pro:   { level: 3, label: 'PREMIUM',  color: G.blu,  emoji: '💎', nextPlan: 'PREMIUM',  nextPrice: '699 Kč/měsíc', nextBenefit: 'Máš nejvyšší přístup' },
+  vip_ultra: { level: 4, label: 'PREMIUM',  color: G.blu,  emoji: '💎' },
+  vip_max:   { level: 5, label: 'PREMIUM',  color: G.blu,  emoji: '💎' },
+  admin:     { level: 99, label: 'ADMIN',   color: G.gold, emoji: '🔧' },
 }
 function getTier(role: string) { return VIP_TIERS[role as Role] ?? VIP_TIERS.free }
 function hasAccess(userRole: string, requiredRole: string): boolean {
