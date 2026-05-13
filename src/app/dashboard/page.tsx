@@ -1,4 +1,5 @@
 'use client'
+import NajdiLogo from '@/components/ui/NajdiLogo'
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
