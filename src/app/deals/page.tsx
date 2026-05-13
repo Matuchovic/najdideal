@@ -1,13 +1,31 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { DealCard, DealCardSkeleton } from '@/components/deals/DealCard'
+import { DealCard } from '@/components/deals/DealCard'
 import Link from 'next/link'
-import { Crown } from 'lucide-react'
+import { Crown, Flame, TrendingUp, Star, Zap } from 'lucide-react'
 import { CATEGORY_META } from '@/lib/types'
 
-export const metadata = { title: 'Všechny dealy' }
+export const metadata = { title: 'Dealy | NajdiDeal' }
 
 interface Props { searchParams: { cat?: string; sort?: string } }
+
+const SORTS = [
+  { value: 'newest',  label: 'Nejnovější',     icon: '🕐' },
+  { value: 'profit',  label: 'Nejvyšší profit', icon: '💰' },
+  { value: 'popular', label: 'Nejoblíbenější',  icon: '👁' },
+  { value: 'trending',label: 'Trending',        icon: '📈' },
+]
+
+const CAT_COLORS: Record<string, string> = {
+  marketplace_flip: '#F0B429',
+  ai_prilezitost:   '#4D9FFF',
+  trend_produkt:    '#00E676',
+  profit_alert:     '#FF3B5C',
+  affiliate:        '#9B5DE5',
+  dropshipping:     '#FF6B35',
+  krypto:           '#FFD97D',
+  ostatni:          'rgba(240,235,225,.4)',
+}
 
 export default async function DealsPage({ searchParams }: Props) {
   const supabase = createClient()
@@ -15,11 +33,12 @@ export default async function DealsPage({ searchParams }: Props) {
   if (!user) redirect('/login')
 
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  const isVip = profile?.role === 'vip' || profile?.role === 'admin'
+  const role = profile?.role ?? 'free'
+  const isVip = role === 'vip' || role === 'vip_pro' || role === 'vip_ultra' || role === 'vip_max' || role === 'admin'
 
   let query = supabase.from('deals').select('*').in('status', ['active', 'featured'])
   if (searchParams.cat) query = query.eq('category', searchParams.cat)
-  if (!isVip) query = query.eq('access_level', 'free')
+  if (!isVip) query = query.neq('access_level', 'vip')
 
   const sortMap: Record<string, { col: string; asc: boolean }> = {
     newest:   { col: 'created_at',    asc: false },
@@ -34,61 +53,150 @@ export default async function DealsPage({ searchParams }: Props) {
   const { data: savedRaw } = await supabase.from('saved_deals').select('deal_id').eq('user_id', user.id)
   const savedIds = new Set((savedRaw ?? []).map(d => d.deal_id))
 
-  const SORTS = [
-    { value: 'newest',   label: 'Nejnovější' },
-    { value: 'profit',   label: 'Nejvyšší profit' },
-    { value: 'popular',  label: 'Nejoblíbenější' },
-    { value: 'trending', label: 'Trending' },
-  ]
+  const activeCat = searchParams.cat
+  const activeSort = searchParams.sort ?? 'newest'
+  const catMeta = activeCat ? CATEGORY_META[activeCat as keyof typeof CATEGORY_META] : null
+  const accentColor = activeCat ? (CAT_COLORS[activeCat] ?? '#F0B429') : '#F0B429'
 
   return (
-    <div className="space-y-6 pb-24 lg:pb-8">
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="font-display text-4xl tracking-widest text-white">DEALY</h1>
-          <p className="font-body text-void-400 text-sm mt-1">{deals?.length ?? 0} dealů{searchParams.cat ? ` v kategorii ${CATEGORY_META[searchParams.cat as keyof typeof CATEGORY_META]?.label}` : ''}</p>
+    <div style={{ paddingBottom: 80 }}>
+      <style>{`
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+        @keyframes shimmerMove { 0%{background-position:-200% center} 100%{background-position:200% center} }
+        @keyframes glowPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+        .deals-filter-pill { transition: all .25s cubic-bezier(.34,1.56,.64,1); }
+        .deals-filter-pill:hover { transform: translateY(-2px); }
+        .deals-sort-btn { transition: all .2s ease; }
+        .deals-sort-btn:hover { transform: translateY(-1px); }
+      `}</style>
+
+      {/* ── AMBIENT ── */}
+      <div style={{ position: 'fixed', top: '20%', right: '-10%', width: 400, height: 400, background: `radial-gradient(circle,${accentColor}08 0%,transparent 70%)`, borderRadius: '50%', pointerEvents: 'none', zIndex: 0, filter: 'blur(60px)', transition: 'background .5s' }} />
+      <div style={{ position: 'fixed', bottom: '20%', left: '-5%', width: 300, height: 300, background: 'radial-gradient(circle,rgba(77,159,255,.05) 0%,transparent 70%)', borderRadius: '50%', pointerEvents: 'none', zIndex: 0, filter: 'blur(50px)' }} />
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* ── HEADER ── */}
+        <div style={{ marginBottom: 28, animation: 'fadeUp .6s ease both' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <div style={{ width: 3, height: 24, background: accentColor, borderRadius: 2, boxShadow: `0 0 12px ${accentColor}`, transition: 'background .5s' }} />
+                <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(32px,5vw,52px)', letterSpacing: 5, color: '#F0EBE1', lineHeight: 1 }}>
+                  {catMeta ? catMeta.label.toUpperCase() : 'VŠECHNY DEALY'}
+                </h1>
+                {catMeta && <span style={{ fontSize: 28 }}>{catMeta.icon}</span>}
+              </div>
+              <p style={{ fontFamily: "'Syne Mono', monospace", fontSize: 10, letterSpacing: 2, color: 'rgba(240,235,225,.35)', textTransform: 'uppercase' }}>
+                {deals?.length ?? 0} {deals?.length === 1 ? 'deal' : 'dealů'} {activeCat ? `· kategorie ${catMeta?.label}` : '· všechny kategorie'}
+              </p>
+            </div>
+
+            {!isVip && (
+              <Link href="/vip" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', background: '#F0B429', color: '#000', padding: '11px 20px', borderRadius: 9, textDecoration: 'none', boxShadow: '0 8px 28px rgba(240,180,41,.3)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                <Crown size={13} /> VIP — Všechny dealy
+              </Link>
+            )}
+          </div>
         </div>
+
+        {/* ── CATEGORY FILTER ── */}
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 16, animation: 'fadeUp .6s ease both', animationDelay: '.1s' }}>
+          {/* Vše */}
+          <Link href={`/deals${activeSort !== 'newest' ? `?sort=${activeSort}` : ''}`} className="deals-filter-pill" style={{
+            flexShrink: 0, padding: '8px 16px',
+            background: !activeCat ? '#F0B429' : 'rgba(255,255,255,.04)',
+            border: `1px solid ${!activeCat ? '#F0B429' : 'rgba(255,255,255,.08)'}`,
+            borderRadius: 100, textDecoration: 'none',
+            fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
+            color: !activeCat ? '#000' : 'rgba(240,235,225,.5)',
+            boxShadow: !activeCat ? '0 4px 16px rgba(240,180,41,.25)' : 'none',
+          }}>
+            VŠE
+          </Link>
+
+          {Object.entries(CATEGORY_META).map(([key, meta]) => {
+            const isActive = activeCat === key
+            const color = CAT_COLORS[key] ?? '#F0B429'
+            return (
+              <Link
+                key={key}
+                href={`/deals?cat=${key}${activeSort !== 'newest' ? `&sort=${activeSort}` : ''}`}
+                className="deals-filter-pill"
+                style={{
+                  flexShrink: 0, padding: '8px 16px',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  background: isActive ? `${color}18` : 'rgba(255,255,255,.04)',
+                  border: `1px solid ${isActive ? color + '55' : 'rgba(255,255,255,.08)'}`,
+                  borderRadius: 100, textDecoration: 'none',
+                  fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
+                  color: isActive ? color : 'rgba(240,235,225,.45)',
+                  boxShadow: isActive ? `0 4px 16px ${color}22` : 'none',
+                }}
+              >
+                <span style={{ fontSize: 12 }}>{meta.icon}</span>
+                {meta.label}
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* ── SORT ── */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 28, animation: 'fadeUp .6s ease both', animationDelay: '.15s' }}>
+          {SORTS.map(s => {
+            const isActive = activeSort === s.value
+            return (
+              <Link
+                key={s.value}
+                href={`/deals?sort=${s.value}${activeCat ? `&cat=${activeCat}` : ''}`}
+                className="deals-sort-btn"
+                style={{
+                  padding: '7px 14px', display: 'flex', alignItems: 'center', gap: 5,
+                  borderRadius: 9, textDecoration: 'none',
+                  background: isActive ? 'rgba(240,180,41,.08)' : 'transparent',
+                  border: `1px solid ${isActive ? 'rgba(240,180,41,.3)' : 'rgba(255,255,255,.06)'}`,
+                  fontFamily: "'Syne Mono', monospace", fontSize: 8, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
+                  color: isActive ? '#F0B429' : 'rgba(240,235,225,.35)',
+                }}
+              >
+                <span>{s.icon}</span> {s.label}
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* ── VIP BANNER ── */}
         {!isVip && (
-          <Link href="/membership" className="btn btn-gold"><Crown className="w-4 h-4" />VIP – Všechny dealy</Link>
+          <div style={{ marginBottom: 24, padding: '14px 18px', background: 'rgba(240,180,41,.04)', border: '1px solid rgba(240,180,41,.15)', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, animation: 'fadeUp .6s ease both', animationDelay: '.2s' }}>
+            <Zap size={13} color="#F0B429" style={{ flexShrink: 0 }} />
+            <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 12, color: 'rgba(240,235,225,.5)', fontWeight: 300 }}>
+              Vidíš pouze volné dealy.{' '}
+              <Link href="/vip" style={{ color: '#F0B429', fontWeight: 600, textDecoration: 'none' }}>Upgraduj na VIP</Link>
+              {' '}pro přístup ke všem příležitostem.
+            </p>
+          </div>
+        )}
+
+        {/* ── GRID ── */}
+        {deals && deals.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 14, animation: 'fadeUp .7s ease both', animationDelay: '.25s' }}>
+            {deals.map(deal => (
+              <DealCard key={deal.id} deal={deal} isSaved={savedIds.has(deal.id)} isVip={isVip} />
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: '80px 24px', textAlign: 'center', animation: 'fadeUp .6s ease both' }}>
+            <div style={{ fontSize: 56, marginBottom: 16 }}>🔍</div>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: 4, color: 'rgba(240,235,225,.2)', marginBottom: 8 }}>ŽÁDNÉ DEALY</p>
+            <p style={{ fontFamily: "'Syne Mono', monospace", fontSize: 9, letterSpacing: 2, color: 'rgba(240,235,225,.25)', textTransform: 'uppercase' }}>
+              Zkus jinou kategorii nebo se vrať později
+            </p>
+            <Link href="/deals" style={{ display: 'inline-flex', marginTop: 24, padding: '10px 22px', background: 'rgba(240,180,41,.08)', border: '1px solid rgba(240,180,41,.2)', borderRadius: 9, fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: '#F0B429', textDecoration: 'none' }}>
+              Zobrazit vše
+            </Link>
+          </div>
         )}
       </div>
-
-      {/* Category filter */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-        <Link href="/deals" className={`flex-shrink-0 px-4 py-2 rounded-full font-heading text-xs font-700 tracking-wider uppercase transition-all border ${!searchParams.cat ? 'bg-gold-500 text-black border-gold-500' : 'border-white/10 text-void-400 hover:border-white/20 hover:text-void-200'}`}>
-          Vše
-        </Link>
-        {Object.entries(CATEGORY_META).map(([key, meta]) => (
-          <Link key={key} href={`/deals?cat=${key}${searchParams.sort ? `&sort=${searchParams.sort}` : ''}`}
-            className={`flex-shrink-0 px-4 py-2 rounded-full font-heading text-xs font-700 tracking-wider uppercase transition-all border flex items-center gap-1.5 ${searchParams.cat === key ? 'bg-gold-500 text-black border-gold-500' : 'border-white/10 text-void-400 hover:border-white/20 hover:text-void-200'}`}>
-            {meta.icon} {meta.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* Sort */}
-      <div className="flex gap-2 flex-wrap">
-        {SORTS.map(s => (
-          <Link key={s.value} href={`/deals?sort=${s.value}${searchParams.cat ? `&cat=${searchParams.cat}` : ''}`}
-            className={`px-3 py-1.5 rounded-lg font-heading text-xs font-600 tracking-wider transition-all border ${(searchParams.sort ?? 'newest') === s.value ? 'bg-void-800 border-gold-500/30 text-gold-400' : 'border-white/[0.06] text-void-500 hover:text-void-300'}`}>
-            {s.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-        {(deals ?? []).map(deal => (
-          <DealCard key={deal.id} deal={deal} isSaved={savedIds.has(deal.id)} isVip={isVip} />
-        ))}
-      </div>
-
-      {deals?.length === 0 && (
-        <div className="text-center py-20">
-          <p className="font-display text-3xl text-void-600 mb-3">ŽÁDNÉ DEALY</p>
-          <p className="font-body text-void-500 text-sm">Zkus jinou kategorii nebo se vrať později.</p>
-        </div>
-      )}
     </div>
   )
 }
