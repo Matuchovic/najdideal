@@ -7,8 +7,8 @@ export default function KontaktPage() {
   const inputStyle = { width: '100%', padding: '13px 16px', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.09)', borderRadius: 9, color: S.wht, fontFamily: 'Syne, sans-serif', fontSize: 13, outline: 'none' }
   return (
     <div style={{ background: S.bg, minHeight: '100vh', color: S.wht, fontFamily: 'Syne, sans-serif' }}>
-      <div style={{ padding: '120px 56px 80px', maxWidth: 960, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
+      <div style={{ padding: 'clamp(90px,12vw,120px) clamp(20px,5vw,56px) 80px', maxWidth: 960, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 32, alignItems: 'start' }}>
           <div>
             <div style={{ fontFamily: 'Syne Mono, monospace', fontSize: 9, letterSpacing: 3, textTransform: 'uppercase', color: S.g, marginBottom: 12 }}>📬 Kontakt</div>
             <h1 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(56px,8vw,100px)', letterSpacing: 4, lineHeight: .85, marginBottom: 20 }}>NAPIŠ <span style={{ color: S.g }}>NÁM</span></h1>

@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 const PERKS = ['Přístup k free dealům každý den', 'Live alerty a oznámení', 'Komunita 2 341+ členů', 'Upgrade na VIP kdykoliv']
 
 export default function RegisterPage() {
+  const [success, setSuccess] = useState(false)
   const [show, setShow] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -18,10 +19,45 @@ export default function RegisterPage() {
     if ((fd.get('password') as string).length < 8) { toast.error('Heslo musí mít alespoň 8 znaků.'); return }
     startTransition(async () => {
       const result = await register(fd)
-      if (result?.error) toast.error(result.error)
+      if (result?.error) { toast.error(result.error) } else { setSuccess(true); setTimeout(() => window.location.replace('/dashboard'), 2400) }
     })
   }
 
+
+  if (success) return (
+    <div style={{ minHeight: '100vh', background: '#020208', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <style>{`
+        @keyframes scaleIn { from { opacity: 0; transform: scale(.6) } to { opacity: 1; transform: scale(1) } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes glow { 0%,100% { box-shadow: 0 0 40px rgba(240,180,41,.3) } 50% { box-shadow: 0 0 80px rgba(240,180,41,.6) } }
+        @keyframes dash { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
+        @keyframes progress { from { width: 0% } to { width: 100% } }
+      `}</style>
+      <div style={{ textAlign: 'center', maxWidth: 400 }}>
+        <div style={{ position: 'relative', display: 'inline-block', marginBottom: 32, animation: 'scaleIn .6s cubic-bezier(.34,1.56,.64,1) both' }}>
+          <div style={{ width: 100, height: 100, borderRadius: '50%', background: 'rgba(240,180,41,.08)', border: '2px solid rgba(240,180,41,.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'glow 2s ease-in-out infinite' }}>
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+              <circle cx="26" cy="20" r="10" stroke="#F0B429" strokeWidth="2" style={{strokeDasharray:80,strokeDashoffset:80,animation:'dash .7s ease .4s forwards'}}/>
+              <path d="M10 44c0-8.84 7.16-16 16-16s16 7.16 16 16" stroke="#F0B429" strokeWidth="2" strokeLinecap="round" style={{strokeDasharray:80,strokeDashoffset:80,animation:'dash .7s ease .6s forwards'}}/>
+              <circle cx="38" cy="38" r="9" fill="#020208" stroke="rgba(240,180,41,.3)" strokeWidth="1"/>
+              <path d="M34 38l3 3 6-6" stroke="#F0B429" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{strokeDasharray:20,strokeDashoffset:20,animation:'dash .4s ease 1s forwards'}}/>
+            </svg>
+          </div>
+        </div>
+        <div style={{ animation: 'fadeUp .6s .5s ease both', opacity: 0 }}>
+          <div style={{ fontFamily: "'Syne Mono', monospace", fontSize: 10, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', color: '#F0B429', marginBottom: 12 }}>✓ Účet vytvořen</div>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(36px,8vw,52px)', letterSpacing: 5, color: '#F0EBE1', marginBottom: 8, lineHeight: 1 }}>REGISTRACE</h2>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(36px,8vw,52px)', letterSpacing: 5, color: '#F0B429', marginBottom: 20, lineHeight: 1, textShadow: '0 0 40px rgba(240,180,41,.4)' }}>PROBĚHLA ÚSPĚŠNĚ</h2>
+          <p style={{ fontSize: 13, color: 'rgba(240,235,225,.38)', fontWeight: 300, lineHeight: 1.7 }}>Vítej v NajdiDeal! Přesměrovávám tě do dashboardu…</p>
+          <div style={{ marginTop: 24, display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: 180, height: 2, background: 'rgba(255,255,255,.06)', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ height: '100%', background: 'linear-gradient(90deg,#F0B429,#FFD97D)', borderRadius: 2, animation: 'progress 2.2s ease forwards' }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
   return (
     <div className="min-h-screen bg-void-1000 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gold-500/5 rounded-full blur-[120px] pointer-events-none" />

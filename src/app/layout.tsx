@@ -3,6 +3,7 @@ import '@/styles/globals.css'
 import { Toaster } from 'react-hot-toast'
 import { CursorProvider } from '@/components/effects/CursorProvider'
 import { NoiseOverlay } from '@/components/effects/NoiseOverlay'
+import Navbar from '@/components/layout/Navbar'
 
 export const metadata: Metadata = {
   title: { default: 'NajdiDeal – Najdi deal dřív než ostatní', template: '%s | NajdiDeal' },
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="cs" className="dark">
       <body className="bg-void-1000 text-white antialiased">
         <NoiseOverlay />
+        <Navbar />
         <CursorProvider />
         {children}
         <Toaster

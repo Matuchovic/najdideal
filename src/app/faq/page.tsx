@@ -20,7 +20,7 @@ export default function FaqPage() {
   const S = { bg: '#020208', wht: '#F0EBE1', g: '#F0B429', mut: 'rgba(240,235,225,.38)', gl: 'rgba(255,255,255,.026)', br: 'rgba(255,255,255,.07)' }
   return (
     <div style={{ background: S.bg, minHeight: '100vh', color: S.wht, fontFamily: 'Syne, sans-serif' }}>
-      <div style={{ padding: '120px 56px 80px', maxWidth: 800, margin: '0 auto' }}>
+      <div style={{ padding: 'clamp(90px,12vw,120px) clamp(16px,5vw,56px) 80px', maxWidth: 800, width: '100%', margin: '0 auto' }}>
         <div style={{ fontFamily: 'Syne Mono, monospace', fontSize: 9, letterSpacing: 3, textTransform: 'uppercase', color: S.g, marginBottom: 12 }}>❓ Časté dotazy</div>
         <h1 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(56px,8vw,110px)', letterSpacing: 4, lineHeight: .85, marginBottom: 20 }}>MÁŠ <span style={{ color: S.g }}>OTÁZKY?</span></h1>
         <p style={{ fontSize: 14, color: S.mut, marginBottom: 56, fontWeight: 300, lineHeight: 1.9 }}>Odpovědi na nejčastější otázky. Nenašel jsi odpověď? Napiš nám na <a href="mailto:info@najdideal.cz" style={{ color: S.g, textDecoration: 'none' }}>info@najdideal.cz</a></p>

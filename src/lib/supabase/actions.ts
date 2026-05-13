@@ -29,7 +29,7 @@ export async function register(formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  return { success: true }
 }
 
 export async function logout() {
