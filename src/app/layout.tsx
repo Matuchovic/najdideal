@@ -8,8 +8,8 @@ import Navbar from '@/components/layout/Navbar'
 
 export const metadata: Metadata = {
   title: { default: 'NajdiDeal – Najdi deal dřív než ostatní', template: '%s | NajdiDeal' },
-  description: 'Denně filtrujeme stovky nabídek a online příležitostí. Ty dostaneš jen ty nejlepší dealy jako první.',
-  keywords: ['dealy', 'flipy', 'marketplace', 'AI příležitosti', 'profit', 'online business', 'NajdiDeal'],
+  description: 'NajdiDeal – AI platforma pro flipování a online příležitosti. Nakup levněji, prodej dráž. Každý den nové dealy z Bazoše, Vinted a dalších trhů.',
+  keywords: ['flipování', 'dealy', 'marketplace flip', 'jak vydělat online', 'bazos flip', 'vinted flip', 'online příležitosti', 'AI dealy', 'profit', 'NajdiDeal', 'nakup levně prodej draze'],
   authors: [{ name: 'NajdiDeal' }],
   creator: 'NajdiDeal',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://najdideal.cz'),
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     locale: 'cs_CZ',
     url: 'https://najdideal.cz',
     title: 'NajdiDeal – Najdi deal dřív než ostatní',
-    description: 'Nejprémiовější deal komunita v ČR a SK.',
+    description: 'Nejprémiernější deal komunita v ČR a SK. Flipuj, vydělávej, buď první.',
     siteName: 'NajdiDeal',
   },
   twitter: { card: 'summary_large_image', title: 'NajdiDeal', description: 'Najdi deal dřív než ostatní.' },
@@ -57,6 +57,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       <LuxuryCursor />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "NajdiDeal",
+            "url": "https://najdideal.cz",
+            "logo": "https://najdideal.cz/og-image.png",
+            "description": "AI platforma pro flipování a online příležitosti v ČR",
+            "sameAs": [],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "email": "info@najdideal.cz",
+              "contactType": "customer service",
+              "availableLanguage": "Czech"
+            }
+          })}}
+        />
       </body>
     </html>
   )
