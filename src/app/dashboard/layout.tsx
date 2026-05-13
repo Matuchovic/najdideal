@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { BackButton } from '@/components/ui/BackButton'
+import NajdiLogo from '@/components/ui/NajdiLogo'
 import { LogoutButton } from '@/components/ui/LogoutButton'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,10 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       `}</style>
       <nav className="dn">
         <BackButton />
-        <Link href="/" className="dn-logo">
-          <div className="dn-logo-box">ND</div>
-          <span>NAJDI<span style={{color:'#F0B429'}}>DEAL</span></span>
-        </Link>
+        <NajdiLogo href="/" size="sm" />
         <div className="dn-r">
           <Link href="/marketplace/zpravy" className="db" title="Zprávy">💬</Link>
           <Link href="/settings" className="db" title="Nastavení">⚙️</Link>

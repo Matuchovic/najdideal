@@ -1,4 +1,5 @@
 'use client'
+import NajdiLogo from '@/components/ui/NajdiLogo'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 
@@ -218,8 +219,7 @@ function PhoneMockup() {
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: 24 }}>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                    <div style={{ width: 32, height: 32, background: G.gold, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', ...bb, fontSize: 14, color: '#000', fontWeight: 900 }}>ND</div>
-                    <div style={{ ...bb, fontSize: 22, letterSpacing: 4, color: G.wht }}>NAJDI<span style={{ color: G.gold }}>DEAL</span></div>
+                    <NajdiLogo size="sm" href="/" showText={true} />
                   </div>
                   <div style={{ ...mo, fontSize: 9, letterSpacing: '2px', textTransform: 'uppercase', color: G.mut }}>AI-powered marketplace</div>
                 </div>
@@ -310,8 +310,7 @@ function PhoneMockup() {
 
               {/* logo */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28, position: 'relative', zIndex: 2 }}>
-                <div style={{ width: 28, height: 28, background: G.gold, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', ...bb, fontSize: 13, color: '#000' }}>ND</div>
-                <div style={{ ...bb, fontSize: 20, letterSpacing: 4, color: G.wht }}>NAJDI<span style={{ color: G.gold }}>DEAL</span></div>
+                <NajdiLogo size="md" href="/" showText={true} />
               </div>
 
               {/* big circular progress */}
@@ -370,8 +369,7 @@ function PhoneMockup() {
               <div style={{ padding: '10px 14px 8px', borderBottom: `1px solid ${G.br}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <div style={{ width: 24, height: 24, background: G.gold, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', ...bb, fontSize: 11, color: '#000' }}>ND</div>
-                    <span style={{ ...bb, fontSize: 16, letterSpacing: 3, color: G.wht }}>NAJDI<span style={{ color: G.gold }}>DEAL</span></span>
+                    <NajdiLogo size="sm" href="/" showText={true} />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                     <div style={{ width: 6, height: 6, borderRadius: '50%', background: G.grn, animation: 'pingGrn 2s ease-in-out infinite' }} />
@@ -989,8 +987,7 @@ export default function HomePage() {
         <div className="footer-grid" style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:36,marginBottom:48}}>
           <div>
             <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:19,letterSpacing:4,display:'flex',alignItems:'center',gap:10,marginBottom:9}}>
-              <div style={{width:28,height:28,background:G.g,borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:900,color:'#000'}}>ND</div>
-              NAJDI<span style={{color:G.g}}>DEAL</span>
+              <NajdiLogo size="md" href="/" showText={true} />
             </div>
             <p style={{fontSize:11,color:G.mut,maxWidth:200,lineHeight:1.75,fontWeight:300}}>Najdi deal dřív než ostatní. Každý den nové příležitosti.</p>
           </div>
