@@ -535,7 +535,7 @@ function ScannerSection({ userRole, onScan, scanning, scanResult }: any) {
 /* ═══════════ MAIN DASHBOARD ═══════════ */
 export default function DashboardPage() {
   const [booted, setBooted] = useState(false)
-  const [showBoot, setShowBoot] = useState(true)
+  const [showBoot, setShowBoot] = useState(false)
   const [profile, setProfile] = useState<any>(null)
   const [deals, setDeals] = useState<any[]>([])
   const [alerts, setAlerts] = useState<any[]>([])
@@ -561,8 +561,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     // Check if booted already this session
-    const alreadyBooted = sessionStorage.getItem('nd_booted')
-    if (alreadyBooted) { setShowBoot(false); setBooted(true) }
+    const alreadyBooted = typeof window !== 'undefined' && sessionStorage.getItem('nd_booted')
+    if (alreadyBooted) { setBooted(true) } else { setShowBoot(true) }
 
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -585,7 +585,7 @@ export default function DashboardPage() {
   }, [])
 
   const handleBootDone = () => {
-    sessionStorage.setItem('nd_booted', '1')
+    if (typeof window !== 'undefined') sessionStorage.setItem('nd_booted', '1')
     setBooted(true)
     setTimeout(() => setShowBoot(false), 700)
   }
@@ -599,7 +599,7 @@ export default function DashboardPage() {
   return (
     <>
       {/* BOOT */}
-      {showBoot && !sessionStorage.getItem?.('nd_booted') && (
+      {showBoot && (
         <BootSequence onDone={handleBootDone} />
       )}
 
