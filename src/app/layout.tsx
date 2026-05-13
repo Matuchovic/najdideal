@@ -1,3 +1,4 @@
+import LuxuryCursor from '@/components/ui/LuxuryCursor'
 import type { Metadata, Viewport } from 'next'
 import '@/styles/globals.css'
 import { Toaster } from 'react-hot-toast'
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             error:   { iconTheme: { primary: '#FF4444', secondary: '#1C1C22' } },
           }}
         />
+      <LuxuryCursor />
       </body>
     </html>
   )
