@@ -6,28 +6,37 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-void-1000">
       <style>{`
-        .dn{height:60px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(2,2,8,.88);backdrop-filter:blur(32px) saturate(180%);display:flex;align-items:center;padding:0 16px;gap:12px;overflow:hidden;position:relative}
-        .dn-logo-wrap{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;pointer-events:auto}
-        .dn-logo-box{width:28px;height:28px;background:#F0B429;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#000;flex-shrink:0}
-        .dn-r{display:flex;align-items:center;gap:5px;justify-content:flex-end}
+        .dn{height:60px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(2,2,8,.88);backdrop-filter:blur(32px) saturate(180%);display:flex;align-items:center;padding:0 16px;position:relative;overflow:hidden}
+        .dn-left{display:flex;align-items:center;width:120px;flex-shrink:0}
+        .dn-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center}
+        .dn-right{display:flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0}
         .db{display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:rgba(240,235,225,.5);text-decoration:none;width:32px;height:32px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.04);transition:all .2s;cursor:pointer;flex-shrink:0}
         .db:hover{color:#F0B429;border-color:rgba(240,180,41,.3);background:rgba(240,180,41,.06)}
+        @keyframes ndPulse{0%,100%{box-shadow:0 0 12px rgba(240,180,41,.55),0 0 28px rgba(240,180,41,.28),inset 0 1px 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 22px rgba(240,180,41,.95),0 0 50px rgba(240,180,41,.5),inset 0 1px 0 rgba(255,255,255,.35)}}
+        @keyframes ndShimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+        @keyframes ndRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        .nd-icon{width:30px;height:30px;border-radius:7px;background:linear-gradient(145deg,#FFD45E 0%,#F0B429 45%,#C8880A 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0;animation:ndPulse 2.8s ease-in-out infinite}
+        .nd-icon-shine{position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(180deg,rgba(255,255,255,.4) 0%,transparent 100%);border-radius:7px 7px 0 0;pointer-events:none}
+        .nd-icon-ring{position:absolute;inset:-2px;border-radius:9px;border:1.5px dashed rgba(240,180,41,.35);animation:ndRing 8s linear infinite;pointer-events:none}
+        .nd-icon-text{font-family:'Bebas Neue',sans-serif;font-size:13px;font-weight:900;color:#000;position:relative;letter-spacing:0.5px}
+        .nd-text{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:5px;white-space:nowrap}
+        .nd-najdi{color:#F0EBE1}
+        .nd-deal{background:linear-gradient(90deg,#F0B429 0%,#FFD97D 40%,#F0B429 60%,#C8880A 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:ndShimmer 3s linear infinite}
         @media(min-width:640px){.dn{padding:0 24px}}
       `}</style>
       <nav className="dn">
-        <BackButton />
-        <div className="dn-logo-wrap">
-          <a href="/" style={{display:'flex',alignItems:'center',gap:'9px',textDecoration:'none'}}>
-            <div style={{width:28,height:28,borderRadius:6,background:'linear-gradient(145deg,#FFD45E 0%,#F0B429 45%,#C8880A 100%)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:12,fontWeight:900,color:'#000',flexShrink:0,boxShadow:'0 0 16px rgba(240,180,41,.6)',position:'relative',overflow:'hidden'}}>
-              <span style={{position:'absolute',top:0,left:0,right:0,height:'55%',background:'linear-gradient(180deg,rgba(255,255,255,.4) 0%,transparent 100%)',borderRadius:'6px 6px 0 0'}} />
-              <span style={{position:'relative'}}>ND</span>
-            </div>
-            <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,letterSpacing:5,color:'#F0EBE1',whiteSpace:'nowrap'}}>
-              NAJDI<span style={{color:'#F0B429'}}>DEAL</span>
-            </span>
-          </a>
-        </div>
-        <div className="dn-r">
+        <div className="dn-left"><BackButton /></div>
+        <Link href="/" className="dn-center" style={{textDecoration:'none',gap:'10px'}}>
+          <div className="nd-icon">
+            <div className="nd-icon-shine" />
+            <div className="nd-icon-ring" />
+            <span className="nd-icon-text">ND</span>
+          </div>
+          <span className="nd-text">
+            <span className="nd-najdi">NAJDI</span><span className="nd-deal">DEAL</span>
+          </span>
+        </Link>
+        <div className="dn-right">
           <Link href="/marketplace/zpravy" className="db" title="Zprávy">💬</Link>
           <Link href="/settings" className="db" title="Nastavení">⚙️</Link>
           <Link href="/" className="db" title="Domů">🏠</Link>
