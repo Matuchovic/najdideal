@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import OnboardingModal from '@/components/ui/OnboardingModal'
+import OnboardingTour from '@/components/ui/OnboardingTour'
 import { Crown, TrendingUp, Bookmark, Bell, ArrowRight, Flame, Zap, Activity, Eye, Clock, Lock, Sparkles, ChevronUp } from 'lucide-react'
 import Link from 'next/link'
 
@@ -573,6 +574,7 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>
+      <OnboardingTour />
       {showOnboarding && <OnboardingModal onComplete={() => setShowOnboarding(false)} />}
     </div>
   )
