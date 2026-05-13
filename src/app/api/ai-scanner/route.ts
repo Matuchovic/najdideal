@@ -70,7 +70,7 @@ Vrať přesně 8 dealů. POUZE JSON array.`
     })
   })
 
-  if (!res.ok) throw new Error(`Anthropic API error: ${res.status}`)
+  if (!res.ok) { const errBody = await res.text(); throw new Error(`Anthropic API error: ${res.status} - ${errBody}`) }
 
   const data = await res.json()
   const text = data.content?.find((b: any) => b.type === 'text')?.text ?? '[]'
