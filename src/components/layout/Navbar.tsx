@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import NajdiLogo from '@/components/ui/NajdiLogo'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
@@ -38,13 +39,7 @@ export default function Navbar() {
         <div className="nav-wrap" style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0 48px' }}>
 
           {/* LOGO */}
-          <Link href="/" onClick={() => setOpen(false)} style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 21, letterSpacing: 6, color: G.wht, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 11 }}>
-            <div style={{ width: 33, height: 33, background: G.g, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 900, color: '#000', position: 'relative', overflow: 'hidden', boxShadow: '0 0 20px rgba(240,180,41,.38)', flexShrink: 0 }}>
-              <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,rgba(255,255,255,.4) 0%,transparent 55%)' }} />
-              ND
-            </div>
-            NAJDI<span style={{ color: G.g }}>DEAL</span>
-          </Link>
+          <NajdiLogo href="/" onClick={() => setOpen(false)} size="md" />
 
           {/* DESKTOP LINKS */}
           <ul className="nav-desktop-links" style={{ gap: 32, listStyle: 'none', margin: 0, padding: 0 }}>
@@ -85,7 +80,8 @@ export default function Navbar() {
       <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: 280, background: 'rgba(6,6,14,.97)', backdropFilter: 'blur(40px)', borderLeft: '1px solid rgba(255,255,255,.08)', zIndex: 495, transform: open ? 'translateX(0)' : 'translateX(100%)', transition: 'transform .4s cubic-bezier(.34,1.1,.64,1)', display: 'flex', flexDirection: 'column', padding: '80px 28px 36px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(240,180,41,.3),transparent)' }} />
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
+        <NajdiLogo href="/" onClick={() => setOpen(false)} size="sm" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, marginTop: 24 }}>
           {links.map((lk, i) => (
             <Link key={lk.l} href={lk.href} onClick={() => setOpen(false)} style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 28, letterSpacing: 3, color: path === lk.href ? G.g : G.wht, textDecoration: 'none', padding: '14px 0', borderBottom: '1px solid rgba(255,255,255,.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'color .2s' }}
               onMouseEnter={e => { (e.currentTarget as any).style.color = G.g }}
