@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Bookmark, BookmarkCheck, Lock, TrendingUp, Flame, Star } from 'lucide-react'
 import { cn, formatCZK, formatPercent, formatRelative } from '@/lib/utils'
 import type { Deal } from '@/lib/types'
@@ -15,11 +15,32 @@ interface DealCardProps {
   compact?: boolean
 }
 
+const GLOW_STYLE = `
+  @keyframes rotateBorder {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes dealPulse {
+    0%,100% { opacity:.5; }
+    50%      { opacity:1; }
+  }
+  @keyframes profitIn {
+    from { opacity:0; transform:translateY(6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+`
+
 export function DealCard({ deal, isSaved = false, onSave, isVip = false, compact = false }: DealCardProps) {
-  const [saved, setSaved] = useState(isSaved)
+  const [saved, setSaved]             = useState(isSaved)
   const [savePending, setSavePending] = useState(false)
-  const meta = CATEGORY_META[deal.category as keyof typeof CATEGORY_META]
+  const [hov, setHov]                 = useState(false)
+  const [mp, setMp]                   = useState({ x: 50, y: 50 })
+  const cardRef                       = useRef<HTMLDivElement>(null)
+
+  const meta     = CATEGORY_META[deal.category as keyof typeof CATEGORY_META]
   const isLocked = deal.access_level === 'vip' && !isVip
+  const isHot    = deal.is_hot
+  const accentColor = isHot ? '#F0B429' : deal.is_featured ? '#4D9FFF' : deal.is_trending ? '#00E676' : '#F0B429'
 
   const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation()
@@ -30,110 +51,235 @@ export function DealCard({ deal, isSaved = false, onSave, isVip = false, compact
     setSavePending(false)
   }
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    setMp({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 })
+  }
+
   return (
-    <Link href={isLocked ? '/membership' : `/deals/${deal.slug}`} className="block group">
-      <div className={cn(
-        'card relative overflow-hidden',
-        compact ? 'p-4' : 'p-5',
-        isLocked && 'opacity-80'
-      )}>
-        {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/0 to-transparent group-hover:via-gold-500/60 transition-all duration-500" />
+    <Link href={isLocked ? '/membership' : `/deals/${deal.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+      <style>{GLOW_STYLE}</style>
 
-        {/* Shine on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(245,184,0,0.04) 0%, transparent 50%)' }} />
-
-        {/* VIP Lock overlay */}
-        {isLocked && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center glass rounded-2xl gap-2">
-            <Lock className="w-5 h-5 text-gold-500" />
-            <span className="font-heading text-xs font-bold tracking-widest text-gold-500 uppercase">VIP přístup</span>
+      <div
+        ref={cardRef}
+        onMouseEnter={() => setHov(true)}
+        onMouseLeave={() => setHov(false)}
+        onMouseMove={handleMouseMove}
+        style={{
+          position: 'relative',
+          borderRadius: 20,
+          padding: compact ? '16px' : '20px',
+          background: hov ? 'rgba(255,255,255,.04)' : 'rgba(255,255,255,.026)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          border: `1px solid ${hov ? accentColor + '44' : 'rgba(255,255,255,.07)'}`,
+          transition: 'all .45s cubic-bezier(.34,1.56,.64,1)',
+          transform: hov ? 'translateY(-6px) scale(1.01)' : 'translateY(0)',
+          boxShadow: hov
+            ? `0 28px 70px rgba(0,0,0,.55), 0 0 0 1px ${accentColor}22, inset 0 1px 0 rgba(255,255,255,.07)`
+            : '0 2px 12px rgba(0,0,0,.2)',
+          cursor: isLocked ? 'default' : 'pointer',
+          overflow: 'hidden',
+          opacity: isLocked ? 0.85 : 1,
+        }}
+      >
+        {/* ── ROTATING GLOW BORDER ── */}
+        {hov && (
+          <div style={{ position: 'absolute', inset: -2, borderRadius: 22, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+            <div style={{
+              position: 'absolute',
+              top: '50%', left: '50%',
+              width: '150%', height: '150%',
+              transform: 'translate(-50%,-50%)',
+              background: `conic-gradient(from 0deg, transparent 0deg, ${accentColor}66 60deg, transparent 120deg, transparent 360deg)`,
+              animation: 'rotateBorder 3s linear infinite',
+            }} />
+            <div style={{ position: 'absolute', inset: 2, borderRadius: 20, background: hov ? 'rgba(255,255,255,.04)' : '#020208' }} />
           </div>
         )}
 
-        <div className="relative">
-          {/* Header row */}
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-void-800 border border-white/5 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                {deal.emoji}
+        {/* ── MOUSE GLOW ── */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 20, pointerEvents: 'none', zIndex: 0,
+          background: `radial-gradient(circle at ${mp.x}% ${mp.y}%, ${accentColor}0e 0%, transparent 55%)`,
+          opacity: hov ? 1 : 0, transition: 'opacity .3s',
+        }} />
+
+        {/* ── TOP LINE ── */}
+        <div style={{
+          position: 'absolute', top: 0, left: '10%', right: '10%', height: 1,
+          background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`,
+          opacity: hov ? 1 : 0.35, transition: 'opacity .4s', zIndex: 1,
+        }} />
+
+        {/* ── TOP SHINE ── */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '45%',
+          background: 'linear-gradient(180deg,rgba(255,255,255,.03) 0%,transparent 100%)',
+          borderRadius: '20px 20px 0 0', pointerEvents: 'none', zIndex: 0,
+        }} />
+
+        {/* ── CONTENT ── */}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              {/* Emoji icon */}
+              <div style={{
+                width: 48, height: 48, borderRadius: 13,
+                background: 'rgba(255,255,255,.05)',
+                border: `1px solid ${hov ? accentColor + '33' : 'rgba(255,255,255,.06)'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 24, flexShrink: 0,
+                transition: 'all .35s cubic-bezier(.34,1.56,.64,1)',
+                transform: hov ? 'scale(1.12) rotate(-6deg)' : 'scale(1)',
+                boxShadow: hov ? `0 0 18px ${accentColor}44` : 'none',
+              }}>
+                {deal.emoji || '💰'}
               </div>
-              <div className="flex flex-col gap-1">
-                <span className={cn('badge', meta.badgeClass)}>{meta.icon} {meta.label}</span>
-                <div className="flex items-center gap-1.5">
-                  {deal.is_featured && <span className="badge badge-gold"><Star className="w-2.5 h-2.5" /> Featured</span>}
-                  {deal.is_hot     && <span className="badge badge-red"><Flame className="w-2.5 h-2.5" /> Hot</span>}
-                  {deal.is_trending && <span className="badge badge-green"><TrendingUp className="w-2.5 h-2.5" /> Trend</span>}
-                  {deal.access_level === 'vip' && <span className="badge badge-vip">👑 VIP</span>}
+
+              {/* Badges */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: `${accentColor}12`, border: `1px solid ${accentColor}28`, borderRadius: 100, padding: '3px 9px' }}>
+                  <span style={{ fontSize: 10 }}>{meta?.icon}</span>
+                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: accentColor }}>{meta?.label}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {deal.is_featured && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: 'rgba(77,159,255,.1)', border: '1px solid rgba(77,159,255,.25)', borderRadius: 100, padding: '2px 7px', fontFamily: "'Syne Mono', monospace", fontSize: 7, fontWeight: 700, letterSpacing: 1.5, color: '#4D9FFF', textTransform: 'uppercase' }}>
+                      ★ Featured
+                    </span>
+                  )}
+                  {deal.is_hot && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: 'rgba(240,180,41,.1)', border: '1px solid rgba(240,180,41,.28)', borderRadius: 100, padding: '2px 7px', fontFamily: "'Syne Mono', monospace", fontSize: 7, fontWeight: 700, letterSpacing: 1.5, color: '#F0B429', textTransform: 'uppercase', animation: 'dealPulse 2s ease-in-out infinite' }}>
+                      🔥 Hot
+                    </span>
+                  )}
+                  {deal.is_trending && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: 'rgba(0,230,118,.08)', border: '1px solid rgba(0,230,118,.22)', borderRadius: 100, padding: '2px 7px', fontFamily: "'Syne Mono', monospace", fontSize: 7, fontWeight: 700, letterSpacing: 1.5, color: '#00E676', textTransform: 'uppercase' }}>
+                      ↑ Trend
+                    </span>
+                  )}
+                  {deal.access_level === 'vip' && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: 'rgba(155,93,229,.1)', border: '1px solid rgba(155,93,229,.28)', borderRadius: 100, padding: '2px 7px', fontFamily: "'Syne Mono', monospace", fontSize: 7, fontWeight: 700, letterSpacing: 1.5, color: '#9B5DE5', textTransform: 'uppercase' }}>
+                      👑 VIP
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
-            <button onClick={handleSave} className="p-1.5 rounded-lg hover:bg-white/5 transition-colors" title={saved ? 'Odebrat' : 'Uložit'}>
+
+            {/* Save button */}
+            <button
+              onClick={handleSave}
+              style={{ padding: 8, borderRadius: 9, background: saved ? 'rgba(240,180,41,.1)' : 'rgba(255,255,255,.04)', border: `1px solid ${saved ? 'rgba(240,180,41,.25)' : 'rgba(255,255,255,.07)'}`, cursor: 'pointer', transition: 'all .25s', flexShrink: 0 }}
+            >
               {saved
-                ? <BookmarkCheck className="w-4 h-4 text-gold-500" />
-                : <Bookmark     className="w-4 h-4 text-void-400 group-hover:text-void-200 transition-colors" />}
+                ? <BookmarkCheck size={14} color="#F0B429" />
+                : <Bookmark size={14} color="rgba(240,235,225,.4)" />}
             </button>
           </div>
 
           {/* Title */}
-          <h3 className="font-heading text-[17px] font-700 tracking-wide mb-3 leading-tight group-hover:text-gold-400 transition-colors line-clamp-2">
+          <h3 style={{
+            fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700, lineHeight: 1.35,
+            color: hov ? '#F0EBE1' : 'rgba(240,235,225,.9)',
+            marginBottom: 14, transition: 'color .3s',
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+          }}>
             {deal.title}
           </h3>
 
+          {/* Divider */}
+          <div style={{ height: 1, background: 'rgba(255,255,255,.05)', marginBottom: 14 }} />
+
           {/* Price rows */}
-          <div className="space-y-2 mb-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
             {deal.buy_price != null && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-void-400 font-heading font-600 tracking-wide uppercase text-xs">Koupeno za</span>
-                <span className="text-gold-500 font-heading font-700 text-base">{formatCZK(deal.buy_price)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,235,225,.35)' }}>Koupeno za</span>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: 1, color: '#F0B429' }}>{formatCZK(deal.buy_price)}</span>
               </div>
             )}
             {deal.sell_price != null && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-void-400 font-heading font-600 tracking-wide uppercase text-xs">Běžná cena</span>
-                <span className="text-void-300 font-medium">{formatCZK(deal.sell_price)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,235,225,.35)' }}>Běžná cena</span>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: 1, color: 'rgba(240,235,225,.6)' }}>{formatCZK(deal.sell_price)}</span>
               </div>
             )}
             {deal.trend_percent != null && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-void-400 font-heading font-600 tracking-wide uppercase text-xs">Nárůst trendu</span>
-                <span className="profit-positive font-heading font-700 text-base">+{deal.trend_percent}%</span>
-              </div>
-            )}
-            {deal.profit_percent != null && deal.buy_price == null && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-void-400 font-heading font-600 tracking-wide uppercase text-xs">Provize</span>
-                <span className="profit-positive font-heading font-700 text-base">{deal.profit_percent}%</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,235,225,.35)' }}>Nárůst trendu</span>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: 1, color: '#00E676' }}>+{deal.trend_percent}%</span>
               </div>
             )}
           </div>
 
           {/* Profit row */}
-          <div className="flex items-center justify-between pt-3 border-t border-white/5">
-            <div className="flex items-center gap-1.5 text-xs text-void-400 font-heading font-600 tracking-wide">
-              <div className="w-1.5 h-1.5 rounded-full bg-gold-500" />
-              {deal.source_name}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '12px 14px',
+            background: isLocked ? 'rgba(255,255,255,.03)' : 'rgba(0,230,118,.07)',
+            border: `1px solid ${isLocked ? 'rgba(255,255,255,.06)' : 'rgba(0,230,118,.15)'}`,
+            borderRadius: 12, position: 'relative',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#F0B429', boxShadow: '0 0 6px #F0B429' }} />
+              <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(240,235,225,.35)' }}>
+                {deal.profit_amount ? 'Profit' : 'Příležitost'}
+              </span>
             </div>
-            {deal.profit_amount != null ? (
-              <span className="font-display text-2xl profit-positive glow-text">
-                {deal.profit_amount > 0 ? '+' : ''}{formatCZK(deal.profit_amount)}
-              </span>
-            ) : deal.profit_percent != null && deal.buy_price != null ? (
-              <span className="font-display text-2xl profit-positive">
-                {formatPercent(deal.profit_percent)}
-              </span>
-            ) : null}
+            <span style={{
+              fontFamily: "'Bebas Neue', sans-serif", fontSize: 26, letterSpacing: 1, lineHeight: 1,
+              color: isLocked ? 'transparent' : '#00E676',
+              filter: isLocked ? 'blur(8px)' : `drop-shadow(0 0 10px #00E67688)`,
+              transition: 'filter .3s',
+              animation: 'profitIn .4s ease',
+            }}>
+              {deal.profit_amount != null
+                ? `+${formatCZK(deal.profit_amount)}`
+                : deal.short_desc?.split('·')[0]?.trim() || 'VIP deal'}
+            </span>
+
+            {/* Lock overlay on profit */}
+            {isLocked && (
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 12 }}>
+                <Lock size={12} color="#9B5DE5" />
+                <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#9B5DE5' }}>VIP only</span>
+              </div>
+            )}
           </div>
 
           {/* Footer */}
           {!compact && (
-            <div className="flex items-center justify-between mt-3 pt-2">
-              <span className="text-xs text-void-500 font-heading">{formatRelative(deal.created_at)}</span>
-              <span className="text-xs text-void-500 font-heading">{deal.view_count} zobrazení</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+              <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, color: 'rgba(240,235,225,.3)', letterSpacing: .5 }}>
+                {formatRelative(deal.created_at)}
+              </span>
+              <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, color: 'rgba(240,235,225,.3)', letterSpacing: .5 }}>
+                {deal.view_count} zobrazení
+              </span>
             </div>
           )}
         </div>
+
+        {/* ── VIP LOCK OVERLAY ── */}
+        {isLocked && (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, background: 'rgba(2,2,8,.7)', backdropFilter: 'blur(4px)', borderRadius: 20 }}>
+            <Lock size={22} color="#9B5DE5" />
+            <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: '#9B5DE5' }}>VIP přístup</span>
+            <div style={{ background: '#F0B429', color: '#000', fontFamily: "'Syne Mono', monospace", fontSize: 8, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '7px 16px', borderRadius: 7 }}>
+              Odemknout
+            </div>
+          </div>
+        )}
+
+        {/* ── BOTTOM GLOW BLOB ── */}
+        <div style={{
+          position: 'absolute', bottom: -40, right: -40, width: 120, height: 120,
+          background: `${accentColor}08`, borderRadius: '50%', filter: 'blur(24px)',
+          opacity: hov ? 1 : 0, transition: 'opacity .4s', pointerEvents: 'none', zIndex: 0,
+        }} />
       </div>
     </Link>
   )
@@ -142,26 +288,26 @@ export function DealCard({ deal, isSaved = false, onSave, isVip = false, compact
 // Skeleton loader
 export function DealCardSkeleton() {
   return (
-    <div className="card p-5">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl shimmer" />
-          <div className="space-y-2">
-            <div className="h-5 w-24 rounded shimmer" />
-            <div className="h-4 w-16 rounded shimmer" />
-          </div>
+    <div style={{ borderRadius: 20, padding: 20, background: 'rgba(255,255,255,.026)', border: '1px solid rgba(255,255,255,.07)', overflow: 'hidden' }}>
+      <style>{`@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`}</style>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
+        <div style={{ width: 48, height: 48, borderRadius: 13, background: 'linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ height: 18, width: '60%', borderRadius: 6, background: 'linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+          <div style={{ height: 14, width: '40%', borderRadius: 6, background: 'linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s .15s infinite' }} />
         </div>
-        <div className="w-6 h-6 rounded shimmer" />
       </div>
-      <div className="h-5 w-3/4 rounded shimmer mb-3" />
-      <div className="space-y-2 mb-4">
-        <div className="h-4 w-full rounded shimmer" />
-        <div className="h-4 w-4/5 rounded shimmer" />
+      <div style={{ height: 16, width: '80%', borderRadius: 6, marginBottom: 14, background: 'linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s .1s infinite' }} />
+      <div style={{ height: 1, background: 'rgba(255,255,255,.05)', marginBottom: 14 }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+        {[0, 1].map(i => (
+          <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ height: 10, width: '30%', borderRadius: 4, background: 'linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%)', backgroundSize: '200% 100%', animation: `shimmer 1.5s ${i * .1}s infinite` }} />
+            <div style={{ height: 10, width: '25%', borderRadius: 4, background: 'linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%)', backgroundSize: '200% 100%', animation: `shimmer 1.5s ${i * .1 + .05}s infinite` }} />
+          </div>
+        ))}
       </div>
-      <div className="flex justify-between pt-3 border-t border-white/5">
-        <div className="h-4 w-20 rounded shimmer" />
-        <div className="h-7 w-28 rounded shimmer" />
-      </div>
+      <div style={{ height: 52, borderRadius: 12, background: 'linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.06) 50%,rgba(255,255,255,.03) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s .2s infinite' }} />
     </div>
   )
 }
