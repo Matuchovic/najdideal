@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import OnboardingModal from '@/components/ui/OnboardingModal'
 import OnboardingTour from '@/components/ui/OnboardingTour'
 import { Crown, TrendingUp, Bookmark, Bell, ArrowRight, Flame, Zap, Activity, Eye, Clock, Lock, Sparkles, ChevronUp } from 'lucide-react'
 import Link from 'next/link'
@@ -278,7 +277,6 @@ function AlertCard({ alert, idx, userRole }: { alert: any; idx: number; userRole
 /* ═══════════ MAIN DASHBOARD ═══════════ */
 export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null)
-  const [showOnboarding, setShowOnboarding] = useState(false)
   const [deals, setDeals] = useState<any[]>([])
   const [alerts, setAlerts] = useState<any[]>([])
   const [savedCount, setSavedCount] = useState(0)
@@ -316,7 +314,6 @@ export default function DashboardPage() {
         supabase.from('alerts').select('*').eq('is_active', true).order('is_pinned', { ascending: false }).order('created_at', { ascending: false }).limit(4),
       ])
       setProfile(pR.data)
-      if (!pR.data?.onboarding_completed) setTimeout(() => setShowOnboarding(true), 800)
       setDeals(dR.data ?? [])
       setSavedCount(sR.data?.length ?? 0)
       setUnreadCount(nR.data?.length ?? 0)
@@ -621,7 +618,6 @@ export default function DashboardPage() {
       </div>
 
       <OnboardingTour key={tourKey} />
-      {showOnboarding && <OnboardingModal onComplete={() => setShowOnboarding(false)} />}
     </div>
   )
 }
