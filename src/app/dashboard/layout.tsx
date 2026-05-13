@@ -6,10 +6,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-void-1000">
       <style>{`
-        .dn{height:60px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(2,2,8,.88);backdrop-filter:blur(32px) saturate(180%);display:flex;align-items:center;padding:0 16px;position:relative;overflow:hidden}
-        .dn-left{display:flex;align-items:center;width:120px;flex-shrink:0}
+        .dn{height:60px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(2,2,8,.88);backdrop-filter:blur(32px) saturate(180%);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:relative;overflow:hidden}
+        .dn-left{display:flex;align-items:center;flex-shrink:0}
         .dn-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center}
-        .dn-right{display:flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0}
+        .dn-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
         .db{display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:rgba(240,235,225,.5);text-decoration:none;width:32px;height:32px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.04);transition:all .2s;cursor:pointer;flex-shrink:0}
         .db:hover{color:#F0B429;border-color:rgba(240,180,41,.3);background:rgba(240,180,41,.06)}
         @keyframes ndPulse{0%,100%{box-shadow:0 0 12px rgba(240,180,41,.55),0 0 28px rgba(240,180,41,.28),inset 0 1px 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 22px rgba(240,180,41,.95),0 0 50px rgba(240,180,41,.5),inset 0 1px 0 rgba(255,255,255,.35)}}
