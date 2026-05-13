@@ -3,8 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import OnboardingTour from '@/components/ui/OnboardingTour'
-import NajdiLogo from '@/components/ui/NajdiLogo'
-import { Crown, TrendingUp, Bookmark, Bell, ArrowRight, Flame, Zap, Activity, Eye, Clock, Lock, Sparkles, ChevronUp, Home, Car, Shirt, Plane, Laptop, BarChart2, Search } from 'lucide-react'
+import { Crown, TrendingUp, Bookmark, Bell, ArrowRight, Flame, Zap, Activity, Eye, Clock, Lock, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 /* ═══════════ DESIGN TOKENS ═══════════ */
