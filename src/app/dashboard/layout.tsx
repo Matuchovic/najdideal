@@ -1,17 +1,27 @@
 import Link from 'next/link'
 import { BackButton } from '@/components/ui/BackButton'
 import { LogoutButton } from '@/components/ui/LogoutButton'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = user
+    ? await supabase.from('profiles').select('role').eq('id', user.id).single()
+    : { data: null }
+  const isAdmin = profile?.role === 'admin'
+
   return (
     <div className="min-h-screen bg-void-1000">
       <style>{`
         .dn{height:60px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(2,2,8,.88);backdrop-filter:blur(32px) saturate(180%);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:relative;overflow:hidden}
         .dn-left{display:flex;align-items:center;flex-shrink:0}
-        .dn-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center}
+        .dn-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;text-decoration:none}
         .dn-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
         .db{display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:rgba(240,235,225,.5);text-decoration:none;width:32px;height:32px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.04);transition:all .2s;cursor:pointer;flex-shrink:0}
         .db:hover{color:#F0B429;border-color:rgba(240,180,41,.3);background:rgba(240,180,41,.06)}
+        .db-admin{display:inline-flex;align-items:center;gap:5px;font-family:'Syne Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(240,180,41,.12);color:#F0B429;border:1px solid rgba(240,180,41,.3);border-radius:8px;padding:6px 10px;text-decoration:none;white-space:nowrap;transition:all .2s}
+        .db-admin:hover{background:rgba(240,180,41,.22);border-color:rgba(240,180,41,.5)}
         @keyframes ndPulse{0%,100%{box-shadow:0 0 12px rgba(240,180,41,.55),0 0 28px rgba(240,180,41,.28),inset 0 1px 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 22px rgba(240,180,41,.95),0 0 50px rgba(240,180,41,.5),inset 0 1px 0 rgba(255,255,255,.35)}}
         @keyframes ndShimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes ndRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
@@ -26,7 +36,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       `}</style>
       <nav className="dn">
         <div className="dn-left"><BackButton /></div>
-        <Link href="/" className="dn-center" style={{textDecoration:'none',gap:'10px'}}>
+        <Link href="/" className="dn-center">
           <div className="nd-icon">
             <div className="nd-icon-shine" />
             <div className="nd-icon-ring" />
@@ -37,6 +47,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </span>
         </Link>
         <div className="dn-right">
+          {isAdmin && (
+            <Link href="/admin" className="db-admin" title="Admin Panel">
+              🔧 ADMIN
+            </Link>
+          )}
           <Link href="/marketplace/zpravy" className="db" title="Zprávy">💬</Link>
           <Link href="/settings" className="db" title="Nastavení">⚙️</Link>
           <Link href="/" className="db" title="Domů">🏠</Link>
