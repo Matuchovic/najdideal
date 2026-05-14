@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const { text } = await req.json()
   if (!text) return NextResponse.json({ error: 'No text' }, { status: 400 })
 
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || 'uYFJyGaibp4N2VwYQshk'
+  const voiceId = 'nPczCjzI2devNBz1zQrb'
   const apiKey  = process.env.ELEVENLABS_API_KEY
 
   if (!apiKey) return NextResponse.json({ error: 'No API key' }, { status: 500 })
