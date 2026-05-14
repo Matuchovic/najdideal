@@ -279,6 +279,9 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
               )}
             </div>
 
+            <button onClick={() => speak('J.A.R.V.I.S online. Připraven k asistenci.')} style={{ width:'100%', padding:'8px', marginBottom:8, background:'rgba(0,230,118,.1)', border:'1px solid rgba(0,230,118,.3)', borderRadius:10, color:'#00E676', cursor:'pointer', fontSize:10 }}>
+              🔊 Test hlasu
+            </button>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {[{ href: '/deals', icon: '💰', label: 'Zobrazit dealy' }, { href: '/vip', icon: '👑', label: 'VIP přístup' }, { href: '/dashboard', icon: '🏠', label: 'Dashboard' }].map(l => (
                 <a key={l.href} href={l.href} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', background: 'rgba(255,255,255,.02)', border: '1px solid rgba(255,255,255,.05)', borderRadius: 9, textDecoration: 'none' }}
