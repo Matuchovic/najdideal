@@ -1,10 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { Zap, PlusCircle, Trash2, Star, StarOff } from 'lucide-react'
-import { formatRelative } from '@/lib/utils'
-import { ALERT_TYPE_META } from '@/lib/types'
 import type { AlertType, DealAccess } from '@/lib/types'
-import { slugify } from '@/lib/utils'
+
+const G = {
+  gold: '#F0B429', grn: '#00E676', blu: '#4D9FFF',
+  pur: '#9B5DE5', red: '#FF3B5C', wht: '#F0EBE1',
+  mut: 'rgba(240,235,225,.38)', gl: 'rgba(255,255,255,.03)',
+  br: 'rgba(255,255,255,.07)',
+}
 
 export const metadata = { title: 'Admin – Alerty' }
 
@@ -13,17 +16,16 @@ async function createAlert(formData: FormData) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
-
   await supabase.from('alerts').insert({
-    title:        formData.get('title') as string,
-    body:         formData.get('body') as string,
-    type:         formData.get('type') as AlertType,
+    title: formData.get('title') as string,
+    body: formData.get('body') as string,
+    type: formData.get('type') as AlertType,
     access_level: formData.get('access_level') as DealAccess,
-    cta_text:     formData.get('cta_text') as string || null,
-    cta_url:      formData.get('cta_url') as string || null,
-    is_pinned:    formData.get('is_pinned') === 'on',
-    is_active:    true,
-    created_by:   user.id,
+    cta_text: formData.get('cta_text') as string || null,
+    cta_url: formData.get('cta_url') as string || null,
+    is_pinned: formData.get('is_pinned') === 'on',
+    is_active: true,
+    created_by: user.id,
   })
   revalidatePath('/admin/alerts')
   revalidatePath('/alerts')
@@ -40,146 +42,134 @@ async function deleteAlert(formData: FormData) {
 async function togglePin(formData: FormData) {
   'use server'
   const supabase = createClient()
-  const id      = formData.get('id') as string
-  const pinned  = formData.get('pinned') === 'true'
+  const id = formData.get('id') as string
+  const pinned = formData.get('pinned') === 'true'
   await supabase.from('alerts').update({ is_pinned: !pinned }).eq('id', id)
   revalidatePath('/admin/alerts')
 }
 
-const ALERT_TYPES: { value: AlertType; label: string }[] = [
-  { value: 'deal',       label: '💰 Deal' },
-  { value: 'price_drop', label: '📉 Pokles ceny' },
-  { value: 'trend',      label: '📈 Trend' },
-  { value: 'ai',         label: '🤖 AI' },
-  { value: 'vip',        label: '👑 VIP' },
-  { value: 'system',     label: '🔔 Systém' },
+const ALERT_TYPES = [
+  { value: 'deal', label: '💰 Deal', color: G.gold },
+  { value: 'price_drop', label: '📉 Pokles ceny', color: G.blu },
+  { value: 'trend', label: '📈 Trend', color: G.grn },
+  { value: 'ai', label: '🤖 AI', color: G.pur },
+  { value: 'vip', label: '👑 VIP', color: G.gold },
+  { value: 'system', label: '🔔 Systém', color: G.mut },
 ]
+
+const inputStyle = { width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,.04)', border: `1px solid rgba(255,255,255,.1)`, borderRadius: 10, fontFamily: "'Syne', sans-serif", fontSize: 13, color: '#F0EBE1', outline: 'none', boxSizing: 'border-box' as const }
+const labelStyle = { display: 'block', fontFamily: "'Syne Mono', monospace", fontSize: 8, letterSpacing: 2, textTransform: 'uppercase' as const, color: 'rgba(240,235,225,.38)', marginBottom: 8 }
 
 export default async function AdminAlertsPage() {
   const supabase = createClient()
-  const { data: alerts } = await supabase
-    .from('alerts')
-    .select('*')
-    .order('is_pinned', { ascending: false })
-    .order('created_at', { ascending: false })
+  const { data: alerts } = await supabase.from('alerts').select('*').order('is_pinned', { ascending: false }).order('created_at', { ascending: false })
+
+  const typeColorMap: Record<string, string> = {
+    deal: G.gold, price_drop: G.blu, trend: G.grn, ai: G.pur, vip: G.gold, system: G.mut,
+  }
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Header */}
       <div>
-        <h1 className="font-display text-4xl tracking-widest text-white">SPRÁVA ALERTŮ</h1>
-        <p className="font-body text-void-400 text-sm mt-1">{alerts?.length ?? 0} alertů celkem</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <div style={{ width: 3, height: 28, background: G.grn, borderRadius: 2, boxShadow: `0 0 10px ${G.grn}` }} />
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 36, letterSpacing: 4, color: G.wht, lineHeight: 1 }}>SPRÁVA ALERTŮ</h1>
+        </div>
+        <p style={{ fontFamily: "'Syne Mono', monospace", fontSize: 9, letterSpacing: 2, color: G.mut, textTransform: 'uppercase' }}>{alerts?.length ?? 0} alertů celkem</p>
       </div>
 
       {/* Create form */}
-      <div className="card p-6 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/30 to-transparent" />
-        <h2 className="font-heading text-sm font-700 text-void-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-          <PlusCircle className="w-4 h-4" /> Nový alert
-        </h2>
-        <form action={createAlert} className="space-y-4">
+      <div style={{ background: G.gl, border: `1px solid rgba(240,180,41,.2)`, borderRadius: 16, padding: 24, position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: 1, background: `linear-gradient(90deg,transparent,${G.gold},transparent)` }} />
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 3, color: G.wht, marginBottom: 20 }}>➕ NOVÝ ALERT</div>
+        <form action={createAlert} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
-            <label className="input-label">Nadpis *</label>
-            <input name="title" type="text" required placeholder="🔥 Nový TOP DEAL právě přidán!" className="input" />
+            <label style={labelStyle}>Nadpis *</label>
+            <input name="title" type="text" required placeholder="🔥 Nový TOP DEAL právě přidán!" style={inputStyle} />
           </div>
           <div>
-            <label className="input-label">Obsah alertu *</label>
-            <textarea name="body" required rows={3} placeholder="Detailní popis alertu..." className="input resize-none" />
+            <label style={labelStyle}>Obsah alertu *</label>
+            <textarea name="body" required rows={3} placeholder="Detailní popis alertu..." style={{ ...inputStyle, resize: 'vertical' }} />
           </div>
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
             <div>
-              <label className="input-label">Typ</label>
-              <select name="type" className="input bg-void-800">
+              <label style={labelStyle}>Typ</label>
+              <select name="type" style={{ ...inputStyle, background: 'rgba(255,255,255,.06)' }}>
                 {ALERT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="input-label">Přístup</label>
-              <select name="access_level" className="input bg-void-800">
+              <label style={labelStyle}>Přístup</label>
+              <select name="access_level" style={{ ...inputStyle, background: 'rgba(255,255,255,.06)' }}>
                 <option value="free">Free – veřejný</option>
-                <option value="vip">VIP – pouze VIP členové</option>
+                <option value="vip">VIP – pouze VIP</option>
               </select>
             </div>
-            <div className="flex items-end">
-              <label className="flex items-center gap-2 cursor-pointer pb-3">
-                <input type="checkbox" name="is_pinned" className="w-4 h-4 accent-gold-500 rounded" />
-                <span className="font-heading text-sm text-void-300">⭐ Připnout nahoře</span>
+            <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: 2 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                <input type="checkbox" name="is_pinned" style={{ width: 16, height: 16, accentColor: G.gold }} />
+                <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 13, color: G.wht }}>⭐ Připnout nahoře</span>
               </label>
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
-              <label className="input-label">CTA text (tlačítko)</label>
-              <input name="cta_text" type="text" placeholder="Zobrazit deal" className="input" />
+              <label style={labelStyle}>CTA text (tlačítko)</label>
+              <input name="cta_text" type="text" placeholder="Zobrazit deal" style={inputStyle} />
             </div>
             <div>
-              <label className="input-label">CTA URL</label>
-              <input name="cta_url" type="url" placeholder="https://..." className="input" />
+              <label style={labelStyle}>CTA URL</label>
+              <input name="cta_url" type="url" placeholder="https://..." style={inputStyle} />
             </div>
           </div>
-          <button type="submit" className="btn btn-gold">
-            <Zap className="w-4 h-4" /> Publikovat alert
-          </button>
+          <div>
+            <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', background: G.gold, color: '#000', padding: '12px 24px', borderRadius: 10, border: 'none', cursor: 'pointer', boxShadow: `0 6px 20px ${G.gold}33` }}>
+              ⚡ Publikovat alert
+            </button>
+          </div>
         </form>
       </div>
 
       {/* Alerts list */}
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {(alerts ?? []).map(alert => {
-          const meta = ALERT_TYPE_META[alert.type as AlertType]
+          const color = typeColorMap[alert.type] ?? G.mut
           return (
-            <div key={alert.id} className={`card p-5 flex items-start gap-4 ${alert.is_pinned ? 'border-gold-500/20' : ''}`}>
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                style={{ background: `${meta.color}15`, border: `1px solid ${meta.color}25` }}
-              >
-                {meta.icon}
+            <div key={alert.id} style={{ background: alert.is_pinned ? 'rgba(240,180,41,.03)' : G.gl, border: `1px solid ${alert.is_pinned ? 'rgba(240,180,41,.2)' : G.br}`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 11, background: `${color}14`, border: `1px solid ${color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
+                {ALERT_TYPES.find(t => t.value === alert.type)?.label.split(' ')[0] ?? '⚡'}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-heading text-sm font-700 text-white">{alert.title}</h3>
-                    {alert.is_pinned && <Star className="w-3.5 h-3.5 text-gold-500 flex-shrink-0" />}
-                    <span className={`badge ${alert.access_level === 'vip' ? 'badge-vip' : 'badge-free'}`}>
-                      {alert.access_level}
-                    </span>
-                    <span className="badge" style={{ background: `${meta.color}15`, color: meta.color, border: `1px solid ${meta.color}25` }}>
-                      {meta.label}
-                    </span>
-                  </div>
-                  <span className="font-heading text-xs text-void-500 flex-shrink-0">{formatRelative(alert.created_at)}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                  <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: G.wht }}>{alert.is_pinned ? '📌 ' : ''}{alert.title}</span>
+                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 7, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 5, background: `${color}14`, color, border: `1px solid ${color}28` }}>{alert.type}</span>
+                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 7, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 5, background: alert.access_level === 'vip' ? 'rgba(155,93,229,.1)' : 'rgba(255,255,255,.05)', color: alert.access_level === 'vip' ? G.pur : G.mut, border: `1px solid ${alert.access_level === 'vip' ? 'rgba(155,93,229,.25)' : G.br}` }}>{alert.access_level}</span>
                 </div>
-                <p className="font-body text-sm text-void-400 leading-relaxed line-clamp-2">{alert.body}</p>
+                <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 12, color: G.mut, fontWeight: 300, lineHeight: 1.6 }}>{alert.body}</p>
               </div>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                {/* Toggle pin */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                 <form action={togglePin}>
                   <input type="hidden" name="id" value={alert.id} />
                   <input type="hidden" name="pinned" value={String(alert.is_pinned)} />
-                  <button type="submit" title={alert.is_pinned ? 'Odepnout' : 'Připnout'}
-                    className="p-1.5 rounded-lg hover:bg-void-700 transition-colors">
-                    {alert.is_pinned
-                      ? <StarOff className="w-4 h-4 text-gold-400" />
-                      : <Star    className="w-4 h-4 text-void-500" />}
+                  <button type="submit" style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,.04)', border: `1px solid ${G.br}`, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }} title={alert.is_pinned ? 'Odepnout' : 'Připnout'}>
+                    {alert.is_pinned ? '📌' : '📍'}
                   </button>
                 </form>
-                {/* Delete */}
                 <form action={deleteAlert}>
                   <input type="hidden" name="id" value={alert.id} />
-                  <button type="submit" title="Smazat"
-                    className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
-                    onClick={e => { if (!confirm('Smazat alert?')) e.preventDefault() }}>
-                    <Trash2 className="w-4 h-4 text-red-400" />
+                  <button type="submit" style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,59,92,.06)', border: `1px solid rgba(255,59,92,.2)`, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Smazat">
+                    🗑️
                   </button>
                 </form>
               </div>
             </div>
           )
         })}
-
         {(alerts ?? []).length === 0 && (
-          <div className="text-center py-16">
-            <Zap className="w-10 h-10 text-void-600 mx-auto mb-3" />
-            <p className="font-display text-2xl text-void-600">ŽÁDNÉ ALERTY</p>
+          <div style={{ padding: '60px 24px', textAlign: 'center' }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>⚡</div>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: 4, color: 'rgba(240,235,225,.2)' }}>ŽÁDNÉ ALERTY</p>
           </div>
         )}
       </div>
