@@ -5,7 +5,7 @@ import { LogoutButton } from '@/components/ui/LogoutButton'
 
 export default async function DealsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-void-1000">
+    <div className="min-h-screen bg-void-1000" style={{position:"relative"}}>
       <style>{`
         .dn{height:60px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(2,2,8,.88);backdrop-filter:blur(32px) saturate(180%);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:relative;overflow:hidden}
         .dn-left{display:flex;align-items:center;flex-shrink:0}
@@ -16,7 +16,7 @@ export default async function DealsLayout({ children }: { children: React.ReactN
         @keyframes ndPulse{0%,100%{box-shadow:0 0 12px rgba(240,180,41,.55),0 0 28px rgba(240,180,41,.28),inset 0 1px 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 22px rgba(240,180,41,.95),0 0 50px rgba(240,180,41,.5),inset 0 1px 0 rgba(255,255,255,.35)}}
         @keyframes ndShimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes ndRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        .nd-icon{width:30px;height:30px;border-radius:7px;background:linear-gradient(145deg,#FFD45E 0%,#F0B429 45%,#C8880A 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0;animation:ndPulse 2.8s ease-in-out infinite}
+        .nd-icon{width:30px;height:30px;border-radius:7px;background:linear-gradient(145deg,#FFD45E 0%,#F0B429 45%,#C8880A 100%);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;animation:ndPulse 2.8s ease-in-out infinite}
         .nd-icon-shine{position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(180deg,rgba(255,255,255,.4) 0%,transparent 100%);border-radius:7px 7px 0 0;pointer-events:none}
         .nd-icon-ring{position:absolute;inset:-2px;border-radius:9px;border:1.5px dashed rgba(240,180,41,.35);animation:ndRing 8s linear infinite;pointer-events:none}
         .nd-icon-text{font-family:'Bebas Neue',sans-serif;font-size:13px;font-weight:900;color:#000;position:relative;letter-spacing:0.5px}
@@ -47,6 +47,7 @@ export default async function DealsLayout({ children }: { children: React.ReactN
       <main className="p-4 md:p-6">
         {children}
       </main>
+      <NajdiBot />
     </div>
   )
 }
