@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import NajdiBot from '@/components/ui/NajdiBot'
 import { BackButton } from '@/components/ui/BackButton'
 import { LogoutButton } from '@/components/ui/LogoutButton'
 import { createClient } from '@/lib/supabase/server'

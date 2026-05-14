@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import NajdiBot from '@/components/ui/NajdiBot'
 import { useState } from 'react'
 
 const plans = [
