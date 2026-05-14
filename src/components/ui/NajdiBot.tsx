@@ -44,6 +44,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   const [clicks, setClicks] = useState(0)
   const [listening, setListening] = useState(false)
   const [speaking, setSpeaking] = useState(false)
+  const [talking, setTalking] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [voiceSupported, setVoiceSupported] = useState(false)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -93,6 +94,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   const typeMsg = useCallback((text: string) => {
     if (typeRef.current) clearInterval(typeRef.current)
     setMessage('')
+    setTalking(true)
     let i = 0
     typeRef.current = setInterval(() => {
       setMessage(text.slice(0, i++))
@@ -230,6 +232,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
         @keyframes ndBP{from{opacity:0;transform:scale(.8) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes ndTP{0%,100%{opacity:1}50%{opacity:0}}
         @keyframes ndWV{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.2);opacity:.2}}
+        @keyframes ndMO{0%{d:path('M 30 44 Q 40 46 50 44')}100%{d:path('M 30 44 Q 40 52 50 44')}}
         .ndb-i{animation:ndBI 3s ease-in-out infinite}
         .ndb-b{animation:ndBB .4s ease!important}
         .ndb-p{animation:ndBP .3s cubic-bezier(.34,1.56,.64,1)}
@@ -347,7 +350,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
                 <circle cx={50.5+eyePos.x} cy={25.5+eyePos.y} r="1.5" fill="white" opacity=".9"/>
               </g>
               <rect x="22" y="34" width="36" height="8" rx="4" fill="#060312" stroke={`${ec}33`} strokeWidth="1"/>
-              <path d={m.mouth} fill="none" stroke={ec} strokeWidth="1.8" strokeLinecap="round"/>
+              <path d={m.mouth} fill={talking ? `${ec}22` : "none"} stroke={ec} strokeWidth="1.8" strokeLinecap="round" style={{ animation: talking ? `ndMO 0.15s ease-in-out infinite alternate` : "none", filter: talking ? `drop-shadow(0 0 3px ${ec})` : "none" }}/>
               <circle cx="12" cy="24" r="4" fill="#0a0818" stroke={`${ec}44`} strokeWidth="1"/>
               <circle cx="12" cy="24" r="2" fill={ec} opacity=".6"/>
               <circle cx="68" cy="24" r="4" fill="#0a0818" stroke={`${ec}44`} strokeWidth="1"/>
