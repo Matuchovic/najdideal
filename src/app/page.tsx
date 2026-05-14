@@ -1,7 +1,6 @@
 'use client'
 import NajdiLogo from '@/components/ui/NajdiLogo'
 import NajdiBot from '@/components/ui/NajdiBot'
-import HeadlineMorph from '@/components/ui/HeadlineMorph'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 
@@ -71,7 +70,7 @@ function ScannerStatus() {
         </div>
       </div>
       <div style={{textAlign:'center',flexShrink:0}}>
-        <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:32,color:'#F0B429',letterSpacing:1,lineHeight:1,textShadow:'0 0 20px rgba(240,180,41,.5)'}}>{pct}%</div>
+        <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:32,color:'#F0B429',letterSpacing:1,lineHeight:1,textShadow:'0 0 20px rgba(240,180,41,.5)'}}>{pct}%</div>
         <div style={{fontFamily:'Syne Mono,monospace',fontSize:7,color:'rgba(240,235,225,.3)',letterSpacing:1,textTransform:'uppercase'}}>Confidence</div>
       </div>
     </div>
@@ -492,7 +491,6 @@ function PhoneMockup() {
   )
 }
 
-
 export default function HomePage() {
   const [aiStatus, setAiStatus] = useState('AI analyzuje 2 341 nabídek právě teď')
   const [online, setOnline] = useState(47)
@@ -637,15 +635,14 @@ export default function HomePage() {
             <span style={{width:7,height:7,borderRadius:'50%',background:G.grn,animation:'ping 1.8s infinite',display:'inline-block',flexShrink:0}} />
             <span style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:'2.5px',textTransform:'uppercase',color:G.grn,transition:'opacity .4s'}}>{aiStatus}</span>
           </div>
-          <div id="nd-headline" style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(64px,10vw,140px)',lineHeight:.86,letterSpacing:4,marginBottom:20,overflow:'hidden',position:'relative'}}>
-            <div id="nd-h-inner" style={{transition:'transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.4s ease',willChange:'transform,opacity'}}>
-              <span id="nd-l1" style={{display:'block',color:G.wht}}>&nbsp;</span>
-              <span id="nd-l2" style={{display:'block',color:G.wht}}>&nbsp;</span>
-              <span id="nd-l3" style={{display:'block',background:'linear-gradient(90deg,#F0EBE1 0%,#F0B429 40%,#FFD97D 60%,#F0B429 80%,#F0EBE1 100%)',backgroundSize:'200% auto',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>&nbsp;</span>
-              <span id="nd-l4" style={{display:'block',color:G.wht}}>&nbsp;</span>
-            </div>
-          </div>
-          <HeadlineMorph />
+          <h1 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(64px,10vw,140px)',lineHeight:.86,letterSpacing:4,marginBottom:20}}>
+            <span style={{display:'block',color:G.wht,animation:'fadeU .9s cubic-bezier(.16,1,.3,1) both'}}>KAŽDÝ DEN</span>
+            <span style={{display:'block',color:G.wht,animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .08s both'}}>JSOU TAM</span>
+            <span style={{display:'block',animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .16s both'}}>
+              <span style={{background:'linear-gradient(90deg,#F0EBE1 0%,#F0B429 25%,#FFD97D 50%,#F0B429 75%,#F0EBE1 100%)',backgroundSize:'200% auto',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',animation:'shimmer 4s linear infinite, textGlow 3s ease-in-out infinite'}}>VÝHODNÉ</span>
+            </span>
+            <span style={{display:'block',color:G.wht,animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .24s both'}}>NABÍDKY.</span>
+          </h1>
           <div style={{animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .32s both'}}>
             <p style={{fontSize:22,color:G.wht,lineHeight:1.5,maxWidth:480,marginBottom:12,fontWeight:600,letterSpacing:.5}}>Většina lidí je přehlédne.</p>
             <p style={{fontSize:16,color:G.mut,lineHeight:1.88,maxWidth:460,marginBottom:40,fontWeight:300}}>My je najdeme za tebe. Nakup levněji. Prodej za víc.<br/>Nepropásni dobrou příležitost.</p>
@@ -656,7 +653,7 @@ export default function HomePage() {
           </div>
           <div className="proof-row" style={{display:'flex',alignItems:'center',gap:20,flexWrap:'wrap',animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .56s both'}}>
             <div style={{display:'flex'}}>
-              {['T','M','E','J','K'].map((l,i) => <div key={i} style={{width:34,height:34,borderRadius:'50%',border:'2px solid rgba(240,180,41,.2)',background:'linear-gradient(135deg,rgba(240,180,41,.15),rgba(240,180,41,.03))',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:13,color:G.g,marginLeft:i>0?-9:0}}>{l}</div>)}
+              {['T','M','E','J','K'].map((l,i) => <div key={i} style={{width:34,height:34,borderRadius:'50%',border:'2px solid rgba(240,180,41,.2)',background:'linear-gradient(135deg,rgba(240,180,41,.15),rgba(240,180,41,.03))',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Bebas Neue,sans-serif',fontSize:13,color:G.g,marginLeft:i>0?-9:0}}>{l}</div>)}
             </div>
             <div>
               <div style={{color:G.g,letterSpacing:3,fontSize:12}}>★★★★★</div>
@@ -695,7 +692,7 @@ export default function HomePage() {
       <div ref={statsRef} className="stats-grid" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:1,background:'rgba(255,255,255,.04)',position:'relative',zIndex:10}}>
         {[{n:247,s:'',l:'Dealů za měsíc'},{n:4235,s:' Kč',l:'Průměrný profit'},{n:18900,s:' Kč',l:'Největší profit'},{n:2341,s:'+',l:'Aktivních členů'}].map(({n,s,l}) => (
           <div key={l} style={{background:'rgba(6,6,14,.92)',backdropFilter:'blur(20px)',padding:'56px 36px',position:'relative',overflow:'hidden'}}>
-            <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(50px,5.5vw,84px)',letterSpacing:2,color:G.g,lineHeight:1,textShadow:'0 0 50px rgba(240,180,41,.35)',marginBottom:8,animation:counted?'count .5s ease':'none'}}>
+            <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(50px,5.5vw,84px)',letterSpacing:2,color:G.g,lineHeight:1,textShadow:'0 0 50px rgba(240,180,41,.35)',marginBottom:8,animation:counted?'count .5s ease':'none'}}>
               {counted ? n.toLocaleString('cs-CZ')+s : '0'}
             </div>
             <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:3,textTransform:'uppercase',color:G.mut}}>{l}</div>
@@ -711,7 +708,7 @@ export default function HomePage() {
               <span style={{width:7,height:7,borderRadius:'50%',background:G.grn,animation:'ping 1.8s infinite',display:'inline-block'}} />
               Live · aktualizováno před 2 min
             </div>
-            <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(46px,7vw,96px)',letterSpacing:3,lineHeight:.85}}>DNEŠNÍ<br/><span style={{color:G.g}}>NABÍDKY</span></h2>
+            <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(46px,7vw,96px)',letterSpacing:3,lineHeight:.85}}>DNEŠNÍ<br/><span style={{color:G.g}}>NABÍDKY</span></h2>
           </div>
           <Link href="/dashboard" style={{fontFamily:'Syne Mono,monospace',fontSize:9,fontWeight:700,letterSpacing:2,textTransform:'uppercase',color:G.g,textDecoration:'none',padding:'10px 20px',borderRadius:6,background:'rgba(240,180,41,.05)',border:'1px solid rgba(240,180,41,.18)',backdropFilter:'blur(16px)',transition:'all .25s',whiteSpace:'nowrap'}} onMouseEnter={e=>{(e.currentTarget as any).style.background='rgba(240,180,41,.1)'}} onMouseLeave={e=>{(e.currentTarget as any).style.background='rgba(240,180,41,.05)'}}>Zobrazit vše →</Link>
         </div>
@@ -727,7 +724,7 @@ export default function HomePage() {
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0'}}><span style={{color:G.mut,fontFamily:'Syne Mono,monospace',fontSize:8,textTransform:'uppercase',letterSpacing:1}}>Tržní cena</span><span style={{color:G.wht,fontWeight:500,fontSize:13}}>{d.sell}</span></div>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:16,padding:'13px 14px',borderRadius:10,background:'rgba(0,230,118,.05)',border:'1px solid rgba(0,230,118,.12)'}}>
                 <span style={{fontFamily:'Syne Mono,monospace',fontSize:8,color:G.mut,letterSpacing:1,textTransform:'uppercase',display:'flex',alignItems:'center',gap:5}}><span style={{width:4,height:4,borderRadius:'50%',background:G.g,display:'inline-block'}} />{d.s}</span>
-                <span style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:28,color:G.grn,letterSpacing:1,textShadow:'0 0 24px rgba(0,230,118,.35)',lineHeight:1}}>{d.p}</span>
+                <span style={{fontFamily:'Bebas Neue,sans-serif',fontSize:28,color:G.grn,letterSpacing:1,textShadow:'0 0 24px rgba(0,230,118,.35)',lineHeight:1}}>{d.p}</span>
               </div>
             </div>
           ))}
@@ -737,7 +734,7 @@ export default function HomePage() {
       {/* MARQUEE 1 */}
       <div style={{padding:'52px 0',overflow:'hidden',borderTop:'1px solid rgba(255,255,255,.04)',borderBottom:'1px solid rgba(255,255,255,.04)',position:'relative',zIndex:10}}>
         <div style={{display:'flex',whiteSpace:'nowrap',animation:'mqS 22s linear infinite'}}>
-          {[...mq1,...mq1].map((w,i) => <span key={i} style={{display:'inline-flex',alignItems:'center',gap:22,padding:'0 36px',fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:48,letterSpacing:5,color:'rgba(240,235,225,.04)'}}>{w}<span style={{color:'rgba(240,180,41,.1)',fontSize:24}}>✦</span></span>)}
+          {[...mq1,...mq1].map((w,i) => <span key={i} style={{display:'inline-flex',alignItems:'center',gap:22,padding:'0 36px',fontFamily:'Bebas Neue,sans-serif',fontSize:48,letterSpacing:5,color:'rgba(240,235,225,.04)'}}>{w}<span style={{color:'rgba(240,180,41,.1)',fontSize:24}}>✦</span></span>)}
         </div>
       </div>
 
@@ -765,7 +762,7 @@ export default function HomePage() {
         `}</style>
         <div style={{textAlign:'center',padding:'0 24px',marginBottom:56}}>
           <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:3,textTransform:'uppercase',color:'#F0B429',marginBottom:12}}>Jak to funguje</div>
-          <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(46px,7vw,92px)',letterSpacing:3,lineHeight:.85}}>TAK JEDNODUCHÉ<br/><span style={{color:'#F0B429'}}>TO JE.</span></h2>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(46px,7vw,92px)',letterSpacing:3,lineHeight:.85}}>TAK JEDNODUCHÉ<br/><span style={{color:'#F0B429'}}>TO JE.</span></h2>
         </div>
         <div className="how-wrap">
           <div className="how-scanner">
@@ -797,7 +794,7 @@ export default function HomePage() {
               <div key={o.label} style={{position:'absolute',top:'42%',left:'50%',animation:o.anim,zIndex:7}}>
                 <div style={{transform:'translate(-50%,-50%)',display:'flex',flexDirection:'column',alignItems:'center',gap:3}}>
                   <div style={{width:36,height:36,borderRadius:'50%',background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.14)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,backdropFilter:'blur(6px)'}}>{o.emoji}</div>
-                  <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:10,color:o.color,letterSpacing:1,background:'rgba(2,2,8,.88)',padding:'1px 5px',borderRadius:3,whiteSpace:'nowrap'}}>{o.label}</div>
+                  <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:10,color:o.color,letterSpacing:1,background:'rgba(2,2,8,.88)',padding:'1px 5px',borderRadius:3,whiteSpace:'nowrap'}}>{o.label}</div>
                 </div>
               </div>
             ))}
@@ -814,7 +811,7 @@ export default function HomePage() {
           <div className="how-steps">
             {[{n:'01',icon:'🔍',color:'#00E676',h:'Sledujeme trh za tebe',p:'Procházíme tisíce inzerátů každý den. Auta, nemovitosti, elektroniku, oblečení – vše na jednom místě. Ty nemusíš hledat.'},{n:'02',icon:'✓',color:'#4D9FFF',h:'Vybereme to nejlepší',p:'Zobrazíme ti jen nabídky které skutečně stojí za pozornost. Žádný šum, žádné přehlcení.'},{n:'03',icon:'🔔',color:'#F0B429',h:'Upozorníme tě jako první',p:'Jakmile se objeví dobrá nabídka, okamžitě ti dáme vědět. Dřív než to uvidí ostatní.'}].map((s2,i) => (
               <div key={i} style={{display:'flex',gap:20,alignItems:'flex-start',padding:'22px 24px',background:'rgba(255,255,255,.026)',backdropFilter:'blur(24px)',border:'1px solid rgba(255,255,255,.07)',borderLeft:`3px solid ${s2.color}`,borderRadius:12,transition:'all .3s',animation:`howCardIn .6s ${i*.15}s ease both`,marginBottom:10}} onMouseEnter={e=>{(e.currentTarget as any).style.background=`${s2.color}06`;(e.currentTarget as any).style.transform='translateX(6px)'}} onMouseLeave={e=>{(e.currentTarget as any).style.background='rgba(255,255,255,.026)';(e.currentTarget as any).style.transform=''}}>
-                <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:40,color:`${s2.color}25`,lineHeight:1,flexShrink:0}}>{s2.n}</div>
+                <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:40,color:`${s2.color}25`,lineHeight:1,flexShrink:0}}>{s2.n}</div>
                 <div style={{flex:1}}>
                   <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
                     <div style={{width:32,height:32,borderRadius:8,background:`${s2.color}12`,border:`1px solid ${s2.color}25`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,flexShrink:0}}>{s2.icon}</div>
@@ -831,7 +828,7 @@ export default function HomePage() {
       {/* MARQUEE 2 */}
       <div style={{padding:'52px 0',overflow:'hidden',borderTop:'1px solid rgba(255,255,255,.04)',borderBottom:'1px solid rgba(255,255,255,.04)',position:'relative',zIndex:10}}>
         <div style={{display:'flex',whiteSpace:'nowrap',animation:'mqS 18s linear infinite reverse'}}>
-          {[...mq2,...mq2].map((w,i) => <span key={i} style={{display:'inline-flex',alignItems:'center',gap:22,padding:'0 36px',fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:48,letterSpacing:5,color:'rgba(240,235,225,.04)'}}>{w}<span style={{color:'rgba(240,180,41,.1)',fontSize:24}}>✦</span></span>)}
+          {[...mq2,...mq2].map((w,i) => <span key={i} style={{display:'inline-flex',alignItems:'center',gap:22,padding:'0 36px',fontFamily:'Bebas Neue,sans-serif',fontSize:48,letterSpacing:5,color:'rgba(240,235,225,.04)'}}>{w}<span style={{color:'rgba(240,180,41,.1)',fontSize:24}}>✦</span></span>)}
         </div>
       </div>
 
@@ -840,12 +837,12 @@ export default function HomePage() {
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 65% 70% at 50% 50%,rgba(240,180,41,.03) 0%,transparent 70%)'}} />
         <div style={{textAlign:'center',marginBottom:64,position:'relative'}}>
           <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:3,textTransform:'uppercase',color:G.g,marginBottom:12}}>👑 Exkluzivní přístup</div>
-          <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(46px,7vw,92px)',letterSpacing:3,lineHeight:.85}}>CO ZÍSKÁŠ<br/><span style={{color:G.g}}>VE VIP?</span></h2>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(46px,7vw,92px)',letterSpacing:3,lineHeight:.85}}>CO ZÍSKÁŠ<br/><span style={{color:G.g}}>VE VIP?</span></h2>
         </div>
         <div className="vip-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:12,position:'relative'}}>
           {[{n:'01',i:'🔔',h:'Upozornění jako první',p:'Jakmile přibyde dobrá nabídka, okamžitě ti dáme vědět. Dřív než ostatní.'},{n:'02',i:'🎯',h:'Jen relevantní nabídky',p:'Žádný šum. Zobrazujeme ti jen to co ti skutečně sedí.'},{n:'03',i:'💰',h:'Nakup za méně',p:'Porovnáváme ceny za tebe. Vždy víš jestli je nabídka výhodná.'},{n:'04',i:'📦',h:'Prodej jednodušeji',p:'Přidej inzerát za minutu. Oslovíš tisíce lidí kteří aktivně hledají.'},{n:'05',i:'👥',h:'Komunita lidí jako ty',p:'Sdílíme tipy, zkušenosti a dobré nabídky. Nejsi na to sám.'},{n:'06',i:'📊',h:'Přehled trhu',p:'Vidíš co je podhodnocené, co táhne a kde jsou příležitosti.'}].map((v,i) => (
             <div key={i} className="vc" style={{background:'rgba(255,255,255,.022)',backdropFilter:'blur(28px)',border:`1px solid ${G.br}`,borderRadius:16,padding:'40px 32px',position:'relative',overflow:'hidden',transition:'transform .45s cubic-bezier(.34,1.56,.64,1),border-color .3s,box-shadow .4s'}} onMouseEnter={e=>{(e.currentTarget as any).style.transform='translateY(-10px)';(e.currentTarget as any).style.borderColor='rgba(240,180,41,.2)'}} onMouseLeave={e=>{(e.currentTarget as any).style.transform='';(e.currentTarget as any).style.borderColor=G.br}}>
-              <div style={{position:'absolute',top:14,right:18,fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:72,color:'rgba(240,180,41,.04)',lineHeight:1}}>{v.n}</div>
+              <div style={{position:'absolute',top:14,right:18,fontFamily:'Bebas Neue,sans-serif',fontSize:72,color:'rgba(240,180,41,.04)',lineHeight:1}}>{v.n}</div>
               <div style={{width:52,height:52,borderRadius:11,background:'rgba(240,180,41,.07)',border:'1px solid rgba(240,180,41,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,marginBottom:20}}>{v.i}</div>
               <h3 style={{fontFamily:'Syne Mono,monospace',fontSize:9,fontWeight:700,letterSpacing:3,textTransform:'uppercase',color:G.g,marginBottom:11}}>{v.h}</h3>
               <p style={{fontSize:12,color:G.mut,lineHeight:1.88,fontWeight:300}}>{v.p}</p>
@@ -857,14 +854,14 @@ export default function HomePage() {
           <div className="vip-banner-grid" style={{display:'grid',gridTemplateColumns:'1fr auto',gap:40,alignItems:'center'}}>
             <div>
               <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,fontWeight:700,letterSpacing:3,textTransform:'uppercase',color:G.g,display:'flex',alignItems:'center',gap:8,marginBottom:14}}>👑 Exkluzivní VIP členství</div>
-              <h3 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(32px,5vw,60px)',letterSpacing:4,color:G.wht,marginBottom:14,lineHeight:.9}}>ZÍSKEJ PŘÍSTUP K <span style={{color:G.g}}>NEJLEPŠÍM</span> DEALŮM JAKO PRVNÍ</h3>
+              <h3 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(32px,5vw,60px)',letterSpacing:4,color:G.wht,marginBottom:14,lineHeight:.9}}>ZÍSKEJ PŘÍSTUP K <span style={{color:G.g}}>NEJLEPŠÍM</span> DEALŮM JAKO PRVNÍ</h3>
               <p style={{fontSize:13,color:G.mut,fontWeight:300,lineHeight:1.8,maxWidth:520}}>VIP členové dostávají alerty dříve. Průměrný VIP člen vydělá 4 235 Kč měsíčně navíc.</p>
               <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:20}}>
                 {['⚡ Instant alerty','🤖 AI příležitosti','🛒 Exkluzivní flipy','👥 Komunita','🔒 VIP obsah'].map(t => <span key={t} style={{fontFamily:'Syne Mono,monospace',fontSize:8,fontWeight:700,letterSpacing:2,textTransform:'uppercase',padding:'5px 12px',borderRadius:100,background:'rgba(240,180,41,.07)',border:'1px solid rgba(240,180,41,.18)',color:G.g}}>{t}</span>)}
               </div>
             </div>
             <div className="vip-banner-cta" style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:12,flexShrink:0}}>
-              <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:72,color:G.g,letterSpacing:2,lineHeight:1,textShadow:'0 0 50px rgba(240,180,41,.35)'}}>499<span style={{fontSize:28}}> Kč</span></div>
+              <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:72,color:G.g,letterSpacing:2,lineHeight:1,textShadow:'0 0 50px rgba(240,180,41,.35)'}}>499<span style={{fontSize:28}}> Kč</span></div>
               <div style={{fontFamily:'Syne Mono,monospace',fontSize:10,color:G.mut,letterSpacing:2,textTransform:'uppercase',marginTop:-4}}>za měsíc · zruš kdykoliv</div>
               <Link href="/vip" style={{background:G.g,color:'#000',fontFamily:'Syne Mono,monospace',fontSize:10,fontWeight:700,letterSpacing:2,textTransform:'uppercase',padding:'14px 28px',borderRadius:8,textDecoration:'none',whiteSpace:'nowrap',boxShadow:'0 8px 32px rgba(240,180,41,.28)',transition:'all .3s'}} onMouseEnter={e=>{(e.currentTarget as any).style.transform='translateY(-4px)';(e.currentTarget as any).style.boxShadow='0 22px 56px rgba(240,180,41,.5)'}} onMouseLeave={e=>{(e.currentTarget as any).style.transform='';(e.currentTarget as any).style.boxShadow='0 8px 32px rgba(240,180,41,.28)'}}>🔒 Vstoupit do VIP →</Link>
             </div>
@@ -876,7 +873,7 @@ export default function HomePage() {
       <section className="proof-grid sec-pad" style={{position:'relative',zIndex:10,padding:'120px clamp(16px,5vw,56px)',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:0}}>
         <div className="proof-left" style={{paddingRight:88,borderRight:'1px solid rgba(255,255,255,.05)'}}>
           <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:3,textTransform:'uppercase',color:G.g,marginBottom:12}}>💰 Ověřené profity</div>
-          <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(38px,5vw,68px)',letterSpacing:3,lineHeight:.85,marginBottom:16}}>LIDÉ KTEŘÍ<br/><span style={{color:G.g}}>TO ZKUSILI.</span></h2>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(38px,5vw,68px)',letterSpacing:3,lineHeight:.85,marginBottom:16}}>LIDÉ KTEŘÍ<br/><span style={{color:G.g}}>TO ZKUSILI.</span></h2>
           <p style={{fontSize:12,color:G.mut,margin:'16px 0 32px',fontWeight:300,lineHeight:1.88}}>Skutečné výsledky skutečných lidí.</p>
           <div className="pcards-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:10,marginBottom:32}}>
             {[{a:'Ušetřil 8 200 Kč',i:'iPhone 14 Pro · Praha',t:'Nalezeno za 2 dny'},{a:'Prodal za 3 dny',i:'MacBook Air M1 · Brno',t:'Bez zbytečného smlouvání'},{a:'Ušetřil 3 450 Kč',i:'PS5 · Ostrava',t:'Koupil pod tržní cenou'},{a:'Našel za hodinu',i:'RTX 3060 Ti · Plzeň',t:'Nabídka zmizela do 6 hodin'}].map((p,i) => (
@@ -891,13 +888,13 @@ export default function HomePage() {
         </div>
         <div className="proof-right" style={{paddingLeft:88}}>
           <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:3,textTransform:'uppercase',color:G.g,marginBottom:12}}>⭐ Recenze</div>
-          <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(38px,5vw,68px)',letterSpacing:3,lineHeight:.85,marginBottom:32}}>CO ŘÍKAJÍ<br/><span style={{color:G.g}}>ČLENOVÉ</span></h2>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(38px,5vw,68px)',letterSpacing:3,lineHeight:.85,marginBottom:32}}>CO ŘÍKAJÍ<br/><span style={{color:G.g}}>ČLENOVÉ</span></h2>
           {[{av:'T',n:'Tomáš P., Praha',a:'Ušetřil 18 000 Kč',t:'Hledal jsem notebook tři týdny sám a nic. NajdiDeal mi ho našel za dva dny. Zaplatil jsem o 18 000 méně než v obchodě.'},{av:'M',n:'Martin V., Brno',a:'Prodal za 3 dny',t:'Měl jsem auto na prodej dva měsíce bez zájmu. Dal jsem ho sem a do tří dnů byl prodaný. Bez handrkování o cenu.'},{av:'E',n:'Eliška R., Ostrava',a:'Nekupuje jinak',t:'Teď před každým nákupem kouknu sem. Třikrát jsem koupila věc výrazně pod cenou. Prostě to dává smysl.'}].map((r,i) => (
             <div key={i} className="tc" style={{background:'rgba(255,255,255,.02)',backdropFilter:'blur(24px)',border:`1px solid ${G.br}`,borderRadius:13,padding:24,marginBottom:10,position:'relative',overflow:'hidden',transition:'border-color .3s,transform .3s'}} onMouseEnter={e=>{(e.currentTarget as any).style.borderColor='rgba(240,180,41,.14)'}} onMouseLeave={e=>{(e.currentTarget as any).style.borderColor=G.br}}>
               <div style={{display:'flex',alignItems:'center',gap:11,marginBottom:12}}>
-                <div style={{width:42,height:42,borderRadius:'50%',background:'linear-gradient(135deg,rgba(240,180,41,.18),rgba(240,180,41,.04))',border:'1px solid rgba(240,180,41,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:17,color:G.g,flexShrink:0}}>{r.av}</div>
+                <div style={{width:42,height:42,borderRadius:'50%',background:'linear-gradient(135deg,rgba(240,180,41,.18),rgba(240,180,41,.04))',border:'1px solid rgba(240,180,41,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Bebas Neue,sans-serif',fontSize:17,color:G.g,flexShrink:0}}>{r.av}</div>
                 <div><div style={{fontSize:12,fontWeight:700}}>{r.n}</div><div style={{color:G.g,fontSize:9,letterSpacing:3}}>★★★★★</div></div>
-                <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:18,color:G.grn,marginLeft:'auto',letterSpacing:1}}>{r.a}</div>
+                <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:18,color:G.grn,marginLeft:'auto',letterSpacing:1}}>{r.a}</div>
               </div>
               <p style={{fontSize:11,color:G.mut,lineHeight:1.82,fontWeight:300}}>{r.t}</p>
             </div>
@@ -914,7 +911,7 @@ export default function HomePage() {
             <span style={{fontFamily:'Syne Mono,monospace',fontSize:10,letterSpacing:2,color:'#00E676'}}>Zakladatelská cena · Přihlas se teď a platíš méně navždy</span>
           </div>
           <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:3,textTransform:'uppercase',color:G.g,marginBottom:12}}>Jednoduchý přístup</div>
-          <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(46px,7vw,96px)',letterSpacing:3,lineHeight:.85}}>VYBER SI <span style={{color:G.g}}>PŘÍSTUP</span></h2>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(46px,7vw,96px)',letterSpacing:3,lineHeight:.85}}>VYBER SI <span style={{color:G.g}}>PŘÍSTUP</span></h2>
           <p style={{fontSize:14,color:G.mut,marginTop:14,fontWeight:300}}>Začni zdarma · Zruš kdykoliv · Žádné závazky</p>
           <div className="pricing-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,maxWidth:920,margin:'56px auto 0'}}>
             {[
@@ -928,7 +925,7 @@ export default function HomePage() {
                 <div style={{marginTop:p.featured?14:0}}>
                   <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,fontWeight:700,letterSpacing:3,textTransform:'uppercase',color:p.color,marginBottom:4}}>{p.tier}</div>
                   <div style={{fontSize:11,color:G.mut,marginBottom:20,fontWeight:300}}>{p.desc}</div>
-                  <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:64,letterSpacing:2,lineHeight:1,color:p.featured?G.g:i===2?'#4D9FFF':G.wht}}>{p.price}<span style={{fontSize:22}}> Kč</span></div>
+                  <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:64,letterSpacing:2,lineHeight:1,color:p.featured?G.g:i===2?'#4D9FFF':G.wht}}>{p.price}<span style={{fontSize:22}}> Kč</span></div>
                   <div style={{fontFamily:'Syne Mono,monospace',fontSize:10,color:G.mut,marginBottom:4}}>za {p.per}</div>
                   {p.note&&<div style={{fontFamily:'Syne Mono,monospace',fontSize:8,color:'#00E676',letterSpacing:1,marginBottom:20}}>🔒 {p.note} – cena se zvýší</div>}
                   {!p.note&&<div style={{marginBottom:20}} />}
@@ -957,7 +954,7 @@ export default function HomePage() {
               <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
                 {[{label:'7 dní',price:'79 Kč',color:'rgba(240,235,225,.5)'},{label:'30 dní',price:'199 Kč',color:G.g},{label:'Nahoře 1 týden',price:'299 Kč',color:'#4D9FFF'}].map(b=>(
                   <div key={b.label} style={{background:'rgba(255,255,255,.04)',border:`1px solid ${b.color}33`,borderRadius:12,padding:'14px 20px',textAlign:'center',cursor:'pointer',transition:'all .25s'}} onMouseEnter={e=>{(e.currentTarget as any).style.background=`${b.color}10`;(e.currentTarget as any).style.borderColor=`${b.color}55`}} onMouseLeave={e=>{(e.currentTarget as any).style.background='rgba(255,255,255,.04)';(e.currentTarget as any).style.borderColor=`${b.color}33`}}>
-                    <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:22,color:b.color,letterSpacing:1,lineHeight:1}}>{b.price}</div>
+                    <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:22,color:b.color,letterSpacing:1,lineHeight:1}}>{b.price}</div>
                     <div style={{fontFamily:'Syne Mono,monospace',fontSize:8,color:G.mut,letterSpacing:1,textTransform:'uppercase',marginTop:4}}>{b.label}</div>
                   </div>
                 ))}
@@ -976,7 +973,7 @@ export default function HomePage() {
         <div className="cta-box" style={{maxWidth:720,margin:'0 auto',position:'relative',background:'rgba(255,255,255,.025)',backdropFilter:'blur(40px)',border:'1px solid rgba(255,255,255,.08)',borderRadius:24,padding:'88px 64px',boxShadow:'0 56px 130px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07)'}}>
           <div style={{position:'absolute',top:0,left:'10%',right:'10%',height:1,background:'linear-gradient(90deg,transparent,#F0B429,transparent)'}} />
           <div style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:4,textTransform:'uppercase',color:G.g,marginBottom:20}}>Připoj se</div>
-          <h2 style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:'clamp(52px,10vw,112px)',letterSpacing:5,lineHeight:.86,marginBottom:20}}>PŘESTAŇ<br/>PŘEHLÍŽET<br/><span style={{color:G.g,textShadow:'0 0 56px rgba(240,180,41,.28)'}}>PŘÍLEŽITOSTI.</span></h2>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(52px,10vw,112px)',letterSpacing:5,lineHeight:.86,marginBottom:20}}>PŘESTAŇ<br/>PŘEHLÍŽET<br/><span style={{color:G.g,textShadow:'0 0 56px rgba(240,180,41,.28)'}}>PŘÍLEŽITOSTI.</span></h2>
           <p style={{fontSize:14,color:G.mut,marginBottom:40,fontWeight:300,lineHeight:1.88}}>Přes 2 341 lidí už nakupuje chytřeji.<br/>Začni zdarma. Zruš kdykoliv.</p>
           <div style={{display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap'}}>
             <Link href="/dashboard" style={{fontFamily:'Syne Mono,monospace',fontSize:10,fontWeight:700,letterSpacing:'2.5px',textTransform:'uppercase',background:G.g,color:'#000',padding:'17px 34px',borderRadius:8,textDecoration:'none',boxShadow:'0 8px 32px rgba(240,180,41,.22)',transition:'all .3s'}} onMouseEnter={e=>{(e.currentTarget as any).style.transform='translateY(-5px)';(e.currentTarget as any).style.boxShadow='0 24px 64px rgba(240,180,41,.52)'}} onMouseLeave={e=>{(e.currentTarget as any).style.transform='';(e.currentTarget as any).style.boxShadow='0 8px 32px rgba(240,180,41,.22)'}}>Začít zdarma</Link>
@@ -990,7 +987,7 @@ export default function HomePage() {
         <div style={{position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(240,180,41,.2),transparent)'}} />
         <div className="footer-grid" style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:36,marginBottom:48}}>
           <div>
-            <div style={{fontFamily:'Barlow Condensed,sans-serif',fontWeight:900,textTransform:'uppercase',fontSize:19,letterSpacing:4,display:'flex',alignItems:'center',gap:10,marginBottom:9}}>
+            <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:19,letterSpacing:4,display:'flex',alignItems:'center',gap:10,marginBottom:9}}>
               <NajdiLogo size="md" href="/" showText={true} />
             </div>
             <p style={{fontSize:11,color:G.mut,maxWidth:200,lineHeight:1.75,fontWeight:300}}>Najdi deal dřív než ostatní. Každý den nové příležitosti.</p>
