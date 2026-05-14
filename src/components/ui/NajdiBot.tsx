@@ -45,6 +45,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   const [listening, setListening] = useState(false)
   const [speaking, setSpeaking] = useState(false)
   const [talking, setTalking] = useState(false)
+  const [mouthOpen, setMouthOpen] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [voiceSupported, setVoiceSupported] = useState(false)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -222,6 +223,13 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
     if (nc % 7 === 0) setCurrentMood('deal')
   }
 
+  // Lip sync interval
+  useEffect(() => {
+    if (!talking) { setMouthOpen(false); return }
+    const id = setInterval(() => setMouthOpen(o => !o), 150)
+    return () => clearInterval(id)
+  }, [talking])
+
   const ec = m.eye
 
   return (
@@ -351,7 +359,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
                 <circle cx={50.5+eyePos.x} cy={25.5+eyePos.y} r="1.5" fill="white" opacity=".9"/>
               </g>
               <rect x="22" y="34" width="36" height="8" rx="4" fill="#060312" stroke={`${ec}33`} strokeWidth="1"/>
-              <path d={m.mouth} fill={talking ? `${ec}22` : "none"} stroke={ec} strokeWidth="1.8" strokeLinecap="round" style={{ animation: talking ? `ndMO 0.15s ease-in-out infinite alternate` : "none", filter: talking ? `drop-shadow(0 0 3px ${ec})` : "none" }}/>
+              <path d={talking && mouthOpen ? 'M 28 42 Q 40 54 52 42' : m.mouth} fill={talking && mouthOpen ? `${ec}11` : "none"} stroke={ec} strokeWidth="1.8" strokeLinecap="round" style={{ transition: 'd 0.1s ease', filter: talking ? `drop-shadow(0 0 3px ${ec})` : "none" }}/>
               <circle cx="12" cy="24" r="4" fill="#0a0818" stroke={`${ec}44`} strokeWidth="1"/>
               <circle cx="12" cy="24" r="2" fill={ec} opacity=".6"/>
               <circle cx="68" cy="24" r="4" fill="#0a0818" stroke={`${ec}44`} strokeWidth="1"/>
