@@ -492,138 +492,6 @@ function PhoneMockup() {
 }
 
 
-const HEADLINES = [
-  { line1: 'NAKUP', line2: 'LEVNĚJI.', line3: 'PRODEJ', line4: 'ZA VÍC.' },
-  { line1: 'PŘEPLÁCÍŠ.', line2: 'PŘESTAŃ.', line3: '', line4: '' },
-  { line1: 'JINÍ TĚ', line2: 'NECHAJÍ ČEKAT.', line3: 'MY', line4: 'NE.' },
-  { line1: 'VĚTŠINA LIDÍ', line2: 'PŘEHLÉDNE.', line3: '', line4: '' },
-  { line1: 'AI VIDÍ', line2: 'CO TY NE.', line3: '', line4: '' },
-  { line1: 'CENA KLESLA.', line2: 'VĚDĚL JSI?', line3: '', line4: '' },
-  { line1: 'CHYTRÝ', line2: 'NAKUPUJE.', line3: 'TY', line4: 'TAKY.' },
-  { line1: 'NEJLEPŠÍ DEAL', line2: 'MIZÍ ZA 3 MIN.', line3: '', line4: '' },
-]
-
-function useLiquidMorph(text: string) {
-  const [display, setDisplay] = useState(text)
-  const [morphing, setMorphing] = useState(false)
-  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚŮŽŠŘČĎŤŇ.!? '
-  const targetRef = useRef(text)
-
-  useEffect(() => {
-    targetRef.current = text
-    if (!text) { setDisplay(''); return }
-    setMorphing(true)
-    let frame = 0
-    const maxFrames = 18
-    const id = setInterval(() => {
-      frame++
-      const t = targetRef.current
-      const progress = frame / maxFrames
-      setDisplay(prev => {
-        const len = Math.max(prev.length, t.length)
-        return Array.from({ length: len }, (_, i) => {
-          const charProgress = Math.max(0, (progress - i / len * 0.4) / 0.6)
-          if (charProgress >= 1) return t[i] || ''
-          if (i < t.length) return CHARS[Math.floor(Math.random() * CHARS.length)]
-          if (Math.random() > progress) return CHARS[Math.floor(Math.random() * CHARS.length)]
-          return ''
-        }).join('')
-      })
-      if (frame >= maxFrames) {
-        clearInterval(id)
-        setDisplay(t)
-        setMorphing(false)
-      }
-    }, 35)
-    return () => clearInterval(id)
-  }, [text])
-
-  return { display, morphing }
-}
-
-function LiquidMorphHeadline() {
-  const [idx, setIdx] = useState(0)
-  const [phase, setPhase] = useState<'show'|'melt'|'form'>('show')
-  const h = HEADLINES[idx]
-
-  useEffect(() => {
-    const showTimer = setTimeout(() => setPhase('melt'), 3200)
-    return () => clearTimeout(showTimer)
-  }, [idx])
-
-  useEffect(() => {
-    if (phase === 'melt') {
-      const t = setTimeout(() => {
-        setIdx(i => (i + 1) % HEADLINES.length)
-        setPhase('form')
-      }, 600)
-      return () => clearTimeout(t)
-    }
-    if (phase === 'form') {
-      const t = setTimeout(() => setPhase('show'), 100)
-      return () => clearTimeout(t)
-    }
-  }, [phase])
-
-  const l1 = useLiquidMorph(phase === 'melt' ? '' : h.line1)
-  const l2 = useLiquidMorph(phase === 'melt' ? '' : h.line2)
-  const l3 = useLiquidMorph(phase === 'melt' ? '' : h.line3)
-  const l4 = useLiquidMorph(phase === 'melt' ? '' : h.line4)
-
-  const meltStyle = phase === 'melt' ? {
-    filter: 'blur(12px) saturate(2)',
-    transform: 'scaleY(1.4) translateY(8px)',
-    opacity: 0,
-    transition: 'all 0.55s cubic-bezier(.4,0,.2,1)',
-  } : {
-    filter: 'blur(0px) saturate(1)',
-    transform: 'scaleY(1) translateY(0)',
-    opacity: 1,
-    transition: 'all 0.6s cubic-bezier(.16,1,.3,1)',
-  }
-
-  return (
-    <>
-      <svg width="0" height="0" style={{position:'absolute'}}>
-        <defs>
-          <filter id="liquid">
-            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" seed="2" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale={phase==='melt'?28:0} xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-      </svg>
-      <h1 style={{
-        fontFamily:'Bebas Neue,sans-serif',
-        fontSize:'clamp(64px,10vw,140px)',
-        lineHeight:.86, letterSpacing:4, marginBottom:20,
-        filter: phase==='melt' ? 'url(#liquid)' : 'none',
-        transition: 'filter 0.3s',
-      }}>
-        <span style={{display:'block', color:'#F0EBE1', ...meltStyle, transitionDelay:'0ms'}}>
-          {l1.display || ' '}
-        </span>
-        <span style={{display:'block', color:'#F0EBE1', ...meltStyle, transitionDelay:'40ms'}}>
-          {l2.display || ' '}
-        </span>
-        {(h.line3 || phase !== 'show') && (
-          <span style={{display:'block', ...meltStyle, transitionDelay:'80ms',
-            background:'linear-gradient(90deg,#F0EBE1 0%,#F0B429 25%,#FFD97D 50%,#F0B429 75%,#F0EBE1 100%)',
-            backgroundSize:'200% auto',
-            WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-          }}>
-            {l3.display || ' '}
-          </span>
-        )}
-        {(h.line4 || phase !== 'show') && (
-          <span style={{display:'block', color:'#F0EBE1', ...meltStyle, transitionDelay:'120ms'}}>
-            {l4.display || ' '}
-          </span>
-        )}
-      </h1>
-    </>
-  )
-}
-
 export default function HomePage() {
   const [aiStatus, setAiStatus] = useState('AI analyzuje 2 341 nabídek právě teď')
   const [online, setOnline] = useState(47)
@@ -768,7 +636,55 @@ export default function HomePage() {
             <span style={{width:7,height:7,borderRadius:'50%',background:G.grn,animation:'ping 1.8s infinite',display:'inline-block',flexShrink:0}} />
             <span style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:'2.5px',textTransform:'uppercase',color:G.grn,transition:'opacity .4s'}}>{aiStatus}</span>
           </div>
-          <LiquidMorphHeadline />
+          <div id="nd-headline" style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(64px,10vw,140px)',lineHeight:.86,letterSpacing:4,marginBottom:20,overflow:'hidden',position:'relative'}}>
+            <div id="nd-h-inner" style={{transition:'transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.4s ease',willChange:'transform,opacity'}}>
+              <span id="nd-l1" style={{display:'block',color:G.wht}}>&nbsp;</span>
+              <span id="nd-l2" style={{display:'block',color:G.wht}}>&nbsp;</span>
+              <span id="nd-l3" style={{display:'block',background:'linear-gradient(90deg,#F0EBE1 0%,#F0B429 40%,#FFD97D 60%,#F0B429 80%,#F0EBE1 100%)',backgroundSize:'200% auto',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>&nbsp;</span>
+              <span id="nd-l4" style={{display:'block',color:G.wht}}>&nbsp;</span>
+            </div>
+          </div>
+          <script dangerouslySetInnerHTML={{__html:`
+(function(){
+  var HL=[
+    {l1:'NAKUP',l2:'LEVNĚJI.',l3:'PRODEJ',l4:'ZA VÍC.'},
+    {l1:'PŘEPLÁCÍŠ.',l2:'PŘESTAŃ.',l3:'',l4:''},
+    {l1:'JINÍ TĚ',l2:'NECHAJÍ ČEKAT.',l3:'MY',l4:'NE.'},
+    {l1:'VĚTŠINA LIDÍ',l2:'PŘEHLÉDNE.',l3:'',l4:''},
+    {l1:'AI VIDÍ',l2:'CO TY NE.',l3:'',l4:''},
+    {l1:'CENA KLESLA.',l2:'VĚDĚL JSI?',l3:'',l4:''},
+    {l1:'CHYTRÝ NAKUPUJE.',l2:'TY TAKY.',l3:'',l4:''},
+    {l1:'NEJLEPŠÍ DEAL',l2:'MIZÍ ZA 3 MIN.',l3:'',l4:''},
+  ];
+  var idx=0;
+  function set(h){
+    var el=document.getElementById('nd-h-inner');
+    var l1=document.getElementById('nd-l1');
+    var l2=document.getElementById('nd-l2');
+    var l3=document.getElementById('nd-l3');
+    var l4=document.getElementById('nd-l4');
+    if(!el||!l1) return;
+    el.style.transform='translateX(100%) skewX(-8deg)';
+    el.style.opacity='0';
+    setTimeout(function(){
+      l1.textContent=h.l1||'\u00A0';
+      l2.textContent=h.l2||'\u00A0';
+      l3.textContent=h.l3||'\u00A0';
+      l4.textContent=h.l4||'\u00A0';
+      el.style.transform='translateX(-6%) skewX(4deg)';
+      setTimeout(function(){
+        el.style.transform='translateX(0) skewX(0deg)';
+        el.style.opacity='1';
+      },50);
+    },450);
+  }
+  function next(){idx=(idx+1)%HL.length;set(HL[idx]);}
+  document.addEventListener('DOMContentLoaded',function(){
+    set(HL[0]);
+    setInterval(next,3500);
+  });
+})();
+          `}}/>
           <div style={{animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .32s both'}}>
             <p style={{fontSize:22,color:G.wht,lineHeight:1.5,maxWidth:480,marginBottom:12,fontWeight:600,letterSpacing:.5}}>Většina lidí je přehlédne.</p>
             <p style={{fontSize:16,color:G.mut,lineHeight:1.88,maxWidth:460,marginBottom:40,fontWeight:300}}>My je najdeme za tebe. Nakup levněji. Prodej za víc.<br/>Nepropásni dobrou příležitost.</p>
