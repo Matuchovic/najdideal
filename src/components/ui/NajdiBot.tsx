@@ -64,12 +64,13 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
     try {
       setSpeaking(true)
       if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
+      console.log('Speaking:', text)
       const res = await fetch('/api/jarvis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
       })
-      if (!res.ok) throw new Error('TTS failed')
+      if (!res.ok) { console.error('TTS error:', res.status, await res.text()); throw new Error('TTS failed') }
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       const audio = new Audio(url)
@@ -102,7 +103,6 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
     if (msgRef.current) clearInterval(msgRef.current)
     const pageMsgs = PAGE_MSGS[pathname] || PAGE_MSGS['/']
     typeMsg(pageMsgs[0])
-    speak(pageMsgs[0])
     let ti = 1
     msgRef.current = setInterval(() => {
       if (autoTips && Math.random() > 0.6) {
