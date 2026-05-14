@@ -166,15 +166,15 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
         <div style={{ position: 'relative' }}>
           {/* Notification dot */}
           {!open && (
-            <div style={{ position: 'absolute', top: -2, right: -2, width: 14, height: 14, borderRadius: '50%', background: '#FF3B5C', border: '2px solid #020208', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace', fontSize: 8, color: 'white', fontWeight: 700 }}>!</div>
+            <div style={{ position: 'absolute', top: -2, right: -2, width: 18, height: 18, borderRadius: '50%', background: '#FF3B5C', border: '2px solid #020208', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace', fontSize: 10, color: 'white', fontWeight: 700 }}>!</div>
           )}
 
           <div
             className={`ndbot-bubble${bounce ? ' bounce' : ''}`}
             onClick={handleBotClick}
-            style={{ cursor: 'pointer', filter: 'drop-shadow(0 8px 24px rgba(240,180,41,.3))' }}
+            style={{ cursor: 'pointer', filter: 'drop-shadow(0 12px 32px rgba(240,180,41,.5))' }}
           >
-            <svg ref={svgRef} width="72" height="88" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg" onMouseMove={handleMouseMove} onMouseLeave={() => setEyePos({ x: 0, y: 0 })}>
+            <svg ref={svgRef} width="96" height="116" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg" onMouseMove={handleMouseMove} onMouseLeave={() => setEyePos({ x: 0, y: 0 })}>
               <defs>
                 <radialGradient id="nbHG" cx="40%" cy="30%" r="65%">
                   <stop offset="0%" stopColor="#2a1f4a"/>
