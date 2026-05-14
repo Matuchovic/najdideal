@@ -1,6 +1,7 @@
 'use client'
 import NajdiLogo from '@/components/ui/NajdiLogo'
 import NajdiBot from '@/components/ui/NajdiBot'
+import HeadlineMorph from '@/components/ui/HeadlineMorph'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 
@@ -644,47 +645,7 @@ export default function HomePage() {
               <span id="nd-l4" style={{display:'block',color:G.wht}}>&nbsp;</span>
             </div>
           </div>
-          <script dangerouslySetInnerHTML={{__html:`
-(function(){
-  var HL=[
-    {l1:'NAKUP',l2:'LEVNĚJI.',l3:'PRODEJ',l4:'ZA VÍC.'},
-    {l1:'PŘEPLÁCÍŠ.',l2:'PŘESTAŇ.',l3:'UŠETŘI',l4:'TISÍCE.'},
-    {l1:'JINÍ TĚ',l2:'NECHAJÍ ČEKAT.',l3:'MY NE.',l4:''},
-    {l1:'VĚTŠINA LIDÍ',l2:'TO PŘEHLÉDNE.',l3:'TY NE.',l4:''},
-    {l1:'AI VIDÍ',l2:'CO TY NE.',l3:'VYUŽIJ TO.',l4:''},
-    {l1:'CENA PRÁVĚ',l2:'KLESLA.',l3:'VĚDĚL JSI?',l4:''},
-    {l1:'CHYTŘÍ LIDÉ',l2:'NAKUPUJÍ LEVNĚJI.',l3:'KAŽDÝ DEN.',l4:''},
-    {l1:'NEJLEPŠÍ DEAL',l2:'MIZÍ ZA',l3:'3 MINUTY.',l4:''},
-  ];
-  var idx=0;
-  function set(h){
-    var el=document.getElementById('nd-h-inner');
-    var l1=document.getElementById('nd-l1');
-    var l2=document.getElementById('nd-l2');
-    var l3=document.getElementById('nd-l3');
-    var l4=document.getElementById('nd-l4');
-    if(!el||!l1) return;
-    el.style.transform='translateX(100%) skewX(-8deg)';
-    el.style.opacity='0';
-    setTimeout(function(){
-      l1.textContent=h.l1||'\u00A0';
-      l2.textContent=h.l2||'\u00A0';
-      l3.textContent=h.l3||'\u00A0';
-      l4.textContent=h.l4||'\u00A0';
-      el.style.transform='translateX(-6%) skewX(4deg)';
-      setTimeout(function(){
-        el.style.transform='translateX(0) skewX(0deg)';
-        el.style.opacity='1';
-      },50);
-    },450);
-  }
-  function next(){idx=(idx+1)%HL.length;set(HL[idx]);}
-  document.addEventListener('DOMContentLoaded',function(){
-    set(HL[0]);
-    setInterval(next,3500);
-  });
-})();
-          `}}/>
+          <HeadlineMorph />
           <div style={{animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .32s both'}}>
             <p style={{fontSize:22,color:G.wht,lineHeight:1.5,maxWidth:480,marginBottom:12,fontWeight:600,letterSpacing:.5}}>Většina lidí je přehlédne.</p>
             <p style={{fontSize:16,color:G.mut,lineHeight:1.88,maxWidth:460,marginBottom:40,fontWeight:300}}>My je najdeme za tebe. Nakup levněji. Prodej za víc.<br/>Nepropásni dobrou příležitost.</p>
