@@ -43,6 +43,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   const [eyePos, setEyePos] = useState({ x: 0, y: 0 })
   const [clicks, setClicks] = useState(0)
   const [listening, setListening] = useState(false)
+  const [speaking, setSpeaking] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [voiceSupported, setVoiceSupported] = useState(false)
   const svgRef = useRef<SVGSVGElement>(null)
