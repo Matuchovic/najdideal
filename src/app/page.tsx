@@ -1018,7 +1018,7 @@ export default function HomePage() {
           </div>
         </div>
       )}
+      <NajdiBot mood="happy" />
     </div>
-    <NajdiBot mood="happy" />
   )
 }
