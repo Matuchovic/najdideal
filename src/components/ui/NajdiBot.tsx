@@ -57,19 +57,34 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   }, [])
 
 
-  const speak = useCallback((text: string) => {
-    if (!window.speechSynthesis) return
-    window.speechSynthesis.cancel()
-    const clean = text.replace(/[💰🤖👑🔄💎⚡📦₿🎯🏠💻🎤🤔❌👋💡🔥👆👇]/gu, '')
-    const utt = new SpeechSynthesisUtterance(clean)
-    utt.lang = 'cs-CZ'
-    utt.rate = 1.05
-    utt.pitch = 1.1
-    utt.volume = 0.9
-    const voices = window.speechSynthesis.getVoices()
-    const czVoice = voices.find(v => v.lang.startsWith('cs')) || voices.find(v => v.lang.startsWith('sk'))
-    if (czVoice) utt.voice = czVoice
-    window.speechSynthesis.speak(utt)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  const speak = useCallback(async (text: string) => {
+    try {
+      setSpeaking(true)
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
+      const res = await fetch('/api/jarvis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      })
+      if (!res.ok) throw new Error('TTS failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audioRef.current = audio
+      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url) }
+      audio.onerror = () => setSpeaking(false)
+      await audio.play()
+    } catch {
+      setSpeaking(false)
+      if (window.speechSynthesis) {
+        const utt = new SpeechSynthesisUtterance(text)
+        utt.lang = 'cs-CZ'; utt.rate = 1.0; utt.pitch = 0.85
+        utt.onend = () => setSpeaking(false)
+        window.speechSynthesis.speak(utt)
+      }
+    }
   }, [])
 
   const typeMsg = useCallback((text: string) => {
