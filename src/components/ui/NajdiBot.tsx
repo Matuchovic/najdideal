@@ -53,7 +53,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   const m = MOODS[currentMood]
 
   useEffect(() => {
-    setVoiceSupported(!!(window.SpeechRecognition || (window as any).webkitSpeechRecognition))
+    setVoiceSupported(!!(( window as any).SpeechRecognition || (window as any).webkitSpeechRecognition))
   }, [])
 
   const typeMsg = useCallback((text: string) => {
