@@ -3,12 +3,12 @@ import { useEffect } from 'react'
 
 const HL = [
   {l1:'NAKUP',l2:'LEVNĚJI.',l3:'PRODEJ',l4:'ZA VÍC.'},
-  {l1:'PŘEPLÁCÍŠ.',l2:'PŘESTAŇ.',l3:'UŠETŘI',l4:'TISÍCE.'},
-  {l1:'JINÍ TĚ',l2:'NECHAJÍ ČEKAT.',l3:'MY NE.',l4:''},
+  {l1:'PLATÍŠ VÍC.',l2:'PŘESTAŇ.',l3:'UŠETŘI',l4:'TISÍCE.'},
+  {l1:'OSTATNÍ TĚ',l2:'NECHAJÍ ČEKAT.',l3:'MY NE.',l4:''},
   {l1:'VĚTŠINA LIDÍ',l2:'TO PŘEHLÉDNE.',l3:'TY NE.',l4:''},
   {l1:'AI VIDÍ',l2:'CO TY NE.',l3:'VYUŽIJ TO.',l4:''},
-  {l1:'CENA PRÁVĚ',l2:'KLESLA.',l3:'VĚDĚL JSI?',l4:''},
-  {l1:'CHYTŘÍ LIDÉ',l2:'NAKUPUJÍ LEVNĚJI.',l3:'KAŽDÝ DEN.',l4:''},
+  {l1:'CENA KLESLA.',l2:'VĚDĚL JSI?',l3:'JEDNEJ.',l4:''},
+  {l1:'CHYTŘÍ LIDÉ',l2:'NAKUPUJÍ LÍP.',l3:'KAŽDÝ DEN.',l4:''},
   {l1:'NEJLEPŠÍ DEAL',l2:'MIZÍ ZA',l3:'3 MINUTY.',l4:''},
 ]
 
