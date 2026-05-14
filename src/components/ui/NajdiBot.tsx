@@ -168,8 +168,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
 
       setCurrentMood(newMood)
       typeMsg(response)
-      speak(response)
-    }, 700)
+      }, 700)
   }
 
   function toggleVoice() {
