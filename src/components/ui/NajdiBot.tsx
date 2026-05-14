@@ -56,6 +56,22 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
     setVoiceSupported(!!(( window as any).SpeechRecognition || (window as any).webkitSpeechRecognition))
   }, [])
 
+
+  const speak = useCallback((text: string) => {
+    if (!window.speechSynthesis) return
+    window.speechSynthesis.cancel()
+    const clean = text.replace(/[💰🤖👑🔄💎⚡📦₿🎯🏠💻🎤🤔❌👋💡🔥👆👇]/gu, '')
+    const utt = new SpeechSynthesisUtterance(clean)
+    utt.lang = 'cs-CZ'
+    utt.rate = 1.05
+    utt.pitch = 1.1
+    utt.volume = 0.9
+    const voices = window.speechSynthesis.getVoices()
+    const czVoice = voices.find(v => v.lang.startsWith('cs')) || voices.find(v => v.lang.startsWith('sk'))
+    if (czVoice) utt.voice = czVoice
+    window.speechSynthesis.speak(utt)
+  }, [])
+
   const typeMsg = useCallback((text: string) => {
     if (typeRef.current) clearInterval(typeRef.current)
     setMessage('')
@@ -70,6 +86,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
     if (msgRef.current) clearInterval(msgRef.current)
     const pageMsgs = PAGE_MSGS[pathname] || PAGE_MSGS['/']
     typeMsg(pageMsgs[0])
+    speak(pageMsgs[0])
     let ti = 1
     msgRef.current = setInterval(() => {
       if (autoTips && Math.random() > 0.6) {
@@ -134,6 +151,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
 
       setCurrentMood(newMood)
       typeMsg(response)
+      speak(response)
     }, 700)
   }
 
