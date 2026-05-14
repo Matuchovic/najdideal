@@ -648,13 +648,13 @@ export default function HomePage() {
 (function(){
   var HL=[
     {l1:'NAKUP',l2:'LEVNĚJI.',l3:'PRODEJ',l4:'ZA VÍC.'},
-    {l1:'PŘEPLÁCÍŠ.',l2:'PŘESTAŃ.',l3:'',l4:''},
-    {l1:'JINÍ TĚ',l2:'NECHAJÍ ČEKAT.',l3:'MY',l4:'NE.'},
-    {l1:'VĚTŠINA LIDÍ',l2:'PŘEHLÉDNE.',l3:'',l4:''},
-    {l1:'AI VIDÍ',l2:'CO TY NE.',l3:'',l4:''},
-    {l1:'CENA KLESLA.',l2:'VĚDĚL JSI?',l3:'',l4:''},
-    {l1:'CHYTRÝ NAKUPUJE.',l2:'TY TAKY.',l3:'',l4:''},
-    {l1:'NEJLEPŠÍ DEAL',l2:'MIZÍ ZA 3 MIN.',l3:'',l4:''},
+    {l1:'PŘEPLÁCÍŠ.',l2:'PŘESTAŇ.',l3:'UŠETŘI',l4:'TISÍCE.'},
+    {l1:'JINÍ TĚ',l2:'NECHAJÍ ČEKAT.',l3:'MY NE.',l4:''},
+    {l1:'VĚTŠINA LIDÍ',l2:'TO PŘEHLÉDNE.',l3:'TY NE.',l4:''},
+    {l1:'AI VIDÍ',l2:'CO TY NE.',l3:'VYUŽIJ TO.',l4:''},
+    {l1:'CENA PRÁVĚ',l2:'KLESLA.',l3:'VĚDĚL JSI?',l4:''},
+    {l1:'CHYTŘÍ LIDÉ',l2:'NAKUPUJÍ LEVNĚJI.',l3:'KAŽDÝ DEN.',l4:''},
+    {l1:'NEJLEPŠÍ DEAL',l2:'MIZÍ ZA',l3:'3 MINUTY.',l4:''},
   ];
   var idx=0;
   function set(h){
