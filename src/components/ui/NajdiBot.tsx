@@ -60,35 +60,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const speak = useCallback(async (text: string) => {
-    try {
-      setSpeaking(true)
-      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
-      console.log('Speaking:', text)
-      const res = await fetch('/api/jarvis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      })
-      if (!res.ok) { console.error('TTS error:', res.status, await res.text()); throw new Error('TTS failed') }
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const audio = new Audio(url)
-      audioRef.current = audio
-      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url) }
-      audio.onerror = (e) => { console.error('Audio error:', e); setSpeaking(false) }
-      try {
-        await audio.play()
-        console.log('Audio playing OK')
-      } catch(playErr) {
-        console.error('Play failed:', playErr)
-        setSpeaking(false)
-      }
-    } catch(err) {
-      console.error('Speak error:', err)
-      setSpeaking(false)
-    }
-  }, [])
+  const speak = (_text: string) => {}
 
   const typeMsg = useCallback((text: string) => {
     if (typeRef.current) clearInterval(typeRef.current)
@@ -245,44 +217,6 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
               <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(240,235,225,.5)' }}>
                 {listening ? 'Naslouchám...' : 'ND Bot · Online'}
               </span>
-              <button onClick={() => setOpen(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(240,235,225,.3)', cursor: 'pointer', fontSize: 18 }}>×</button>
-            </div>
-
-            <div style={{ background: 'rgba(240,180,41,.05)', border: '1px solid rgba(240,180,41,.15)', borderRadius: 12, padding: '10px 14px', marginBottom: 10, minHeight: 52, display: 'flex', alignItems: 'center' }}>
-              <p style={{ fontFamily: "'Syne',sans-serif", fontSize: 12, color: '#F0EBE1', lineHeight: 1.6, margin: 0 }}>
-                {message}<span style={{ animation: 'ndTP 1s infinite', fontFamily: 'monospace' }}> █</span>
-              </p>
-            </div>
-
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                <button onClick={toggleVoice} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 20, border: `1px solid ${listening ? 'rgba(255,59,92,.5)' : 'rgba(240,180,41,.3)'}`, background: listening ? 'rgba(255,59,92,.15)' : 'rgba(240,180,41,.08)', cursor: 'pointer', fontFamily: "'Syne Mono',monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: listening ? '#FF3B5C' : '#F0B429', transition: 'all .2s' }}>
-                  <span style={{ fontSize: 14 }}>{listening ? '⏹' : '🎤'}</span>
-                  {listening ? 'Zastav' : 'Mluv se mnou'}
-                </button>
-                {listening && (
-                  <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 20 }}>
-                    {[0,1,2,3].map(i => (
-                      <div key={i} style={{ width: 3, borderRadius: 2, background: '#FF3B5C', height: `${8 + i * 3}px`, animation: `ndWV ${.3 + i * .1}s ease-in-out infinite`, animationDelay: `${i * .08}s` }} />
-                    ))}
-                  </div>
-                )}
-              </div>
-              {transcript && (
-                <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 9, color: 'rgba(240,235,225,.4)', padding: '4px 8px', background: 'rgba(255,255,255,.02)', borderRadius: 6 }}>
-                  {transcript}
-                </div>
-              )}
-              {!voiceSupported && (
-                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 10, color: 'rgba(255,107,53,.7)', marginTop: 4 }}>
-                  🎤 Hlasový vstup vyžaduje Chrome nebo Safari
-                </div>
-              )}
-            </div>
-
-            <button onClick={() => speak('J.A.R.V.I.S online. Připraven k asistenci.')} style={{ width:'100%', padding:'8px', marginBottom:8, background:'rgba(0,230,118,.1)', border:'1px solid rgba(0,230,118,.3)', borderRadius:10, color:'#00E676', cursor:'pointer', fontSize:10 }}>
-              🔊 Test hlasu
-            </button>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {[{ href: '/deals', icon: '💰', label: 'Zobrazit dealy' }, { href: '/vip', icon: '👑', label: 'VIP přístup' }, { href: '/dashboard', icon: '🏠', label: 'Dashboard' }].map(l => (
                 <a key={l.href} href={l.href} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', background: 'rgba(255,255,255,.02)', border: '1px solid rgba(255,255,255,.05)', borderRadius: 9, textDecoration: 'none' }}
