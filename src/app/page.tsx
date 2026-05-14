@@ -504,12 +504,12 @@ const HEADLINES = [
 ]
 
 function useLiquidMorph(text: string) {
-  const [display, setDisplay] = React.useState(text)
-  const [morphing, setMorphing] = React.useState(false)
+  const [display, setDisplay] = useState(text)
+  const [morphing, setMorphing] = useState(false)
   const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚŮŽŠŘČĎŤŇ.!? '
-  const targetRef = React.useRef(text)
+  const targetRef = useRef(text)
 
-  React.useEffect(() => {
+  useEffect(() => {
     targetRef.current = text
     if (!text) { setDisplay(''); return }
     setMorphing(true)
@@ -542,16 +542,16 @@ function useLiquidMorph(text: string) {
 }
 
 function LiquidMorphHeadline() {
-  const [idx, setIdx] = React.useState(0)
-  const [phase, setPhase] = React.useState<'show'|'melt'|'form'>('show')
+  const [idx, setIdx] = useState(0)
+  const [phase, setPhase] = useState<'show'|'melt'|'form'>('show')
   const h = HEADLINES[idx]
 
-  React.useEffect(() => {
+  useEffect(() => {
     const showTimer = setTimeout(() => setPhase('melt'), 3200)
     return () => clearTimeout(showTimer)
   }, [idx])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (phase === 'melt') {
       const t = setTimeout(() => {
         setIdx(i => (i + 1) % HEADLINES.length)
