@@ -76,16 +76,17 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
       const audio = new Audio(url)
       audioRef.current = audio
       audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url) }
-      audio.onerror = () => setSpeaking(false)
-      await audio.play()
-    } catch {
-      setSpeaking(false)
-      if (window.speechSynthesis) {
-        const utt = new SpeechSynthesisUtterance(text)
-        utt.lang = 'cs-CZ'; utt.rate = 1.0; utt.pitch = 0.85
-        utt.onend = () => setSpeaking(false)
-        window.speechSynthesis.speak(utt)
+      audio.onerror = (e) => { console.error('Audio error:', e); setSpeaking(false) }
+      try {
+        await audio.play()
+        console.log('Audio playing OK')
+      } catch(playErr) {
+        console.error('Play failed:', playErr)
+        setSpeaking(false)
       }
+    } catch(err) {
+      console.error('Speak error:', err)
+      setSpeaking(false)
     }
   }, [])
 
