@@ -1,5 +1,6 @@
 'use client'
 import NajdiLogo from '@/components/ui/NajdiLogo'
+import NajdiBot from '@/components/ui/NajdiBot'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 
@@ -1018,5 +1019,6 @@ export default function HomePage() {
         </div>
       )}
     </div>
+    <NajdiBot mood="happy" />
   )
 }
