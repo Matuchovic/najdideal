@@ -220,15 +220,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // 6. Admin route protection
+  // 6. Admin route protection - jen auth check, roli řeší admin/layout.tsx
   if (isAdmin) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
-    }
-    // Check admin role via user metadata or custom claim
-    const role = user.user_metadata?.role || user.app_metadata?.role
-    if (role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 
