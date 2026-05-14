@@ -45,6 +45,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
   const [listening, setListening] = useState(false)
   const [speaking, setSpeaking] = useState(false)
   const [talking, setTalking] = useState(false)
+  const [talking, setTalking] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [voiceSupported, setVoiceSupported] = useState(false)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -232,6 +233,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
         @keyframes ndBP{from{opacity:0;transform:scale(.8) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes ndTP{0%,100%{opacity:1}50%{opacity:0}}
         @keyframes ndWV{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.2);opacity:.2}}
+        @keyframes ndMO{0%{d:path('M 30 44 Q 40 46 50 44')}100%{d:path('M 30 44 Q 40 52 50 44')}}
         @keyframes ndMO{0%{d:path('M 30 44 Q 40 46 50 44')}100%{d:path('M 30 44 Q 40 52 50 44')}}
         .ndb-i{animation:ndBI 3s ease-in-out infinite}
         .ndb-b{animation:ndBB .4s ease!important}
