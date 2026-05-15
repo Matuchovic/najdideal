@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Search, Filter, Plus, Lock, Eye, MapPin, Clock, TrendingUp } from 'lucide-react'
 
+export const metadata = { title: 'Marketplace', description: 'Nakupuj a prodávej na NajdiDeal marketplace.' }
+
+
 const G = {
   gold:'#F0B429', gold2:'rgba(240,180,41,.08)', gold4:'rgba(240,180,41,.18)',
   grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5', org:'#FF6B35', red:'#FF3B5C',

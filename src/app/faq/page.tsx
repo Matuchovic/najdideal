@@ -2,6 +2,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
+export const metadata = { title: 'Časté dotazy', description: 'Odpovědi na nejčastější otázky o NajdiDeal platformě.' }
+
+
 const faqs = [
   { q: 'Co je NajdiDeal?', a: 'NajdiDeal je prémiová AI platforma, která denně skenuje stovky nabídek na marketplace platformách, sleduje affiliate programy a trend produkty. Filtrujeme jen ty s reálným profit potenciálem a VIP členové je dostávají jako první.' },
   { q: 'Jak rychle uvidím první profit?', a: 'Záleží na tvé aktivitě. Naši členové průměrně vydělají první profit do 7 dní od připojení. Nejrychlejší dealy – typicky marketplace flipy – se prodají do 24–48 hodin.' },

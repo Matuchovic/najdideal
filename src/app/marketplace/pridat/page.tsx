@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Lock } from 'lucide-react'
 
+export const metadata = { title: 'Přidat inzerát', description: 'Přidej svůj inzerát na NajdiDeal marketplace.' }
+
+
 const G = {
   gold:'#F0B429', gold2:'rgba(240,180,41,.08)', gold4:'rgba(240,180,41,.18)',
   grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5', org:'#FF6B35',

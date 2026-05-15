@@ -3,6 +3,9 @@ import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
+export const metadata = { title: 'Admin · Live Chat', description: 'Správa live chat konverzací.' }
+
+
 const G = { bg:'#020208', gl:'rgba(255,255,255,.04)', br:'rgba(255,255,255,.08)', wht:'#F0EBE1', mut:'rgba(240,235,225,.45)', g:'#F0B429', grn:'#00E676' }
 
 export default function AdminChat() {

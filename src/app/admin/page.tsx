@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
+export const metadata = { title: 'Admin · Dashboard', description: 'Administrátorský přehled platformy NajdiDeal.' }
+
+
 // ══════════════════════════════════════════════════════════
 //  NajdiDeal – Ultimátní Admin Dashboard
 //  Real-time stats, grafy, revenue, activity logy, email marketing

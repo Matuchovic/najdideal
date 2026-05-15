@@ -1,6 +1,9 @@
 'use client'
 import { useState } from 'react'
 
+export const metadata = { title: 'Kontakt', description: 'Kontaktuj tým NajdiDeal. Jsme tu pro tebe.' }
+
+
 export default function KontaktPage() {
   const [sent, setSent] = useState(false)
   const S = { bg: '#020208', wht: '#F0EBE1', g: '#F0B429', mut: 'rgba(240,235,225,.38)', gl: 'rgba(255,255,255,.026)', br: 'rgba(255,255,255,.07)' }
