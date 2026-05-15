@@ -1,5 +1,4 @@
 export default function GdprPage() {
-
 export const metadata = { title: 'Ochrana osobních údajů', description: 'Informace o zpracování osobních údajů dle GDPR.' }
 
   const S = { bg: '#020208', wht: '#F0EBE1', g: '#F0B429', mut: 'rgba(240,235,225,.38)', gl: 'rgba(255,255,255,.026)', br: 'rgba(255,255,255,.07)' }
