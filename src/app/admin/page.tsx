@@ -105,6 +105,8 @@ export default function AdminDashboard() {
   const [emailTarget, setEmailTarget] = useState('all')
   const [scanResult, setScanResult] = useState<any>(null)
   const [scanning, setScanning] = useState(false)
+  const [bazosResult, setBazosResult] = useState<any>(null)
+  const [bazosLoading, setBazosLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'email' | 'logs'>('overview')
   const [chatCount, setChatCount] = useState(0)
 
@@ -230,6 +232,20 @@ export default function AdminDashboard() {
       {scanResult && (
         <div style={{ padding: '10px 16px', background: scanResult.error ? 'rgba(255,59,92,.06)' : 'rgba(0,230,118,.06)', border: `1px solid ${scanResult.error ? 'rgba(255,59,92,.2)' : 'rgba(0,230,118,.2)'}`, borderRadius: 10, fontFamily: "'Syne Mono', monospace", fontSize: 9, color: scanResult.error ? G.red : G.grn }}>
           {scanResult.error ? `✗ ${scanResult.error}` : `✓ Naskenováno ${scanResult.scanned} · Nalezeno ${scanResult.found} · Přidáno ${scanResult.inserted} nových dealů`}
+        </div>
+      )}
+
+      {/* Bazoš RSS Sync */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        {['mobily', 'pc', 'elektro', 'auto', 'sport', 'obleceni'].map(kat => (
+          <button key={kat} onClick={() => runBazosSync(kat)} disabled={bazosLoading} style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', background: 'rgba(240,180,41,.08)', color: G.gold, border: `1px solid ${G.gold}33`, padding: '8px 12px', borderRadius: 8, cursor: bazosLoading ? 'default' : 'pointer', opacity: bazosLoading ? 0.6 : 1 }}>
+            📡 {kat}
+          </button>
+        ))}
+      </div>
+      {bazosResult && (
+        <div style={{ padding: '10px 16px', background: bazosResult.error ? 'rgba(255,59,92,.06)' : 'rgba(240,180,41,.06)', border: `1px solid ${bazosResult.error ? 'rgba(255,59,92,.2)' : 'rgba(240,180,41,.2)'}`, borderRadius: 10, fontFamily: "'Syne Mono', monospace", fontSize: 9, color: bazosResult.error ? G.red : G.gold }}>
+          {bazosResult.error ? `✗ ${bazosResult.error}` : `✓ Bazoš ${bazosResult.kategorie} · Celkem ${bazosResult.total} · Přidáno ${bazosResult.inserted} · Přeskočeno ${bazosResult.skipped}`}
         </div>
       )}
       {/* TABS + CHAT BADGE */}
