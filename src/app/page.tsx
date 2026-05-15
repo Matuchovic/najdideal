@@ -501,11 +501,44 @@ function ChatWidget() {
   const [request, setRequest] = useState('')
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState('')
-  const [sessionId] = useState(() => Math.random().toString(36).slice(2))
+  const [sessionId] = useState(() => {
+    if (typeof window === 'undefined') return Math.random().toString(36).slice(2)
+    const saved = localStorage.getItem('nd_chat_session')
+    if (saved) return saved
+    const newId = Math.random().toString(36).slice(2)
+    localStorage.setItem('nd_chat_session', newId)
+    return newId
+  })
   const [connecting, setConnecting] = useState(false)
   const [connectStep, setConnectStep] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+
+  // Obnov stav z minulé session
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const savedStep = localStorage.getItem('nd_chat_step') as any
+    const savedEmail = localStorage.getItem('nd_chat_email')
+    if (savedStep === 'waiting' || savedStep === 'chat') {
+      if (savedEmail) setEmail(savedEmail)
+      setStep(savedStep)
+      // Načti historii zpráv
+      supabase.from('chat_messages').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }).then(({ data }) => {
+        if (data && data.length > 0) setMessages(data)
+      })
+    }
+  }, [])
+
+  // Ulož stav do localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (step === 'closed' || step === 'form') return
+    localStorage.setItem('nd_chat_step', step)
+  }, [step])
+
+  useEffect(() => {
+    if (email) localStorage.setItem('nd_chat_email', email)
+  }, [email])
 
   useEffect(() => {
     if (step !== 'waiting' && step !== 'chat') return
@@ -520,6 +553,15 @@ function ChatWidget() {
   }, [step, sessionId])
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+  function resetSession() {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem('nd_chat_session')
+    localStorage.removeItem('nd_chat_step')
+    localStorage.removeItem('nd_chat_email')
+    const newId = Math.random().toString(36).slice(2)
+    localStorage.setItem('nd_chat_session', newId)
+  }
 
   async function submitForm() {
     if (!email.trim() || !request.trim()) return
@@ -759,7 +801,11 @@ function ChatWidget() {
               <div style={{ padding: '8px 18px', background: 'linear-gradient(90deg, rgba(0,230,118,.05), rgba(0,230,118,.01))', borderBottom: '1px solid rgba(0,230,118,.08)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 10px #00E676', flexShrink: 0 }} />
                 <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#00E676', fontFamily: 'Syne Mono,monospace', flex: 1 }}>Operátor připojen · Živý chat</span>
-                <span style={{ fontSize: 9, color: 'rgba(0,230,118,.4)', fontFamily: 'Syne Mono,monospace' }}>🔒</span>
+                <button onClick={() => { resetSession(); setStep('form'); setMessages([]); setEmail(''); setRequest('') }} title="Nová konverzace" style={{ fontSize: 9, color: 'rgba(240,235,225,.3)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Syne Mono,monospace', letterSpacing: .5, padding: '2px 6px', borderRadius: 4, transition: 'color .2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#F0B429')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(240,235,225,.3)')}>
+                  + Nová
+                </button>
               </div>
               <div className="cw-scroll" style={{ height: 285, overflowY: 'auto', padding: '14px 16px 8px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {messages.filter(m => !m.message.startsWith('📧')).map((m, i) => (
