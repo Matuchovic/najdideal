@@ -25,7 +25,7 @@ const BAZOS_HEADERS = {
   'Referer': 'https://www.bazos.cz/',
 }
 
-async function fetchAndUploadImage(ogUrl: string, slug: string, adminSupabase: ReturnType<typeof createAdminClient>): Promise<string | null> {
+async function fetchAndUploadImage(ogUrl: string, slug: string, adminSupabase: ReturnType<typeof createAdminClient<any>>): Promise<string | null> {
   try {
     const imgRes = await fetch(ogUrl, {
       headers: { ...BAZOS_HEADERS, 'Accept': 'image/webp,image/avif,image/*,*/*;q=0.8' },
