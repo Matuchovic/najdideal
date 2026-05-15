@@ -41,7 +41,16 @@ export default function AdminChat() {
     setMessages(data || [])
   }
 
-  function selectSession(sid: string) { setActiveSession(sid); loadMessages(sid) }
+  async function selectSession(sid: string) {
+    setActiveSession(sid)
+    const { data } = await supabase.from('chat_messages').select('*').eq('session_id', sid).order('created_at', { ascending: true })
+    setMessages(data || [])
+    // Pošli uvítací zprávu pokud admin ještě neodpověděl
+    const hasAdminMsg = (data || []).some((m: any) => m.role === 'admin')
+    if (!hasAdminMsg) {
+      await supabase.from('chat_messages').insert({ session_id: sid, role: 'admin', message: 'Dobrý den! Jak vám můžeme pomoci? 👋' })
+    }
+  }
 
   async function sendMessage() {
     if (!input.trim() || !activeSession) return
