@@ -320,23 +320,6 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Quick actions */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-              {[
-                { href: '/admin/deals/new', icon: '➕', label: 'Nový deal', color: G.gold },
-                { href: '/admin/deals', icon: '📋', label: 'Správa dealů', color: G.blu },
-                { href: '/admin/users', icon: '👥', label: 'Uživatelé', color: G.grn },
-                { href: '/admin/alerts', icon: '⚡', label: 'Alerty', color: G.pur },
-                { href: '/admin/analytics', icon: '📊', label: 'Analytika', color: G.org },
-              ].map(({ href, icon, label, color }) => (
-                <Link key={href} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: G.gl, border: `1px solid ${G.br}`, borderRadius: 11, textDecoration: 'none', transition: 'all .2s' }}
-                  onMouseEnter={e => { (e.currentTarget as any).style.borderColor = color + '44'; (e.currentTarget as any).style.background = color + '08' }}
-                  onMouseLeave={e => { (e.currentTarget as any).style.borderColor = G.br; (e.currentTarget as any).style.background = G.gl }}>
-                  <span style={{ fontSize: 16 }}>{icon}</span>
-                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color }}>{label}</span>
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       )}
