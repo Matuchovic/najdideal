@@ -250,7 +250,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
       <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 16 }}>
 
         {open && (
-          <div className="ndb-p" style={{ background: 'rgba(6,4,16,.98)', border: '1px solid rgba(240,180,41,.2)', borderRadius: 24, width: 320, boxShadow: '0 32px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04)', overflow: 'hidden' }}>
+          <div className="ndb-p" style={{ background: 'rgba(6,4,16,.98)', border: '1px solid rgba(240,180,41,.2)', borderRadius: 24, width: 300, maxHeight: 'calc(100vh - 120px)', overflowY: 'auto', overflowX: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04)' }}>
 
             {/* Gold top line */}
             <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #F0B429 30%, #FFD97D 50%, #F0B429 70%, transparent)' }} />
