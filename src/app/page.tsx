@@ -164,7 +164,7 @@ function PhoneMockup() {
   }
 
   return (
-    <div style={{ position: 'relative', animation: 'phoneFloat 7s ease-in-out infinite', filter: 'drop-shadow(0 60px 120px rgba(0,0,0,.9)) drop-shadow(0 0 80px rgba(240,180,41,.06))', zIndex: 10, willChange: 'transform' }}>
+    <div style={{ position: 'relative', animation: 'phoneFloat 7s ease-in-out infinite', zIndex: 10, willChange: 'transform', transform: 'translateZ(0)' }}>
       <style>{`
         @keyframes phoneFloat{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}70%{transform:translateY(-10px)}}
         @keyframes phoneShadow{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.4}40%{transform:translateX(-50%) scaleX(.72);opacity:.18}}
