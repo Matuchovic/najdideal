@@ -635,14 +635,13 @@ export default function HomePage() {
             <span style={{width:7,height:7,borderRadius:'50%',background:G.grn,animation:'ping 1.8s infinite',display:'inline-block',flexShrink:0}} />
             <span style={{fontFamily:'Syne Mono,monospace',fontSize:9,letterSpacing:'2.5px',textTransform:'uppercase',color:G.grn,transition:'opacity .4s'}}>{aiStatus}</span>
           </div>
-          <h1 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(64px,10vw,140px)',lineHeight:.86,letterSpacing:4,marginBottom:20}}>
-            <span style={{display:'block',color:G.wht,animation:'fadeU .9s cubic-bezier(.16,1,.3,1) both'}}>KAŽDÝ DEN</span>
-            <span style={{display:'block',color:G.wht,animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .08s both'}}>JSOU</span>
-            <span style={{display:'block',animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .16s both'}}>
-              <span style={{background:'linear-gradient(90deg,#F0EBE1 0%,#F0B429 25%,#FFD97D 50%,#F0B429 75%,#F0EBE1 100%)',backgroundSize:'200% auto',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',animation:'shimmer 4s linear infinite, textGlow 3s ease-in-out infinite'}}>VÝHODNÉ</span>
-            </span>
-            <span style={{display:'block',color:G.wht,animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .24s both'}}>NABÍDKY.</span>
-          </h1>
+          <div id="nd-th" style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(64px,10vw,140px)',lineHeight:.86,letterSpacing:4,marginBottom:20,position:'relative'}}>
+            <div id="nd-l1" style={{color:G.wht,minHeight:'1.05em'}}>&nbsp;</div>
+            <div id="nd-l2" style={{color:G.wht,minHeight:'1.05em'}}>&nbsp;</div>
+            <div id="nd-l3" style={{minHeight:'1.05em'}}><span id="nd-l3s" style={{background:'linear-gradient(90deg,#F0EBE1 0%,#F0B429 25%,#FFD97D 50%,#F0B429 75%,#F0EBE1 100%)',backgroundSize:'200% auto',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',animation:'shimmer 3s linear infinite'}}>&nbsp;</span></div>
+            <div id="nd-l4" style={{color:G.wht,minHeight:'1.05em'}}>&nbsp;</div>
+            <div style={{position:'absolute',bottom:-8,left:0,height:3,width:'100%',background:'rgba(240,180,41,.1)',borderRadius:2}}><div id="nd-pb" style={{height:'100%',width:'0%',background:'linear-gradient(90deg,#F0B429,#FFD97D)',borderRadius:2,boxShadow:'0 0 16px rgba(240,180,41,.7)',transition:'width 0.05s linear'}}/></div>
+          </div>
           <div style={{animation:'fadeU .9s cubic-bezier(.16,1,.3,1) .32s both'}}>
             <p style={{fontSize:22,color:G.wht,lineHeight:1.5,maxWidth:480,marginBottom:12,fontWeight:600,letterSpacing:.5}}>Většina lidí je přehlédne.</p>
             <p style={{fontSize:16,color:G.mut,lineHeight:1.88,maxWidth:460,marginBottom:40,fontWeight:300}}>My je najdeme za tebe. Nakup levněji. Prodej za víc.<br/>Nepropásni dobrou příležitost.</p>
