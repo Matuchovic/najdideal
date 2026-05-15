@@ -522,7 +522,7 @@ function ChatWidget() {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, fontFamily: 'system-ui,sans-serif' }}>
+    <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 9999, fontFamily: 'system-ui,sans-serif' }}>
       {open && (
         <div style={{ width: 340, height: 460, background: G.bg, border: `1px solid ${G.br}`, borderRadius: 20, display: 'flex', flexDirection: 'column', marginBottom: 12, boxShadow: '0 24px 64px rgba(0,0,0,.6)', overflow: 'hidden' }}>
           <div style={{ padding: '14px 16px', background: 'rgba(240,180,41,.08)', borderBottom: `1px solid ${G.br}`, display: 'flex', alignItems: 'center', gap: 10 }}>
