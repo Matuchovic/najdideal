@@ -164,9 +164,9 @@ function PhoneMockup() {
   }
 
   return (
-    <div style={{ position: 'relative', animation: 'phoneFloat 7s ease-in-out infinite', filter: 'drop-shadow(0 60px 120px rgba(0,0,0,.9)) drop-shadow(0 0 80px rgba(240,180,41,.06))', zIndex: 10 }}>
+    <div style={{ position: 'relative', animation: 'phoneFloat 7s ease-in-out infinite', filter: 'drop-shadow(0 60px 120px rgba(0,0,0,.9)) drop-shadow(0 0 80px rgba(240,180,41,.06))', zIndex: 10, willChange: 'transform' }}>
       <style>{`
-        @keyframes phoneFloat{0%,100%{transform:translateY(0) rotate(-1deg)}40%{transform:translateY(-20px) rotate(.4deg)}70%{transform:translateY(-12px) rotate(-.5deg)}}
+        @keyframes phoneFloat{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}70%{transform:translateY(-10px)}}
         @keyframes phoneShadow{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.4}40%{transform:translateX(-50%) scaleX(.72);opacity:.18}}
         @keyframes scrIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pingGold{0%,100%{box-shadow:0 0 0 0 rgba(240,180,41,.8)}55%{box-shadow:0 0 0 4px transparent}}
@@ -487,7 +487,7 @@ function PhoneMockup() {
       </div>
 
       {/* shadow */}
-      <div style={{ position: 'absolute', bottom: -38, left: '50%', transform: 'translateX(-50%)', width: 210, height: 26, background: 'rgba(0,0,0,.62)', borderRadius: '50%', filter: 'blur(20px)', animation: 'phoneShadow 7s ease-in-out infinite' }} />
+      <div style={{ position: 'absolute', bottom: -38, left: '50%', transform: 'translateX(-50%)', width: 210, height: 26, background: 'rgba(0,0,0,.62)', borderRadius: '50%', filter: 'blur(20px)', animation: 'phoneShadow 7s ease-in-out infinite', willChange: 'transform, opacity' }} />
     </div>
   )
 }
