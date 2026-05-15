@@ -354,7 +354,7 @@ function DealMessage({ deal, idx, userRole }: { deal: any; idx: number; userRole
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {/* Profit */}
           <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: 1, color: isLocked ? 'transparent' : G.grn, filter: isLocked ? 'blur(8px)' : `drop-shadow(0 0 6px ${G.grn}66)`, lineHeight: 1 }}>
-            {deal.profit_amount ? `+${Number(deal.profit_amount).toLocaleString('cs-CZ')} Kč` : deal.sell_price ? `${Number(deal.sell_price).toLocaleString('cs-CZ')} Kč` : deal.source_name === 'Bazoš.cz' ? '→ Bazoš.cz' : '+??? Kč'}
+            {(() => { if (deal.profit_amount) return `+${Number(deal.profit_amount).toLocaleString('cs-CZ')} Kč`; if (deal.sell_price) return `${Number(deal.sell_price).toLocaleString('cs-CZ')} Kč`; const m = deal.title.match(/(\d[\d\s]*?)\s*Kč|:\s*(\d[\d\s]{1,8})\s*$/); if (m) return `${parseInt((m[1]||m[2]).replace(/\s/g,''), 10).toLocaleString('cs-CZ')} Kč`; return deal.source_name === 'Bazoš.cz' ? '→ Bazoš.cz' : '+??? Kč'; })()}
           </div>
 
           {deal.is_hot && (
