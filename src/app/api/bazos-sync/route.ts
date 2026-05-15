@@ -17,6 +17,20 @@ const KATEGORIE: Record<string, { rub: string; emoji: string; label: string }> =
   ostatni:  { rub: 'os', emoji: '📦', label: 'Ostatní' },
 }
 
+async function fetchOgImage(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { 
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NajdiDeal/1.0)' },
+      signal: AbortSignal.timeout(4000)
+    })
+    if (!res.ok) return null
+    const html = await res.text()
+    const match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+      || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)
+    return match?.[1] ?? null
+  } catch { return null }
+}
+
 function generateSlug(title: string): string {
   return title
     .toLowerCase()
@@ -75,6 +89,7 @@ export async function POST(req: Request) {
       const { data: existing } = await supabase.from('deals').select('id').eq('source_url', item.link).single()
       if (existing) { skipped++; continue }
 
+      const ogImage = await fetchOgImage(item.link)
       const { error } = await supabase.from('deals').insert({
         title: item.title.slice(0, 200),
         slug: generateSlug(item.title),
@@ -84,6 +99,7 @@ export async function POST(req: Request) {
         access_level: 'free' as const,
         emoji: kat.emoji,
         source_url: item.link,
+        image_url: ogImage,
         source_name: 'Bazoš.cz',
         sell_price: item.price,
         tags: [kat.label, 'bazoš', 'bazar'],
