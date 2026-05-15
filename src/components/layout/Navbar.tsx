@@ -55,9 +55,19 @@ export default function Navbar() {
           </ul>
 
           {/* DESKTOP CTA */}
-          <Link href="/dashboard" className="nav-desktop-links" style={{ fontFamily: 'Syne Mono, monospace', fontSize: 9, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', background: G.g, color: '#000', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', boxShadow: '0 4px 16px rgba(240,180,41,.25)', whiteSpace: 'nowrap' }}>
-            Přejít do aplikace →
-          </Link>
+          <div className="nav-desktop-links" style={{ alignItems: 'center', gap: 10 }}>
+            <Link href="/kontakt" style={{ position: 'relative', fontFamily: 'Syne Mono, monospace', fontSize: 9, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: G.mut, padding: '10px 16px', borderRadius: 8, textDecoration: 'none', border: '1px solid rgba(255,255,255,.08)', background: 'rgba(255,255,255,.03)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 7, transition: 'all .2s' }}
+              onMouseEnter={e => { (e.currentTarget as any).style.borderColor = 'rgba(240,180,41,.3)'; (e.currentTarget as any).style.color = G.g }}
+              onMouseLeave={e => { (e.currentTarget as any).style.borderColor = 'rgba(255,255,255,.08)'; (e.currentTarget as any).style.color = G.mut }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676', flexShrink: 0, display: 'inline-block' }} />
+              💬 Podpora
+            </Link>
+            <Link href="/dashboard" style={{ fontFamily: 'Syne Mono, monospace', fontSize: 9, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', background: `linear-gradient(135deg, ${G.g}, #C8880A)`, color: '#000', padding: '10px 22px', borderRadius: 8, textDecoration: 'none', boxShadow: '0 4px 20px rgba(240,180,41,.3), 0 0 0 1px rgba(240,180,41,.15)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'all .25s' }}
+              onMouseEnter={e => { (e.currentTarget as any).style.boxShadow = '0 8px 32px rgba(240,180,41,.5), 0 0 0 1px rgba(240,180,41,.3)'; (e.currentTarget as any).style.transform = 'translateY(-1px)' }}
+              onMouseLeave={e => { (e.currentTarget as any).style.boxShadow = '0 4px 20px rgba(240,180,41,.3), 0 0 0 1px rgba(240,180,41,.15)'; (e.currentTarget as any).style.transform = '' }}>
+              Přejít do aplikace →
+            </Link>
+          </div>
 
           {/* MOBILE RIGHT */}
           <div className="nav-hamburger" style={{ alignItems: 'center', gap: 10 }}>
