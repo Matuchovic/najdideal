@@ -1,7 +1,8 @@
 'use client'
+import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import NajdiLogo from '@/components/ui/NajdiLogo'
 import NajdiBot from '@/components/ui/NajdiBot'
-import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 
 
@@ -487,6 +488,69 @@ function PhoneMockup() {
 
       {/* shadow */}
       <div style={{ position: 'absolute', bottom: -38, left: '50%', transform: 'translateX(-50%)', width: 210, height: 26, background: 'rgba(0,0,0,.62)', borderRadius: '50%', filter: 'blur(20px)', animation: 'phoneShadow 7s ease-in-out infinite' }} />
+    </div>
+  )
+}
+
+
+function ChatWidget() {
+  const supabase = createClient()
+  const [open, setOpen] = useState(false)
+  const [messages, setMessages] = useState<any[]>([])
+  const [input, setInput] = useState('')
+  const [sessionId] = useState(() => Math.random().toString(36).slice(2))
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const G = { g:'#F0B429', gl:'rgba(255,255,255,.06)', br:'rgba(255,255,255,.1)', wht:'#F0EBE1', mut:'rgba(240,235,225,.5)', bg:'#0D0D18' }
+
+  useEffect(() => {
+    if (!open) return
+    const ch = supabase.channel('chat-' + sessionId)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
+        setMessages(prev => [...prev, payload.new])
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [open, sessionId])
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+  async function send() {
+    if (!input.trim()) return
+    const msg = input.trim()
+    setInput('')
+    await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: msg })
+  }
+
+  return (
+    <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, fontFamily: 'system-ui,sans-serif' }}>
+      {open && (
+        <div style={{ width: 340, height: 460, background: G.bg, border: `1px solid ${G.br}`, borderRadius: 20, display: 'flex', flexDirection: 'column', marginBottom: 12, boxShadow: '0 24px 64px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+          <div style={{ padding: '14px 16px', background: 'rgba(240,180,41,.08)', borderBottom: `1px solid ${G.br}`, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676' }} />
+            <span style={{ fontFamily: 'Syne Mono,monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.g }}>Podpora online</span>
+            <button onClick={() => setOpen(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: G.mut, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ alignSelf: 'flex-start', maxWidth: '85%', padding: '10px 14px', borderRadius: '14px 14px 14px 4px', background: G.gl, color: G.wht, fontSize: 13, lineHeight: 1.5 }}>
+              Ahoj! 👋 Jak ti můžu pomoci?
+            </div>
+            {messages.map((m, i) => (
+              <div key={i} style={{ alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%', padding: '10px 14px', borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px', background: m.role === 'user' ? G.g : G.gl, color: m.role === 'user' ? '#000' : G.wht, fontSize: 13, lineHeight: 1.5 }}>
+                {m.message}
+              </div>
+            ))}
+            <div ref={bottomRef} />
+          </div>
+          <div style={{ padding: '12px', borderTop: `1px solid ${G.br}`, display: 'flex', gap: 8 }}>
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
+              placeholder="Napiš zprávu..." style={{ flex: 1, background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '9px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
+            <button onClick={send} style={{ background: G.g, color: '#000', border: 'none', borderRadius: 8, padding: '9px 14px', fontWeight: 700, cursor: 'pointer', fontSize: 16 }}>↑</button>
+          </div>
+        </div>
+      )}
+      <button onClick={() => setOpen(!open)} style={{ width: 56, height: 56, borderRadius: '50%', background: G.g, border: 'none', cursor: 'pointer', fontSize: 24, boxShadow: '0 8px 28px rgba(240,180,41,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform .2s', transform: open ? 'scale(.9)' : 'scale(1)' }}>
+        {open ? '×' : '💬'}
+      </button>
     </div>
   )
 }
@@ -1000,6 +1064,9 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* LIVE CHAT WIDGET */}
+      <ChatWidget />
       <NajdiBot mood="happy" />
     </div>
   )
