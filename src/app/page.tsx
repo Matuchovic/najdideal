@@ -557,6 +557,12 @@ function ChatWidget() {
   const isOpen = step !== 'closed'
   const showMinimized = minimized && step !== 'closed'
 
+  useEffect(() => {
+    const handler = () => { setStep('form'); setMinimized(false) }
+    window.addEventListener('openChat', handler)
+    return () => window.removeEventListener('openChat', handler)
+  }, [])
+
   const statusDot = (color: string, pulse = false) => (
     <div style={{ width: 7, height: 7, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}`, animation: pulse ? 'cwPulse 1.4s infinite' : 'none', flexShrink: 0 }} />
   )
@@ -784,10 +790,10 @@ function ChatWidget() {
         </div>
       )}
 
-      {/* FAB */}
-      <button className="cw-fab" onClick={() => { if (isOpen) { setStep('closed'); setMinimized(false) } else setStep('form') }} style={{ width: 62, height: 62, borderRadius: '50%', background: isOpen ? 'rgba(255,255,255,.07)' : 'linear-gradient(135deg,#F0B429,#C8880A)', border: isOpen ? '1px solid rgba(255,255,255,.1)' : 'none', cursor: 'pointer', fontSize: isOpen ? 22 : 26, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isOpen ? '0 4px 20px rgba(0,0,0,.3)' : '0 8px 32px rgba(240,180,41,.45), 0 0 0 10px rgba(240,180,41,.07)', transition: 'all .3s cubic-bezier(.34,1.56,.64,1)', color: isOpen ? 'rgba(240,235,225,.5)' : '#000' }}>
-        {isOpen ? '×' : '💬'}
-      </button>
+      {/* Close button - only when open */}
+      {isOpen && (
+        <button onClick={() => { setStep('closed'); setMinimized(false) }} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.1)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(240,235,225,.5)', transition: 'all .2s' }}>×</button>
+      )}
     </div>
   )
 }
