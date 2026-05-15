@@ -251,7 +251,6 @@ export default function AdminDashboard() {
           {chatCount > 0 && <span style={{ position: 'absolute', top: -6, right: -6, width: 18, height: 18, borderRadius: '50%', background: '#FF3B5C', color: '#fff', fontSize: 9, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{chatCount}</span>}
         </Link>
       </div>
-      </div>
 
       {/* ── OVERVIEW TAB ── */}
       {activeTab === 'overview' && (
