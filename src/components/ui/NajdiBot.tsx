@@ -250,60 +250,108 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
       <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 16 }}>
 
         {open && (
-          <div className="ndb-p" style={{ background: 'rgba(10,8,20,.97)', border: '1px solid rgba(240,180,41,.3)', borderRadius: 20, padding: 16, width: 280, boxShadow: '0 20px 60px rgba(0,0,0,.6)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, paddingBottom: 12, borderBottom: '1px solid rgba(255,255,255,.06)' }}>
-              <div style={{ width: 7, height: 7, borderRadius: '50%', background: listening ? '#FF3B5C' : '#00E676', boxShadow: `0 0 8px ${listening ? '#FF3B5C' : '#00E676'}` }} />
-              <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(240,235,225,.5)' }}>
-                {listening ? 'Naslouchám...' : 'ND Bot · Online'}
-              </span>
-              <button onClick={() => setOpen(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(240,235,225,.3)', cursor: 'pointer', fontSize: 18 }}>×</button>
+          <div className="ndb-p" style={{ background: 'rgba(6,4,16,.98)', border: '1px solid rgba(240,180,41,.2)', borderRadius: 24, width: 320, boxShadow: '0 32px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04)', overflow: 'hidden' }}>
+
+            {/* Gold top line */}
+            <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #F0B429 30%, #FFD97D 50%, #F0B429 70%, transparent)' }} />
+
+            {/* Header */}
+            <div style={{ padding: '14px 16px', background: 'linear-gradient(180deg, rgba(240,180,41,.06) 0%, transparent 100%)', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ position: 'relative' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 11, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🤖</div>
+                <div style={{ position: 'absolute', bottom: -2, right: -2, width: 10, height: 10, borderRadius: '50%', background: listening ? '#FF3B5C' : '#00E676', border: '2px solid #060410', boxShadow: `0 0 6px ${listening ? '#FF3B5C' : '#00E676'}` }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 11, fontWeight: 700, color: '#F0EBE1', letterSpacing: .5 }}>ND Asistent</div>
+                <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 8, color: listening ? '#FF3B5C' : '#00E676', letterSpacing: 1, textTransform: 'uppercase' }}>{listening ? '🔴 Naslouchám...' : '● Online · AI powered'}</div>
+              </div>
+              <button onClick={() => setOpen(false)} style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.07)', color: 'rgba(240,235,225,.4)', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
             </div>
 
-            <div style={{ background: 'rgba(240,180,41,.05)', border: '1px solid rgba(240,180,41,.15)', borderRadius: 12, padding: '10px 14px', marginBottom: 10, minHeight: 52, display: 'flex', alignItems: 'center' }}>
-              <p style={{ fontFamily: "'Syne',sans-serif", fontSize: 12, color: '#F0EBE1', lineHeight: 1.6, margin: 0 }}>
-                {message}<span style={{ animation: 'ndTP 1s infinite', fontFamily: 'monospace' }}> █</span>
+            <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent)' }} />
+
+            {/* AI Message */}
+            <div style={{ padding: '12px 16px', background: 'rgba(240,180,41,.03)', borderBottom: '1px solid rgba(240,180,41,.06)', minHeight: 56, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#F0B429', flexShrink: 0, animation: 'ndTP 2s infinite' }} />
+              <p style={{ fontFamily: "'Syne',sans-serif", fontSize: 12, color: '#F0EBE1', lineHeight: 1.65, margin: 0 }}>
+                {message}<span style={{ animation: 'ndTP 1s infinite', fontFamily: 'monospace', color: '#F0B429' }}>▋</span>
               </p>
             </div>
 
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                <button onClick={toggleVoice} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 20, border: `1px solid ${listening ? 'rgba(255,59,92,.5)' : 'rgba(240,180,41,.3)'}`, background: listening ? 'rgba(255,59,92,.15)' : 'rgba(240,180,41,.08)', cursor: 'pointer', fontFamily: "'Syne Mono',monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: listening ? '#FF3B5C' : '#F0B429', transition: 'all .2s' }}>
-                  <span style={{ fontSize: 14 }}>{listening ? '⏹' : '🎤'}</span>
-                  {listening ? 'Zastav' : 'Mluv se mnou'}
-                </button>
-                {listening && (
-                  <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 20 }}>
-                    {[0,1,2,3].map(i => (
-                      <div key={i} style={{ width: 3, borderRadius: 2, background: '#FF3B5C', height: `${8 + i * 3}px`, animation: `ndWV ${.3 + i * .1}s ease-in-out infinite`, animationDelay: `${i * .08}s` }} />
-                    ))}
-                  </div>
+            {/* Voice */}
+            <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+              <button onClick={toggleVoice} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px', borderRadius: 12, border: `1px solid ${listening ? 'rgba(255,59,92,.4)' : 'rgba(240,180,41,.25)'}`, background: listening ? 'rgba(255,59,92,.1)' : 'rgba(240,180,41,.06)', cursor: 'pointer', fontFamily: "'Syne Mono',monospace", fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: listening ? '#FF3B5C' : '#F0B429', transition: 'all .2s' }}>
+                {listening ? (
+                  <>
+                    <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 16 }}>
+                      {[0,1,2,3,4].map(i => <div key={i} style={{ width: 3, borderRadius: 2, background: '#FF3B5C', height: `${6 + i * 2}px`, animation: `ndWV ${.25 + i * .08}s ease-in-out infinite`, animationDelay: `${i * .06}s` }} />)}
+                    </div>
+                    Zastav nahrávání
+                  </>
+                ) : (
+                  <><span style={{ fontSize: 16 }}>🎤</span> Mluv se mnou</>
                 )}
-              </div>
-              {transcript && (
-                <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 9, color: 'rgba(240,235,225,.4)', padding: '4px 8px', background: 'rgba(255,255,255,.02)', borderRadius: 6 }}>
-                  {transcript}
-                </div>
-              )}
-              {!voiceSupported && (
-                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 10, color: 'rgba(255,107,53,.7)', marginTop: 4 }}>
-                  🎤 Hlasový vstup vyžaduje Chrome nebo Safari
-                </div>
-              )}
+              </button>
+              {transcript && <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 9, color: 'rgba(240,235,225,.35)', padding: '6px 8px', marginTop: 6, background: 'rgba(255,255,255,.02)', borderRadius: 8, fontStyle: 'italic' }}>{transcript}</div>}
             </div>
 
-            <button onClick={() => speak('J.A.R.V.I.S online. Připraven k asistenci.')} style={{ width:'100%', padding:'8px', marginBottom:8, background:'rgba(0,230,118,.1)', border:'1px solid rgba(0,230,118,.3)', borderRadius:10, color:'#00E676', cursor:'pointer', fontSize:10 }}>
-              🔊 Test hlasu
-            </button>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {[{ href: '/deals', icon: '💰', label: 'Zobrazit dealy' }, { href: '/vip', icon: '👑', label: 'VIP přístup' }, { href: '/dashboard', icon: '🏠', label: 'Dashboard' }].map(l => (
-                <a key={l.href} href={l.href} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', background: 'rgba(255,255,255,.02)', border: '1px solid rgba(255,255,255,.05)', borderRadius: 9, textDecoration: 'none' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,.05)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(240,180,41,.2)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,.02)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,.05)' }}>
-                  <span style={{ fontSize: 14 }}>{l.icon}</span>
-                  <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 11, color: 'rgba(240,235,225,.6)' }}>{l.label}</span>
-                  <span style={{ marginLeft: 'auto', color: 'rgba(240,235,225,.2)' }}>→</span>
-                </a>
-              ))}
+            {/* Quick actions grid */}
+            <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+              <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 8, color: 'rgba(240,235,225,.3)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>Rychlé akce</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+                {[
+                  { icon: '💰', label: 'Dnešní dealy', href: '/dashboard', color: '#F0B429' },
+                  { icon: '👑', label: 'VIP členství', href: '/vip', color: '#9B5DE5' },
+                  { icon: '📊', label: 'Moje profity', href: '/dashboard', color: '#00E676' },
+                  { icon: '🔔', label: 'Nastavit alert', href: '/dashboard', color: '#4D9FFF' },
+                  { icon: '🏠', label: 'Dashboard', href: '/dashboard', color: '#F0B429' },
+                  { icon: '💬', label: 'Live podpora', action: 'chat', color: '#00E676' },
+                ].map((item, i) => (
+                  item.href ? (
+                    <a key={i} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '8px 10px', background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)', borderRadius: 10, textDecoration: 'none', transition: 'all .15s' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = `rgba(${item.color === '#F0B429' ? '240,180,41' : item.color === '#00E676' ? '0,230,118' : item.color === '#4D9FFF' ? '77,159,255' : '155,93,229'},.07)`; (e.currentTarget as HTMLElement).style.borderColor = `${item.color}30` }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,.03)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,.06)' }}>
+                      <span style={{ fontSize: 14 }}>{item.icon}</span>
+                      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 8, color: 'rgba(240,235,225,.6)', letterSpacing: .5 }}>{item.label}</span>
+                      <span style={{ marginLeft: 'auto', color: item.color, fontSize: 10 }}>→</span>
+                    </a>
+                  ) : (
+                    <button key={i} onClick={() => window.dispatchEvent(new Event('openChat'))} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '8px 10px', background: 'rgba(0,230,118,.05)', border: '1px solid rgba(0,230,118,.15)', borderRadius: 10, cursor: 'pointer', transition: 'all .15s' }}>
+                      <span style={{ fontSize: 14 }}>{item.icon}</span>
+                      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 8, color: '#00E676', letterSpacing: .5 }}>{item.label}</span>
+                      <span style={{ marginLeft: 'auto', color: '#00E676', fontSize: 10 }}>→</span>
+                    </button>
+                  )
+                ))}
+              </div>
+            </div>
+
+            {/* AI Tips */}
+            <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+              <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 8, color: 'rgba(240,235,225,.3)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>🤖 AI Tipy dne</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                {[
+                  { tip: 'iPhone 15 Pro na Bazosi pod cenou — AI skóre 97%', tag: '🔥 HOT', color: '#F0B429' },
+                  { tip: 'Nejlepší čas prodávat elektroniku: pondělí ráno', tag: '💡 TIP', color: '#4D9FFF' },
+                  { tip: 'VIP členové vydělali průměrně 4 235 Kč tento měsíc', tag: '👑 VIP', color: '#9B5DE5' },
+                ].map((t, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 10px', background: 'rgba(255,255,255,.02)', borderRadius: 10, border: '1px solid rgba(255,255,255,.04)' }}>
+                    <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 7, color: t.color, fontWeight: 700, whiteSpace: 'nowrap', marginTop: 1 }}>{t.tag}</span>
+                    <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 10, color: 'rgba(240,235,225,.55)', lineHeight: 1.5 }}>{t.tip}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Voice test + stats */}
+            <div style={{ padding: '10px 16px 14px', display: 'flex', gap: 8 }}>
+              <button onClick={() => speak('Zdravím! Jsem ND Asistent. Jsem zde aby jsem ti pomohl najít nejlepší dealy v České republice a Slovensku.')} style={{ flex: 1, padding: '8px', background: 'rgba(0,230,118,.07)', border: '1px solid rgba(0,230,118,.2)', borderRadius: 10, color: '#00E676', cursor: 'pointer', fontFamily: "'Syne Mono',monospace", fontSize: 8, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                {speaking ? '🔊 Mluvím...' : '🔊 Test hlasu'}
+              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4px 10px', background: 'rgba(255,255,255,.02)', borderRadius: 10, border: '1px solid rgba(255,255,255,.05)' }}>
+                <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 13, fontWeight: 700, color: '#F0B429' }}>2341</span>
+                <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 7, color: 'rgba(240,235,225,.3)', letterSpacing: .5 }}>ČLENŮ</span>
+              </div>
             </div>
           </div>
         )}
