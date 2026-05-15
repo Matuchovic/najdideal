@@ -250,7 +250,7 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
       <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 16 }}>
 
         {open && (
-          <div className="ndb-p" style={{ background: 'rgba(6,4,16,.98)', border: '1px solid rgba(240,180,41,.2)', borderRadius: 24, width: 300, maxHeight: 'calc(100vh - 120px)', overflowY: 'auto', overflowX: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04)' }}>
+          <div className="ndb-p" style={{ background: 'rgba(6,4,16,.98)', border: '1px solid rgba(240,180,41,.2)', borderRadius: 24, width: 300, maxHeight: '480px', overflowY: 'auto', overflowX: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04)' }}>
 
             {/* Gold top line */}
             <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #F0B429 30%, #FFD97D 50%, #F0B429 70%, transparent)' }} />
@@ -322,23 +322,6 @@ export default function NajdiBot({ mood = 'happy', autoTips = true }: NajdiBotPr
                       <span style={{ marginLeft: 'auto', color: '#00E676', fontSize: 10 }}>→</span>
                     </button>
                   )
-                ))}
-              </div>
-            </div>
-
-            {/* AI Tips */}
-            <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
-              <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: 8, color: 'rgba(240,235,225,.3)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>🤖 AI Tipy dne</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {[
-                  { tip: 'iPhone 15 Pro na Bazosi pod cenou — AI skóre 97%', tag: '🔥 HOT', color: '#F0B429' },
-                  { tip: 'Nejlepší čas prodávat elektroniku: pondělí ráno', tag: '💡 TIP', color: '#4D9FFF' },
-                  { tip: 'VIP členové vydělali průměrně 4 235 Kč tento měsíc', tag: '👑 VIP', color: '#9B5DE5' },
-                ].map((t, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 10px', background: 'rgba(255,255,255,.02)', borderRadius: 10, border: '1px solid rgba(255,255,255,.04)' }}>
-                    <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: 7, color: t.color, fontWeight: 700, whiteSpace: 'nowrap', marginTop: 1 }}>{t.tag}</span>
-                    <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 10, color: 'rgba(240,235,225,.55)', lineHeight: 1.5 }}>{t.tip}</span>
-                  </div>
                 ))}
               </div>
             </div>
