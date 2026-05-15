@@ -1,8 +1,6 @@
 'use client'
 import { useState } from 'react'
 
-export const metadata = { title: 'Kontakt', description: 'Kontaktuj tým NajdiDeal. Jsme tu pro tebe.' }
-
 
 export default function KontaktPage() {
   const [sent, setSent] = useState(false)

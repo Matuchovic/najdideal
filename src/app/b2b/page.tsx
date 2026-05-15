@@ -2,8 +2,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-export const metadata = { title: 'Pro firmy', description: 'NajdiDeal pro firmy a podnikatele. Scaluj svůj business.' }
-
 
 const G = {
   gold:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5',

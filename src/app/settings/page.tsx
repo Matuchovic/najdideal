@@ -5,8 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { User, Crown, Bell, Shield, LogOut, Copy, Check, ChevronRight, Clock, Star, Zap, Mail, Edit2 } from 'lucide-react'
 import Link from 'next/link'
 
-export const metadata = { title: 'Nastavení účtu', description: 'Spravuj své nastavení, notifikace a bezpečnost účtu.' }
-
 
 const G = {
   gold:'#F0B429', gold2:'rgba(240,180,41,.08)', gold3:'rgba(240,180,41,.06)', gold4:'rgba(240,180,41,.18)',

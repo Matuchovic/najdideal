@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Edit2, Trash2, CheckCircle, Clock, Eye, MapPin, AlertCircle, MessageSquare } from 'lucide-react'
 
-export const metadata = { title: 'Moje inzeráty', description: 'Přehled tvých aktivních inzerátů na marketplace.' }
-
 
 const G = {
   gold:'#F0B429', gold2:'rgba(240,180,41,.08)', gold4:'rgba(240,180,41,.18)',

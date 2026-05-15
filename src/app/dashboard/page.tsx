@@ -7,8 +7,6 @@ import OnboardingTour from '@/components/ui/OnboardingTour'
 import { Crown, TrendingUp, Bookmark, Bell, ArrowRight, Flame, Zap, Activity, Eye, Clock, Lock, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
-export const metadata = { title: 'Dashboard', description: 'Tvůj přehled dealů, profitů a příležitostí.' }
-
 
 /* ═══════════ DESIGN TOKENS ═══════════ */
 const G = {

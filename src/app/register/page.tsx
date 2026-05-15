@@ -6,8 +6,6 @@ import { Eye, EyeOff, ArrowRight, CheckCircle } from 'lucide-react'
 import { register } from '@/lib/supabase/actions'
 import toast from 'react-hot-toast'
 
-export const metadata = { title: 'Registrace', description: 'Vytvoř si účet zdarma a začni vydělávat na dealech.' }
-
 
 const PERKS = ['Přístup k free dealům každý den', 'Live alerty a oznámení', 'Komunita 2 341+ členů', 'Upgrade na VIP kdykoliv']
 

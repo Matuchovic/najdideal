@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { MessageSquare, ArrowRight, Clock, Eye } from 'lucide-react'
 
-export const metadata = { title: 'Zprávy', description: 'Tvoje zprávy a konverzace na marketplace.' }
-
 
 const G = {
   gold:'#F0B429', grn:'#00E676', blu:'#4D9FFF',

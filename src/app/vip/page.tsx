@@ -3,8 +3,6 @@ import Link from 'next/link'
 import NajdiBot from '@/components/ui/NajdiBot'
 import { useState } from 'react'
 
-export const metadata = { title: 'VIP Členství', description: 'Získej VIP přístup k nejlepším dealům dřív než ostatní. Od 299 Kč/měsíc.' }
-
 
 const plans = [
   { tier: 'ZDARMA', price: '0', per: 'navždy', color: 'rgba(240,235,225,.4)', desc: 'Pro vyzkoušení', features: ['Základní nabídky každý den', 'Zobrazení všech inzerátů', 'Přístup k marketplace'], locked: ['Okamžitá upozornění', 'Kontakt na prodejce', 'Přidávání inzerátů', 'Uložená hledání', 'Hlídač ceny'], featured: false },
