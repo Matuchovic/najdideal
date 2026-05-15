@@ -17,6 +17,16 @@ const KATEGORIE: Record<string, { rub: string; emoji: string; label: string }> =
   ostatni:  { rub: 'os', emoji: '📦', label: 'Ostatní' },
 }
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 80) + '-' + Date.now().toString(36)
+}
+
 function parsePrice(text: string): number | null {
   const match = text.match(/(\d[\d\s]*)\s*(?:Kč|kč|KC|kc)/i)
   if (!match) return null
@@ -67,6 +77,7 @@ export async function POST(req: Request) {
 
       const { error } = await supabase.from('deals').insert({
         title: item.title.slice(0, 200),
+        slug: generateSlug(item.title),
         description: item.description,
         category: 'marketplace_flip' as const,
         status: 'active' as const,
