@@ -105,6 +105,18 @@ export default function AdminDashboard() {
   const [scanResult, setScanResult] = useState<any>(null)
   const [scanning, setScanning] = useState(false)
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'email' | 'logs'>('overview')
+  const [chatCount, setChatCount] = useState(0)
+
+  useEffect(() => {
+    const sb2 = createClient()
+    sb2.from('chat_messages').select('session_id', { count: 'exact' }).eq('role', 'user').then(({ count }) => setChatCount(count || 0))
+    const ch = sb2.channel('admin-chat-notify')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, (p) => {
+        if (p.new.role === 'user') setChatCount(prev => prev + 1)
+      })
+      .subscribe()
+    return () => { sb2.removeChannel(ch) }
+  }, [])
 
   useEffect(() => {
     const load = async () => {
@@ -219,20 +231,26 @@ export default function AdminDashboard() {
           {scanResult.error ? `✗ ${scanResult.error}` : `✓ Naskenováno ${scanResult.scanned} · Nalezeno ${scanResult.found} · Přidáno ${scanResult.inserted} nových dealů`}
         </div>
       )}
-
-      {/* TABS */}
-      <div style={{ display: 'flex', gap: 4, background: G.gl, border: `1px solid ${G.br}`, borderRadius: 12, padding: 4 }}>
-        {TABS.map(tab => (
-          <button key={tab.id} className="admin-tab" onClick={() => setActiveTab(tab.id)} style={{
-            flex: 1, padding: '8px 12px', borderRadius: 9,
-            background: activeTab === tab.id ? 'rgba(240,180,41,.1)' : 'transparent',
-            border: activeTab === tab.id ? `1px solid ${G.gold}33` : '1px solid transparent',
-            fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
-            color: activeTab === tab.id ? G.gold : G.mut,
-          }}>
-            {tab.label}
-          </button>
-        ))}
+      {/* TABS + CHAT BADGE */}
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 4, background: G.gl, border: `1px solid ${G.br}`, borderRadius: 12, padding: 4, flex: 1 }}>
+          {TABS.map(tab => (
+            <button key={tab.id} className="admin-tab" onClick={() => setActiveTab(tab.id)} style={{
+              flex: 1, padding: '8px 12px', borderRadius: 9,
+              background: activeTab === tab.id ? 'rgba(240,180,41,.1)' : 'transparent',
+              border: activeTab === tab.id ? `1px solid ${G.gold}33` : '1px solid transparent',
+              fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
+              color: activeTab === tab.id ? G.gold : G.mut,
+            }}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <Link href="/admin/chat" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 16px', background: chatCount > 0 ? 'rgba(240,180,41,.12)' : G.gl, border: `1px solid ${chatCount > 0 ? G.gold + '44' : G.br}`, borderRadius: 12, textDecoration: 'none', fontFamily: "'Syne Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: chatCount > 0 ? G.gold : G.mut }}>
+          💬 Chat
+          {chatCount > 0 && <span style={{ position: 'absolute', top: -6, right: -6, width: 18, height: 18, borderRadius: '50%', background: '#FF3B5C', color: '#fff', fontSize: 9, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{chatCount}</span>}
+        </Link>
+      </div>
       </div>
 
       {/* ── OVERVIEW TAB ── */}
