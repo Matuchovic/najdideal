@@ -495,67 +495,118 @@ function PhoneMockup() {
 
 function ChatWidget() {
   const supabase = createClient()
-  const [open, setOpen] = useState(false)
+  const [step, setStep] = useState<'closed'|'form'|'waiting'|'chat'>('closed')
+  const [email, setEmail] = useState('')
+  const [request, setRequest] = useState('')
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState('')
   const [sessionId] = useState(() => Math.random().toString(36).slice(2))
   const bottomRef = useRef<HTMLDivElement>(null)
-  const G = { g:'#F0B429', gl:'rgba(255,255,255,.06)', br:'rgba(255,255,255,.1)', wht:'#F0EBE1', mut:'rgba(240,235,225,.5)', bg:'#0D0D18' }
+  const G = { g:'#F0B429', gl:'rgba(255,255,255,.06)', br:'rgba(255,255,255,.12)', wht:'#F0EBE1', mut:'rgba(240,235,225,.5)', bg:'#0D0D18' }
 
   useEffect(() => {
-    if (!open) return
+    if (step !== 'waiting' && step !== 'chat') return
     const ch = supabase.channel('chat-' + sessionId)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
-        setMessages(prev => [...prev, payload.new])
+        const m = payload.new as any
+        if (m.role === 'admin') setStep('chat')
+        setMessages(prev => [...prev, m])
       })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
-  }, [open, sessionId])
+  }, [step, sessionId])
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+  async function submitForm() {
+    if (!email.trim() || !request.trim()) return
+    setStep('waiting')
+    await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: `📧 ${email} | ${request}` })
+  }
 
   async function send() {
     if (!input.trim()) return
     const msg = input.trim()
     setInput('')
+    const newMsg = { id: Date.now(), session_id: sessionId, role: 'user', message: msg }
+    setMessages(prev => [...prev, newMsg])
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: msg })
+  }
+
+  function toggle() {
+    if (step === 'closed') setStep('form')
+    else setStep('closed')
   }
 
   return (
     <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 9999, fontFamily: 'system-ui,sans-serif' }}>
-      {open && (
-        <div style={{ width: 340, height: 460, background: G.bg, border: `1px solid ${G.br}`, borderRadius: 20, display: 'flex', flexDirection: 'column', marginBottom: 12, boxShadow: '0 24px 64px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+      {step !== 'closed' && (
+        <div style={{ width: 340, background: G.bg, border: `1px solid ${G.br}`, borderRadius: 20, marginBottom: 12, boxShadow: '0 24px 64px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+          {/* Header */}
           <div style={{ padding: '14px 16px', background: 'rgba(240,180,41,.08)', borderBottom: `1px solid ${G.br}`, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676' }} />
-            <span style={{ fontFamily: 'Syne Mono,monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.g }}>Podpora online</span>
-            <button onClick={() => setOpen(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: G.mut, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: step === 'waiting' ? '#F0B429' : '#00E676', boxShadow: `0 0 8px ${step === 'waiting' ? '#F0B429' : '#00E676'}`, animation: step === 'waiting' ? 'ping 1.5s infinite' : 'none' }} />
+            <span style={{ fontFamily: 'Syne Mono,monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.g, flex: 1 }}>
+              {step === 'form' ? 'Podpora' : step === 'waiting' ? 'Hledáme operátora...' : 'Operátor online'}
+            </span>
+            <button onClick={() => setStep('closed')} style={{ background: 'none', border: 'none', color: G.mut, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
           </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ alignSelf: 'flex-start', maxWidth: '85%', padding: '10px 14px', borderRadius: '14px 14px 14px 4px', background: G.gl, color: G.wht, fontSize: 13, lineHeight: 1.5 }}>
-              Ahoj! 👋 Jak ti můžu pomoci?
+
+          {/* Form */}
+          {step === 'form' && (
+            <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <p style={{ fontSize: 12, color: G.mut, margin: 0, lineHeight: 1.6 }}>Zadej svůj email a popis požadavku. Živý operátor se připojí co nejdříve.</p>
+              <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Tvůj email" type="email"
+                style={{ background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '10px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
+              <textarea value={request} onChange={e => setRequest(e.target.value)} placeholder="Popis tvého požadavku..." rows={3}
+                style={{ background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '10px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit', resize: 'none' }} />
+              <button onClick={submitForm} style={{ background: G.g, color: '#000', border: 'none', borderRadius: 8, padding: '12px', fontFamily: 'Syne Mono,monospace', fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', cursor: 'pointer' }}>
+                Kontaktovat podporu →
+              </button>
             </div>
-            {messages.map((m, i) => (
-              <div key={i} style={{ alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%', padding: '10px 14px', borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px', background: m.role === 'user' ? G.g : G.gl, color: m.role === 'user' ? '#000' : G.wht, fontSize: 13, lineHeight: 1.5 }}>
-                {m.message}
+          )}
+
+          {/* Waiting */}
+          {step === 'waiting' && (
+            <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+              <div style={{ fontSize: 32, marginBottom: 16 }}>⏳</div>
+              <div style={{ fontFamily: 'Syne Mono,monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.g, marginBottom: 8 }}>Hledáme volného operátora</div>
+              <p style={{ fontSize: 12, color: G.mut, margin: 0, lineHeight: 1.6 }}>Obvyklá čekací doba je do 5 minut. Zůstaň na stránce.</p>
+              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 6 }}>
+                {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: G.g, opacity: 0.4, animation: `ping ${1 + i * 0.3}s infinite` }} />)}
               </div>
-            ))}
-            <div ref={bottomRef} />
-          </div>
-          <div style={{ padding: '12px', borderTop: `1px solid ${G.br}`, display: 'flex', gap: 8 }}>
-            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
-              placeholder="Napiš zprávu..." style={{ flex: 1, background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '9px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
-            <button onClick={send} style={{ background: G.g, color: '#000', border: 'none', borderRadius: 8, padding: '9px 14px', fontWeight: 700, cursor: 'pointer', fontSize: 16 }}>↑</button>
-          </div>
+            </div>
+          )}
+
+          {/* Chat */}
+          {step === 'chat' && (
+            <>
+              <div style={{ height: 300, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {messages.filter(m => !m.message.startsWith('📧')).map((m, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                    <div style={{ maxWidth: '80%', padding: '9px 13px', borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px', background: m.role === 'user' ? G.g : G.gl, color: m.role === 'user' ? '#000' : G.wht, fontSize: 13, lineHeight: 1.5 }}>
+                      {m.message}
+                    </div>
+                  </div>
+                ))}
+                <div ref={bottomRef} />
+              </div>
+              <div style={{ padding: '12px', borderTop: `1px solid ${G.br}`, display: 'flex', gap: 8 }}>
+                <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
+                  placeholder="Napiš zprávu..." style={{ flex: 1, background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '9px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
+                <button onClick={send} style={{ background: G.g, color: '#000', border: 'none', borderRadius: 8, padding: '9px 14px', fontWeight: 700, cursor: 'pointer', fontSize: 16 }}>↑</button>
+              </div>
+            </>
+          )}
         </div>
       )}
-      <button onClick={() => setOpen(!open)} style={{ width: 56, height: 56, borderRadius: '50%', background: G.g, border: 'none', cursor: 'pointer', fontSize: 24, boxShadow: '0 8px 28px rgba(240,180,41,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform .2s', transform: open ? 'scale(.9)' : 'scale(1)' }}>
-        {open ? '×' : '💬'}
+      <button onClick={toggle} style={{ width: 56, height: 56, borderRadius: '50%', background: G.g, border: 'none', cursor: 'pointer', fontSize: 22, boxShadow: '0 8px 28px rgba(240,180,41,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform .2s', transform: step !== 'closed' ? 'scale(.9)' : 'scale(1)' }}>
+        {step !== 'closed' ? '×' : '💬'}
       </button>
     </div>
   )
 }
 
-export default function HomePage() {
+export default function Homeexport default function HomePage() {
   const [aiStatus, setAiStatus] = useState('AI analyzuje 2 341 nabídek právě teď')
   const [online, setOnline] = useState(47)
   const [members, setMembers] = useState(2341)
