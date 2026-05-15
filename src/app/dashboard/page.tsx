@@ -337,9 +337,11 @@ function DealMessage({ deal, idx, userRole }: { deal: any; idx: number; userRole
         borderRadius: 2, opacity: hov ? 1 : 0.4, transition: 'opacity .3s',
       }} />
 
-      {/* Emoji */}
-      <div style={{ fontSize: 24, flexShrink: 0, width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,.04)', borderRadius: 10, border: '1px solid rgba(255,255,255,.06)' }}>
-        {deal.emoji || '💰'}
+      {/* Thumbnail / Emoji */}
+      <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: 10, border: '1px solid rgba(255,255,255,.06)', overflow: 'hidden', background: 'rgba(255,255,255,.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
+        {deal.image_url
+          ? <img src={deal.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          : (deal.emoji || '💰')}
       </div>
 
       {/* Content */}
