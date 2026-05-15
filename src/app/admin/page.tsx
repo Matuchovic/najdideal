@@ -156,6 +156,17 @@ export default function AdminDashboard() {
     load()
   }, [])
 
+  const runBazosSync = async (kategorie: string) => {
+    setBazosLoading(true)
+    setBazosResult(null)
+    try {
+      const res = await fetch('/api/bazos-sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kategorie }) })
+      const data = await res.json()
+      setBazosResult(data)
+    } catch { setBazosResult({ error: 'Chyba připojení' }) }
+    setBazosLoading(false)
+  }
+
   const runScanner = async () => {
     setScanning(true)
     try {
