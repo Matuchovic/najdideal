@@ -580,7 +580,11 @@ function ChatWidget() {
           {/* Chat */}
           {step === 'chat' && (
             <>
-              <div style={{ height: 300, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ padding: '8px 16px', background: 'rgba(0,230,118,.08)', borderBottom: '1px solid rgba(0,230,118,.15)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 6px #00E676' }} />
+                <span style={{ fontFamily: 'Syne Mono,monospace', fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#00E676' }}>Operátor připojen</span>
+              </div>
+              <div style={{ height: 260, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {messages.filter(m => !m.message.startsWith('📧')).map((m, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
                     <div style={{ maxWidth: '80%', padding: '9px 13px', borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px', background: m.role === 'user' ? G.g : G.gl, color: m.role === 'user' ? '#000' : G.wht, fontSize: 13, lineHeight: 1.5 }}>
