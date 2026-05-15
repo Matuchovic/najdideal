@@ -496,19 +496,21 @@ function PhoneMockup() {
 function ChatWidget() {
   const supabase = createClient()
   const [step, setStep] = useState<'closed'|'form'|'waiting'|'chat'>('closed')
+  const [minimized, setMinimized] = useState(false)
   const [email, setEmail] = useState('')
   const [request, setRequest] = useState('')
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState('')
   const [sessionId] = useState(() => Math.random().toString(36).slice(2))
   const bottomRef = useRef<HTMLDivElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (step !== 'waiting' && step !== 'chat') return
     const ch = supabase.channel('chat-' + sessionId)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
         const m = payload.new as any
-        if (m.role === 'admin') setStep('chat')
+        if (m.role === 'admin') { setStep('chat'); setMinimized(false) }
         setMessages(prev => [...prev, m])
       })
       .subscribe()
@@ -527,97 +529,133 @@ function ChatWidget() {
     if (!input.trim()) return
     const msg = input.trim()
     setInput('')
-    const newMsg = { id: Date.now(), session_id: sessionId, role: 'user', message: msg }
-    setMessages(prev => [...prev, newMsg])
+    setMessages(prev => [...prev, { id: Date.now(), role: 'user', message: msg }])
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: msg })
   }
 
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const isImage = file.type.startsWith('image/')
+    const label = isImage ? `🖼️ ${file.name}` : `📎 ${file.name}`
+    setMessages(prev => [...prev, { id: Date.now(), role: 'user', message: label }])
+    await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: label })
+    e.target.value = ''
+  }
+
   const isOpen = step !== 'closed'
+  const showMinimized = minimized && step !== 'closed'
+
+  const statusDot = (color: string, pulse = false) => (
+    <div style={{ width: 7, height: 7, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}`, animation: pulse ? 'cwPulse 1.4s infinite' : 'none', flexShrink: 0 }} />
+  )
 
   return (
-    <div style={{ position: 'fixed', bottom: 28, left: 28, zIndex: 9999, fontFamily: "'SF Pro Display', -apple-system, sans-serif" }}>
-      {isOpen && (
-        <div style={{ width: 360, marginBottom: 16, borderRadius: 24, overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.06)', background: 'linear-gradient(160deg, #0D0D1A 0%, #080810 100%)', animation: 'chatSlideUp .3s cubic-bezier(.34,1.56,.64,1)' }}>
-          <style>{`@keyframes chatSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}} @keyframes chatPulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1)}} @keyframes chatShimmer{0%{background-position:200% center}100%{background-position:-200% center}}`}</style>
+    <div style={{ position: 'fixed', bottom: 28, left: 28, zIndex: 9999 }}>
+      <style>{`
+        @keyframes cwSlideUp { from { opacity:0; transform:translateY(24px) scale(.96) } to { opacity:1; transform:translateY(0) scale(1) } }
+        @keyframes cwPulse { 0%,100% { opacity:.3; transform:scale(.7) } 50% { opacity:1; transform:scale(1) } }
+        @keyframes cwSpin { to { transform:rotate(360deg) } }
+        @keyframes cwFadeIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
+        @keyframes cwBounce { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-4px) } }
+        .cw-input:focus { border-color: rgba(240,180,41,.5) !important; box-shadow: 0 0 0 3px rgba(240,180,41,.07) !important; outline: none !important; }
+        .cw-msg { animation: cwFadeIn .22s ease; }
+        .cw-fab:hover { transform: scale(1.08) !important; }
+        .cw-icon-btn:hover { background: rgba(255,255,255,.1) !important; }
+        .cw-send:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(240,180,41,.5) !important; }
+        .cw-submit:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(240,180,41,.4) !important; }
+        .cw-scroll::-webkit-scrollbar { width: 3px; }
+        .cw-scroll::-webkit-scrollbar-track { background: transparent; }
+        .cw-scroll::-webkit-scrollbar-thumb { background: rgba(240,180,41,.2); border-radius: 10px; }
+      `}</style>
+      <input ref={fileRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={handleFile} style={{ display: 'none' }} />
 
-          {/* Header */}
-          <div style={{ padding: '20px 20px 16px', background: 'linear-gradient(135deg, rgba(240,180,41,.08) 0%, rgba(240,180,41,.02) 100%)', borderBottom: '1px solid rgba(255,255,255,.05)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg, transparent, rgba(240,180,41,.4), transparent)' }} />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ position: 'relative' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'linear-gradient(135deg, #F0B429, #C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: '0 4px 16px rgba(240,180,41,.3)' }}>👑</div>
-                  {step === 'chat' && <div style={{ position: 'absolute', bottom: -2, right: -2, width: 12, height: 12, borderRadius: '50%', background: '#00E676', border: '2px solid #080810', boxShadow: '0 0 8px #00E676' }} />}
-                </div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#F0EBE1', letterSpacing: .3 }}>NajdiDeal Podpora</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                    {step === 'waiting' ? (
-                      <>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#F0B429', animation: 'chatPulse 1.5s infinite' }} />
-                        <span style={{ fontSize: 10, color: 'rgba(240,180,41,.8)', letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Hledáme operátora</span>
-                      </>
-                    ) : step === 'chat' ? (
-                      <>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 6px #00E676' }} />
-                        <span style={{ fontSize: 10, color: '#00E676', letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Online · Připraven pomoci</span>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 6px #00E676' }} />
-                        <span style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Odpovídáme do 5 min</span>
-                      </>
-                    )}
-                  </div>
+      {/* MINIMIZED BAR */}
+      {showMinimized && (
+        <div onClick={() => setMinimized(false)} style={{ marginBottom: 12, padding: '12px 18px', background: '#0A0A14', borderRadius: 18, border: '1px solid rgba(255,255,255,.08)', boxShadow: '0 12px 40px rgba(0,0,0,.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, animation: 'cwSlideUp .3s ease', minWidth: 220 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👑</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#F0EBE1' }}>NajdiDeal Support</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+              {step === 'chat' ? statusDot('#00E676') : statusDot('#F0B429', true)}
+              <span style={{ fontSize: 9, color: step === 'chat' ? '#00E676' : '#F0B429', fontFamily: 'Syne Mono,monospace', letterSpacing: .8 }}>{step === 'chat' ? 'ONLINE' : 'ČEKÁME...'}</span>
+            </div>
+          </div>
+          <div style={{ fontSize: 16, color: 'rgba(240,235,225,.3)' }}>↑</div>
+        </div>
+      )}
+
+      {/* MAIN PANEL */}
+      {isOpen && !minimized && (
+        <div style={{ width: 372, marginBottom: 14, borderRadius: 28, overflow: 'hidden', animation: 'cwSlideUp .35s cubic-bezier(.34,1.56,.64,1)', boxShadow: '0 40px 100px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.07), inset 0 1px 0 rgba(255,255,255,.07)', background: '#0A0A14' }}>
+
+          {/* GOLD LINE */}
+          <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #F0B429 30%, #FFD97D 50%, #F0B429 70%, transparent)' }} />
+
+          {/* HEADER */}
+          <div style={{ padding: '16px 18px', background: 'linear-gradient(180deg, rgba(240,180,41,.07) 0%, transparent 100%)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ position: 'relative' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 13, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, boxShadow: '0 6px 20px rgba(240,180,41,.3)' }}>👑</div>
+                <div style={{ position: 'absolute', bottom: -2, right: -2, width: 13, height: 13, borderRadius: '50%', background: step === 'chat' ? '#00E676' : step === 'waiting' ? '#F0B429' : '#00E676', border: '2.5px solid #0A0A14', boxShadow: `0 0 8px ${step === 'chat' ? '#00E676' : step === 'waiting' ? '#F0B429' : '#00E676'}`, animation: step === 'waiting' ? 'cwPulse 1.4s infinite' : 'none' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#F0EBE1', letterSpacing: .2 }}>NajdiDeal Support</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 3 }}>
+                  {step === 'waiting' ? <>{statusDot('#F0B429', true)}<span style={{ fontSize: 9, color: 'rgba(240,180,41,.8)', fontFamily: 'Syne Mono,monospace', letterSpacing: .8 }}>HLEDÁME OPERÁTORA</span></> : step === 'chat' ? <>{statusDot('#00E676')}<span style={{ fontSize: 9, color: '#00E676', fontFamily: 'Syne Mono,monospace', letterSpacing: .8 }}>OPERÁTOR ONLINE</span></> : <>{statusDot('#00E676')}<span style={{ fontSize: 9, color: 'rgba(240,235,225,.4)', fontFamily: 'Syne Mono,monospace', letterSpacing: .8 }}>ODPOVÍDÁME DO 5 MIN</span></>}
                 </div>
               </div>
-              <button onClick={() => setStep('closed')} style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(240,235,225,.5)', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>×</button>
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button className="cw-icon-btn" onClick={() => setMinimized(true)} title="Minimalizovat" style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.07)', color: 'rgba(240,235,225,.4)', cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s' }}>—</button>
+              <button className="cw-icon-btn" onClick={() => setStep('closed')} style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.07)', color: 'rgba(240,235,225,.4)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s' }}>×</button>
             </div>
           </div>
 
+          <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent)' }} />
+
           {/* FORM */}
           {step === 'form' && (
-            <div style={{ padding: 20 }}>
-              <p style={{ fontSize: 12, color: 'rgba(240,235,225,.55)', margin: '0 0 18px', lineHeight: 1.7 }}>Vyplň své údaje a živý operátor se připojí během chvilky.</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div>
-                  <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,180,41,.7)', display: 'block', marginBottom: 6 }}>Email</label>
-                  <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.cz" type="email"
-                    style={{ width: '100%', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '11px 14px', color: '#F0EBE1', fontSize: 13, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box', transition: 'border-color .2s' }}
-                    onFocus={e => (e.target.style.borderColor = 'rgba(240,180,41,.4)')}
-                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,.08)')} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,180,41,.7)', display: 'block', marginBottom: 6 }}>Váš požadavek</label>
-                  <textarea value={request} onChange={e => setRequest(e.target.value)} placeholder="Popište co potřebujete..." rows={3}
-                    style={{ width: '100%', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '11px 14px', color: '#F0EBE1', fontSize: 13, outline: 'none', fontFamily: 'inherit', resize: 'none', boxSizing: 'border-box', transition: 'border-color .2s' }}
-                    onFocus={e => (e.target.style.borderColor = 'rgba(240,180,41,.4)')}
-                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,.08)')} />
-                </div>
-                <button onClick={submitForm} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #F0B429, #C8880A)', border: 'none', borderRadius: 10, color: '#000', fontSize: 10, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 8px 24px rgba(240,180,41,.25)', transition: 'all .2s' }}
-                  onMouseEnter={e => { (e.currentTarget as any).style.transform = 'translateY(-1px)'; (e.currentTarget as any).style.boxShadow = '0 12px 32px rgba(240,180,41,.35)' }}
-                  onMouseLeave={e => { (e.currentTarget as any).style.transform = ''; (e.currentTarget as any).style.boxShadow = '0 8px 24px rgba(240,180,41,.25)' }}>
-                  Spojit s operátorem →
-                </button>
+            <div style={{ padding: '20px 20px 24px' }}>
+              <div style={{ marginBottom: 18, padding: '12px 14px', background: 'rgba(240,180,41,.04)', borderRadius: 14, border: '1px solid rgba(240,180,41,.1)', display: 'flex', gap: 10 }}>
+                <span style={{ fontSize: 16 }}>💎</span>
+                <p style={{ fontSize: 12, color: 'rgba(240,235,225,.5)', margin: 0, lineHeight: 1.75 }}>Náš tým je připraven pomoci. Vyplň formulář a spojíme tě s expertem během okamžiku.</p>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 14 }}>
-                {['🔒 Bezpečné', '⚡ Rychlé', '✓ Zdarma'].map(t => <span key={t} style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: .5 }}>{t}</span>)}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+                <div>
+                  <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: 'rgba(240,180,41,.55)', display: 'block', marginBottom: 7, fontFamily: 'Syne Mono,monospace' }}>Email adresa</label>
+                  <input className="cw-input" value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.cz" type="email" style={{ width: '100%', background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: '12px 15px', color: '#F0EBE1', fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box', transition: 'all .2s' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: 'rgba(240,180,41,.55)', display: 'block', marginBottom: 7, fontFamily: 'Syne Mono,monospace' }}>Váš požadavek</label>
+                  <textarea className="cw-input" value={request} onChange={e => setRequest(e.target.value)} placeholder="Popište co potřebujete..." rows={3} style={{ width: '100%', background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: '12px 15px', color: '#F0EBE1', fontSize: 13, fontFamily: 'inherit', resize: 'none', boxSizing: 'border-box', transition: 'all .2s' }} />
+                </div>
+                <button className="cw-submit" onClick={submitForm} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#F0B429,#C8880A)', border: 'none', borderRadius: 12, color: '#000', fontSize: 10, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 8px 28px rgba(240,180,41,.28)', transition: 'all .25s', fontFamily: 'Syne Mono,monospace' }}>Spojit s operátorem →</button>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14 }}>
+                {['🔒 Zabezpečeno', '⚡ Rychlá odezva', '✓ Zdarma'].map(t => <span key={t} style={{ fontSize: 9, color: 'rgba(240,235,225,.2)' }}>{t}</span>)}
               </div>
             </div>
           )}
 
           {/* WAITING */}
           {step === 'waiting' && (
-            <div style={{ padding: '40px 24px', textAlign: 'center' }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(240,180,41,.08)', border: '1px solid rgba(240,180,41,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, margin: '0 auto 20px' }}>⏳</div>
-              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', color: '#F0B429', marginBottom: 10 }}>Hledáme volného operátora</div>
-              <p style={{ fontSize: 12, color: 'rgba(240,235,225,.45)', margin: '0 0 24px', lineHeight: 1.7 }}>Obvyklá čekací doba je do 5 minut.<br/>Prosím zůstaň na stránce.</p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-                {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: '#F0B429', animation: `chatPulse ${1 + i * 0.2}s infinite`, animationDelay: `${i * 0.15}s` }} />)}
+            <div style={{ padding: '36px 24px 40px', textAlign: 'center' }}>
+              <div style={{ position: 'relative', width: 72, height: 72, margin: '0 auto 22px' }}>
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(240,180,41,.12)', borderTopColor: '#F0B429', animation: 'cwSpin 1.4s linear infinite' }} />
+                <div style={{ position: 'absolute', inset: 7, borderRadius: '50%', background: 'rgba(240,180,41,.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>⏳</div>
               </div>
-              <div style={{ marginTop: 24, padding: '12px 16px', background: 'rgba(255,255,255,.03)', borderRadius: 10, border: '1px solid rgba(255,255,255,.05)' }}>
-                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.35)', letterSpacing: .5 }}>Tvá zpráva byla doručena</div>
-                <div style={{ fontSize: 11, color: 'rgba(240,235,225,.6)', marginTop: 4, fontWeight: 600 }}>{email}</div>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2.5, textTransform: 'uppercase', color: '#F0B429', marginBottom: 10, fontFamily: 'Syne Mono,monospace' }}>Hledáme volného operátora</div>
+              <p style={{ fontSize: 12, color: 'rgba(240,235,225,.38)', margin: '0 0 26px', lineHeight: 1.8 }}>Obvyklá čekací doba je do 5 minut.<br/>Prosím zůstaň na stránce.</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
+                {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: '#F0B429', animation: `cwPulse 1.2s infinite`, animationDelay: `${i * 0.18}s` }} />)}
+              </div>
+              <div style={{ marginTop: 26, padding: '13px 16px', background: 'rgba(255,255,255,.03)', borderRadius: 14, border: '1px solid rgba(255,255,255,.05)', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(240,180,41,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>✉️</div>
+                <div>
+                  <div style={{ fontSize: 9, color: 'rgba(240,235,225,.28)', letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'Syne Mono,monospace' }}>Kontakt</div>
+                  <div style={{ fontSize: 12, color: 'rgba(240,235,225,.65)', fontWeight: 600, marginTop: 2 }}>{email}</div>
+                </div>
               </div>
             </div>
           )}
@@ -625,35 +663,42 @@ function ChatWidget() {
           {/* CHAT */}
           {step === 'chat' && (
             <>
-              <div style={{ padding: '10px 16px', background: 'rgba(0,230,118,.05)', borderBottom: '1px solid rgba(0,230,118,.1)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676' }} />
-                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#00E676' }}>Operátor připojen · Živý chat</span>
+              <div style={{ padding: '8px 18px', background: 'linear-gradient(90deg, rgba(0,230,118,.05), rgba(0,230,118,.01))', borderBottom: '1px solid rgba(0,230,118,.08)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 10px #00E676', flexShrink: 0 }} />
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#00E676', fontFamily: 'Syne Mono,monospace', flex: 1 }}>Operátor připojen · Živý chat</span>
+                <span style={{ fontSize: 9, color: 'rgba(0,230,118,.4)', fontFamily: 'Syne Mono,monospace' }}>🔒</span>
               </div>
-              <div style={{ height: 280, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div className="cw-scroll" style={{ height: 285, overflowY: 'auto', padding: '14px 16px 8px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {messages.filter(m => !m.message.startsWith('📧')).map((m, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
-                    {m.role === 'admin' && <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0 }}>👑</div>}
-                    <div style={{ maxWidth: '75%', padding: '10px 14px', borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: m.role === 'user' ? 'linear-gradient(135deg,#F0B429,#C8880A)' : 'rgba(255,255,255,.06)', color: m.role === 'user' ? '#000' : '#F0EBE1', fontSize: 13, lineHeight: 1.5, fontWeight: m.role === 'user' ? 500 : 400, boxShadow: m.role === 'user' ? '0 4px 16px rgba(240,180,41,.2)' : 'none' }}>
-                      {m.message}
+                  <div key={i} className="cw-msg" style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
+                    {m.role === 'admin' && <div style={{ width: 28, height: 28, borderRadius: 9, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0, boxShadow: '0 3px 10px rgba(240,180,41,.2)' }}>👑</div>}
+                    <div>
+                      {m.role === 'admin' && <div style={{ fontSize: 9, color: 'rgba(240,180,41,.4)', marginBottom: 3, fontFamily: 'Syne Mono,monospace', letterSpacing: .5 }}>Operátor</div>}
+                      <div style={{ maxWidth: 230, padding: '10px 13px', borderRadius: m.role === 'user' ? '14px 14px 3px 14px' : '14px 14px 14px 3px', background: m.role === 'user' ? 'linear-gradient(135deg,#F0B429,#C8880A)' : 'rgba(255,255,255,.06)', color: m.role === 'user' ? '#000' : '#F0EBE1', fontSize: 13, lineHeight: 1.55, fontWeight: m.role === 'user' ? 500 : 400, boxShadow: m.role === 'user' ? '0 4px 18px rgba(240,180,41,.2)' : '0 2px 8px rgba(0,0,0,.2)', border: m.role === 'admin' ? '1px solid rgba(255,255,255,.05)' : 'none' }}>
+                        {m.message}
+                      </div>
                     </div>
                   </div>
                 ))}
                 <div ref={bottomRef} />
               </div>
-              <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,.05)', display: 'flex', gap: 8, background: 'rgba(255,255,255,.02)' }}>
-                <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
-                  placeholder="Napiš zprávu..." style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '10px 14px', color: '#F0EBE1', fontSize: 13, outline: 'none', fontFamily: 'inherit', transition: 'border-color .2s' }}
-                  onFocus={e => (e.target.style.borderColor = 'rgba(240,180,41,.4)')}
-                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,.08)')} />
-                <button onClick={send} style={{ width: 42, height: 42, borderRadius: 10, background: 'linear-gradient(135deg,#F0B429,#C8880A)', border: 'none', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(240,180,41,.25)', flexShrink: 0 }}>↑</button>
+              <div style={{ padding: '10px 14px 14px', borderTop: '1px solid rgba(255,255,255,.04)' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button className="cw-icon-btn" onClick={() => fileRef.current?.click()} title="Přiložit soubor nebo foto" style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', color: 'rgba(240,235,225,.4)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .15s' }}>📎</button>
+                  <input className="cw-input" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Napiš zprávu..." style={{ flex: 1, background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 11, padding: '10px 13px', color: '#F0EBE1', fontSize: 13, fontFamily: 'inherit', transition: 'all .2s' }} />
+                  <button className="cw-send" onClick={send} style={{ width: 38, height: 38, borderRadius: 11, background: 'linear-gradient(135deg,#F0B429,#C8880A)', border: 'none', cursor: 'pointer', fontSize: 17, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(240,180,41,.28)', flexShrink: 0, transition: 'all .2s' }}>↑</button>
+                </div>
+                <div style={{ marginTop: 8, textAlign: 'center' }}>
+                  <span style={{ fontSize: 9, color: 'rgba(240,235,225,.18)', fontFamily: 'Syne Mono,monospace', letterSpacing: .5 }}>📎 Foto · PDF · Word podporováno</span>
+                </div>
               </div>
             </>
           )}
         </div>
       )}
 
-      {/* FAB button */}
-      <button onClick={() => setStep(isOpen ? 'closed' : 'form')} style={{ width: 60, height: 60, borderRadius: '50%', background: isOpen ? 'rgba(255,255,255,.08)' : 'linear-gradient(135deg,#F0B429,#C8880A)', border: isOpen ? '1px solid rgba(255,255,255,.12)' : 'none', cursor: 'pointer', fontSize: isOpen ? 20 : 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isOpen ? 'none' : '0 8px 32px rgba(240,180,41,.4), 0 0 0 8px rgba(240,180,41,.08)', transition: 'all .3s cubic-bezier(.34,1.56,.64,1)', color: isOpen ? 'rgba(240,235,225,.6)' : '#000' }}>
+      {/* FAB */}
+      <button className="cw-fab" onClick={() => { if (isOpen) { setStep('closed'); setMinimized(false) } else setStep('form') }} style={{ width: 62, height: 62, borderRadius: '50%', background: isOpen ? 'rgba(255,255,255,.07)' : 'linear-gradient(135deg,#F0B429,#C8880A)', border: isOpen ? '1px solid rgba(255,255,255,.1)' : 'none', cursor: 'pointer', fontSize: isOpen ? 22 : 26, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isOpen ? '0 4px 20px rgba(0,0,0,.3)' : '0 8px 32px rgba(240,180,41,.45), 0 0 0 10px rgba(240,180,41,.07)', transition: 'all .3s cubic-bezier(.34,1.56,.64,1)', color: isOpen ? 'rgba(240,235,225,.5)' : '#000' }}>
         {isOpen ? '×' : '💬'}
       </button>
     </div>
