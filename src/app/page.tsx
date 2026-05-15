@@ -625,40 +625,78 @@ function ChatWidget() {
 
           <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent)' }} />
 
-          {/* CONNECTING SCREEN */}
+          {/* CONNECTING SCREEN - DIVINE */}
           {connecting && (
-            <div style={{ padding: '40px 24px 48px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(240,180,41,.06) 0%, transparent 70%)' }} />
-              
-              {/* Orbiting rings */}
-              <div style={{ position: 'relative', width: 120, height: 120, margin: '0 auto 28px' }}>
-                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(240,180,41,.08)', animation: 'cwSpin 8s linear infinite' }} />
-                <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '1px solid rgba(240,180,41,.12)', animation: 'cwSpin 5s linear infinite reverse' }} />
-                <div style={{ position: 'absolute', inset: 18, borderRadius: '50%', border: '1.5px solid rgba(240,180,41,.18)', borderTopColor: '#F0B429', animation: 'cwSpin 2.5s linear infinite' }} />
-                <div style={{ position: 'absolute', inset: 28, borderRadius: '50%', border: '1.5px solid rgba(240,180,41,.25)', borderBottomColor: '#FFD97D', animation: 'cwSpin 1.8s linear infinite reverse' }} />
-                <div style={{ position: 'absolute', inset: 38, borderRadius: '50%', background: 'radial-gradient(circle, rgba(240,180,41,.15), rgba(240,180,41,.03))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>👑</div>
+            <div style={{ position: 'relative', overflow: 'hidden', background: '#05050F' }}>
+              {/* Animated background */}
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 100% 80% at 50% 120%, rgba(240,180,41,.12) 0%, transparent 65%)' }} />
+              <div style={{ position: 'absolute', top: -40, left: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(240,180,41,.04), transparent)', animation: 'cwSpin 20s linear infinite' }} />
+              <div style={{ position: 'absolute', bottom: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(155,93,229,.04), transparent)', animation: 'cwSpin 15s linear infinite reverse' }} />
+
+              {/* Top section */}
+              <div style={{ padding: '32px 24px 20px', textAlign: 'center', position: 'relative' }}>
+                {/* Crown orb */}
+                <div style={{ position: 'relative', width: 100, height: 100, margin: '0 auto 20px' }}>
+                  {/* Outer glow */}
+                  <div style={{ position: 'absolute', inset: -12, borderRadius: '50%', background: 'radial-gradient(circle, rgba(240,180,41,.08), transparent)', animation: 'cwPulse 2s infinite' }} />
+                  {/* Ring 1 */}
+                  <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(240,180,41,.1)', animation: 'cwSpin 12s linear infinite' }}>
+                    <div style={{ position: 'absolute', top: -3, left: '50%', width: 6, height: 6, borderRadius: '50%', background: '#F0B429', boxShadow: '0 0 10px #F0B429', transform: 'translateX(-50%)' }} />
+                  </div>
+                  {/* Ring 2 */}
+                  <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: '1px solid rgba(240,180,41,.15)', animation: 'cwSpin 8s linear infinite reverse' }}>
+                    <div style={{ position: 'absolute', top: -3, left: '50%', width: 5, height: 5, borderRadius: '50%', background: '#FFD97D', boxShadow: '0 0 8px #FFD97D', transform: 'translateX(-50%)' }} />
+                  </div>
+                  {/* Ring 3 spinner */}
+                  <div style={{ position: 'absolute', inset: 20, borderRadius: '50%', border: '2px solid transparent', borderTopColor: '#F0B429', borderRightColor: 'rgba(240,180,41,.3)', animation: 'cwSpin 1.6s linear infinite' }} />
+                  {/* Core */}
+                  <div style={{ position: 'absolute', inset: 28, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(240,180,41,.2), rgba(200,136,10,.05))', backdropFilter: 'blur(4px)', border: '1px solid rgba(240,180,41,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: 'inset 0 1px 0 rgba(255,255,255,.1)' }}>👑</div>
+                </div>
+
+                <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: 4, textTransform: 'uppercase', color: '#F0B429', fontFamily: 'Syne Mono,monospace', marginBottom: 6 }}>Navazujeme spojení</div>
+                <div style={{ fontSize: 11, color: 'rgba(240,235,225,.35)', letterSpacing: .5 }}>
+                  {connectStep < 2 ? 'Ověřujeme a zabezpečujeme...' : connectStep < 4 ? 'Hledáme nejlepšího operátora...' : '✦ Připraveno ✦'}
+                </div>
               </div>
 
-              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', color: '#F0B429', marginBottom: 6, fontFamily: 'Syne Mono,monospace' }}>Navazujeme spojení</div>
-              <div style={{ fontSize: 12, color: 'rgba(240,235,225,.35)', marginBottom: 32, letterSpacing: .3 }}>Připojujeme tě k operátorovi...</div>
+              <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(240,180,41,.1), transparent)', margin: '0 24px' }} />
 
               {/* Steps */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left' }}>
+              <div style={{ padding: '16px 20px 24px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
-                  'Ověřování identity',
-                  'Šifrování spojení',
-                  'Hledání operátora',
-                  'Příprava chatu',
-                  'Připojeno',
-                ].map((label, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 14px', borderRadius: 12, background: connectStep > i ? 'rgba(240,180,41,.06)' : 'rgba(255,255,255,.02)', border: `1px solid ${connectStep > i ? 'rgba(240,180,41,.15)' : 'rgba(255,255,255,.04)'}`, transition: 'all .4s' }}>
-                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: connectStep > i ? 'linear-gradient(135deg,#F0B429,#C8880A)' : connectStep === i ? 'rgba(240,180,41,.1)' : 'rgba(255,255,255,.04)', border: connectStep === i ? '1.5px solid #F0B429' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, flexShrink: 0, transition: 'all .4s', boxShadow: connectStep > i ? '0 2px 10px rgba(240,180,41,.3)' : 'none' }}>
-                      {connectStep > i ? '✓' : connectStep === i ? <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#F0B429', animation: 'cwPulse 1s infinite' }} /> : ''}
+                  { label: 'Ověřování identity', icon: '🛡️', desc: 'SSL · End-to-end šifrování' },
+                  { label: 'Zabezpečení spojení', icon: '🔐', desc: '256-bit AES · Soukromý kanál' },
+                  { label: 'Hledání experta', icon: '⭐', desc: 'Top hodnocený operátor' },
+                  { label: 'Příprava workspace', icon: '💼', desc: 'Osobní chat místnost' },
+                  { label: 'Připojeno', icon: '✦', desc: 'Vítejte v prémiové podpoře' },
+                ].map((item, i) => {
+                  const done = connectStep > i
+                  const active = connectStep === i
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 14, background: done ? 'rgba(240,180,41,.05)' : active ? 'rgba(240,180,41,.03)' : 'rgba(255,255,255,.015)', border: `1px solid ${done ? 'rgba(240,180,41,.18)' : active ? 'rgba(240,180,41,.12)' : 'rgba(255,255,255,.04)'}`, transition: 'all .5s cubic-bezier(.4,0,.2,1)', transform: active ? 'translateX(3px)' : 'none' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 11, background: done ? 'linear-gradient(135deg,#F0B429,#C8880A)' : active ? 'rgba(240,180,41,.1)' : 'rgba(255,255,255,.03)', border: active ? '1px solid rgba(240,180,41,.3)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: done ? 13 : 16, flexShrink: 0, transition: 'all .5s', boxShadow: done ? '0 4px 14px rgba(240,180,41,.3)' : active ? '0 0 20px rgba(240,180,41,.15)' : 'none' }}>
+                        {done ? '✓' : active ? <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F0B429', animation: 'cwPulse 1s infinite', boxShadow: '0 0 10px #F0B429' }} /> : item.icon}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 11, fontWeight: active || done ? 700 : 400, color: done ? 'rgba(240,235,225,.9)' : active ? '#F0B429' : 'rgba(240,235,225,.25)', fontFamily: 'Syne Mono,monospace', letterSpacing: .5, transition: 'all .4s' }}>{item.label}</div>
+                        {(active || done) && <div style={{ fontSize: 9, color: done ? 'rgba(240,180,41,.5)' : 'rgba(240,235,225,.3)', marginTop: 2, letterSpacing: .3, transition: 'all .4s' }}>{item.desc}</div>}
+                      </div>
+                      {done && <div style={{ fontSize: 14, color: '#00E676', flexShrink: 0, animation: 'cwFadeIn .3s ease' }}>✓</div>}
+                      {active && <div style={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid rgba(240,180,41,.2)', borderTopColor: '#F0B429', animation: 'cwSpin 1s linear infinite', flexShrink: 0 }} />}
                     </div>
-                    <span style={{ fontSize: 11, color: connectStep > i ? 'rgba(240,235,225,.8)' : connectStep === i ? '#F0B429' : 'rgba(240,235,225,.25)', fontFamily: 'Syne Mono,monospace', letterSpacing: .5, transition: 'all .4s', fontWeight: connectStep === i ? 700 : 400 }}>{label}</span>
-                    {connectStep > i && <div style={{ marginLeft: 'auto', fontSize: 10, color: '#00E676' }}>✓</div>}
-                  </div>
-                ))}
+                  )
+                })}
+              </div>
+
+              {/* Bottom badge */}
+              <div style={{ margin: '0 20px 20px', padding: '10px 16px', background: 'rgba(255,255,255,.02)', borderRadius: 12, border: '1px solid rgba(255,255,255,.04)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ display: 'flex', gap: -4 }}>
+                  {['🇨🇿','🇸🇰'].map((f,i) => <span key={i} style={{ fontSize: 14 }}>{f}</span>)}
+                </div>
+                <div>
+                  <div style={{ fontSize: 9, color: 'rgba(240,235,225,.25)', fontFamily: 'Syne Mono,monospace', letterSpacing: 1 }}>NEJLEPŠÍ PODPORA V CZ & SK</div>
+                  <div style={{ fontSize: 9, color: 'rgba(240,180,41,.5)', marginTop: 1 }}>★★★★★ · Odpovídáme do 5 minut</div>
+                </div>
               </div>
             </div>
           )}
