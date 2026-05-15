@@ -861,7 +861,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="vip-banner-cta" style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:12,flexShrink:0}}>
-              <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:72,color:G.g,letterSpacing:2,lineHeight:1,textShadow:'0 0 50px rgba(240,180,41,.35)'}}>499<span style={{fontSize:28}}> Kč</span></div>
+              <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:72,color:G.g,letterSpacing:2,lineHeight:1,textShadow:'0 0 50px rgba(240,180,41,.35)'}}>OD 299<span style={{fontSize:28}}> Kč</span></div>
               <div style={{fontFamily:'Syne Mono,monospace',fontSize:10,color:G.mut,letterSpacing:2,textTransform:'uppercase',marginTop:-4}}>za měsíc · zruš kdykoliv</div>
               <Link href="/vip" style={{background:G.g,color:'#000',fontFamily:'Syne Mono,monospace',fontSize:10,fontWeight:700,letterSpacing:2,textTransform:'uppercase',padding:'14px 28px',borderRadius:8,textDecoration:'none',whiteSpace:'nowrap',boxShadow:'0 8px 32px rgba(240,180,41,.28)',transition:'all .3s'}} onMouseEnter={e=>{(e.currentTarget as any).style.transform='translateY(-4px)';(e.currentTarget as any).style.boxShadow='0 22px 56px rgba(240,180,41,.5)'}} onMouseLeave={e=>{(e.currentTarget as any).style.transform='';(e.currentTarget as any).style.boxShadow='0 8px 32px rgba(240,180,41,.28)'}}>🔒 Vstoupit do VIP →</Link>
             </div>
