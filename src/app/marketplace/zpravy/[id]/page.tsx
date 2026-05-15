@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import type { Profile, Listing, ListingMessage } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -17,8 +18,8 @@ const G = {
 
 export default function ChatPage({ params }: { params: { id: string } }) {
   const [messages, setMessages] = useState<any[]>([])
-  const [listing, setListing] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [listing, setListing] = useState<Listing | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [newMsg, setNewMsg] = useState('')
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -65,7 +66,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
           table: 'listing_messages',
           filter: `listing_id=eq.${params.id}`,
         }, async (payload) => {
-          const msg = payload.new as any
+          const msg = payload.new as ListingMessage
           if ((msg.sender_id === user.id && msg.receiver_id === otherId) ||
               (msg.sender_id === otherId && msg.receiver_id === user.id)) {
             setMessages(p => [...p, msg])
@@ -112,7 +113,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long' })
   }
 
-  const grouped: { date: string; msgs: any[] }[] = []
+  const grouped: { date: string; msgs: ListingMessage[] }[] = []
   for (const msg of messages) {
     const d = formatDate(msg.created_at)
     const last = grouped[grouped.length - 1]
@@ -155,8 +156,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
           {/* Zpět */}
           <Link href="/marketplace/zpravy" style={{ width: 36, height: 36, borderRadius: 10, background: G.gl, border: `1px solid ${G.br}`, display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', flexShrink: 0, transition: 'all .2s' }}
-            onMouseEnter={e => { (e.currentTarget as any).style.borderColor = 'rgba(240,180,41,.3)' }}
-            onMouseLeave={e => { (e.currentTarget as any).style.borderColor = G.br }}>
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(240,180,41,.3)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = G.br }}>
             <ArrowLeft size={16} color={G.mut} />
           </Link>
 
@@ -164,7 +165,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
           <div style={{ width: 44, height: 44, borderRadius: 12, overflow: 'hidden', flexShrink: 0, background: G.gl, border: `1px solid ${G.br}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, boxShadow: '0 4px 16px rgba(0,0,0,.3)' }}>
             {listing?.images?.[0]
               ? <img src={listing.images[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : catEmoji[listing?.category] ?? '🛒'}
+              : catEmoji[listing?.category ?? ''] ?? '🛒'}
           </div>
 
           {/* Info */}
@@ -178,15 +179,15 @@ export default function ChatPage({ params }: { params: { id: string } }) {
               </div>
               <div style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,255,255,.15)' }} />
               <div style={{ fontFamily: 'Syne Mono, monospace', fontSize: 9, color: G.mut, textTransform: 'uppercase', letterSpacing: 1 }}>
-                {catEmoji[listing?.category]} {listing?.category}
+                {catEmoji[listing?.category ?? '']} {listing?.category}
               </div>
             </div>
           </div>
 
           {/* Odkaz na inzerát */}
           <Link href={`/marketplace/${params.id}`} style={{ fontFamily: 'Syne Mono, monospace', fontSize: 8, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: G.gold, textDecoration: 'none', padding: '7px 12px', border: `1px solid rgba(240,180,41,.2)`, borderRadius: 7, background: 'rgba(240,180,41,.05)', whiteSpace: 'nowrap', transition: 'all .2s' }}
-            onMouseEnter={e => { (e.currentTarget as any).style.background = 'rgba(240,180,41,.1)' }}
-            onMouseLeave={e => { (e.currentTarget as any).style.background = 'rgba(240,180,41,.05)' }}>
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,.1)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,.05)' }}>
             Inzerát →
           </Link>
         </div>
@@ -317,8 +318,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
               boxShadow: newMsg.trim() ? '0 6px 24px rgba(240,180,41,.35)' : 'none',
               transform: newMsg.trim() ? 'scale(1)' : 'scale(.95)',
             }}
-            onMouseEnter={e => { if (newMsg.trim()) (e.currentTarget as any).style.transform = 'scale(1.08)' }}
-            onMouseLeave={e => { (e.currentTarget as any).style.transform = newMsg.trim() ? 'scale(1)' : 'scale(.95)' }}
+            onMouseEnter={e => { if (newMsg.trim()) (e.currentTarget as HTMLElement).style.transform = 'scale(1.08)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = newMsg.trim() ? 'scale(1)' : 'scale(.95)' }}
           >
             {sending
               ? <div style={{ width: 18, height: 18, border: '2px solid rgba(0,0,0,.3)', borderTop: '2px solid #000', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />

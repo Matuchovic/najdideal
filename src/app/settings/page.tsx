@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import type { Profile } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { User, Crown, Bell, Shield, LogOut, Copy, Check, ChevronRight, Clock, Star, Zap, Mail, Edit2 } from 'lucide-react'
 import Link from 'next/link'
@@ -23,7 +24,7 @@ const TIER_CONFIG: Record<string, { label: string; color: string; emoji: string;
   admin:     { level:99, label:'ADMIN',    color:G.gold, emoji:'🔧' },
 }
 
-function Card({ children, style = {} }: { children: React.ReactNode; style?: any }) {
+function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
     <div style={{ background: G.gl, backdropFilter: 'blur(28px) saturate(160%)', border: `1px solid ${G.br}`, borderRadius: 16, overflow: 'hidden', position: 'relative', ...style }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)' }} />
@@ -32,7 +33,7 @@ function Card({ children, style = {} }: { children: React.ReactNode; style?: any
   )
 }
 
-function SectionTitle({ icon: Icon, title, color = G.gold }: { icon: any; title: string; color?: string }) {
+function SectionTitle({ icon: Icon, title, color = G.gold }: { icon: React.ElementType; title: string; color?: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '18px 22px', borderBottom: `1px solid ${G.br}` }}>
       <div style={{ width: 32, height: 32, borderRadius: 8, background: `${color}10`, border: `1px solid ${color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -64,7 +65,7 @@ function Toggle({ value, onChange, color = G.grn }: { value: boolean; onChange: 
 }
 
 export default function SettingsPage() {
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [editName, setEditName] = useState(false)
@@ -201,7 +202,7 @@ export default function SettingsPage() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (user) await supabase.from('profiles').update({ full_name: newName }).eq('id', user.id)
-    setProfile((p: any) => ({ ...p, full_name: newName }))
+    setProfile((p) => p ? { ...p, full_name: newName } : null)
     setEditName(false)
     setSavingName(false)
   }
@@ -315,7 +316,7 @@ export default function SettingsPage() {
                     role: 'free',
                     subscription_cancelled_at: new Date().toISOString()
                   }).eq('id', user.id)
-                  setProfile((p: any) => ({ ...p, role: 'free' }))
+                  setProfile((p) => p ? { ...p, role: 'free' as const } : null)
                 }
                 setCancelLoading(false)
                 setShowCancel(false)
@@ -449,7 +450,7 @@ export default function SettingsPage() {
           { label: 'Kontaktovat podporu', desc: 'Odpovídáme do 24 hodin', href: '/kontakt' },
           { label: 'Telegram komunita', desc: 'Soukromá skupina členů', href: 'https://t.me/' },
         ].map((item, i) => (
-          <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px', borderBottom: i < 2 ? `1px solid rgba(255,255,255,.04)` : 'none', textDecoration: 'none', gap: 12, transition: 'background .2s' }} onMouseEnter={e => { (e.currentTarget as any).style.background = 'rgba(255,255,255,.03)' }} onMouseLeave={e => { (e.currentTarget as any).style.background = 'transparent' }}>
+          <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px', borderBottom: i < 2 ? `1px solid rgba(255,255,255,.04)` : 'none', textDecoration: 'none', gap: 12, transition: 'background .2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,.03)' }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
             <div>
               <div style={{ fontSize: 13, color: G.wht, fontWeight: 500, marginBottom: 2 }}>{item.label}</div>
               <div style={{ fontFamily: "'Syne Mono', monospace", fontSize: 9, color: G.mut, letterSpacing: .5 }}>{item.desc}</div>
@@ -462,7 +463,7 @@ export default function SettingsPage() {
       {/* LOGOUT */}
       <Card style={{ animation: 'fadeUp .6s .3s ease both' }}>
         <div style={{ padding: '6px 0' }}>
-          <button onClick={logout} disabled={logoutLoading} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 22px', background: 'none', border: 'none', cursor: 'pointer', transition: 'background .2s' }} onMouseEnter={e => { (e.currentTarget as any).style.background = 'rgba(255,59,92,.06)' }} onMouseLeave={e => { (e.currentTarget as any).style.background = 'transparent' }}>
+          <button onClick={logout} disabled={logoutLoading} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 22px', background: 'none', border: 'none', cursor: 'pointer', transition: 'background .2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,59,92,.06)' }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,59,92,.1)', border: '1px solid rgba(255,59,92,.22)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <LogOut size={14} color={G.red} />
@@ -484,7 +485,7 @@ export default function SettingsPage() {
         <div style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, color: G.mut, letterSpacing: 1, marginBottom: 6 }}>NAJDIDEAL · HOSABUT S.R.O. · IČO: 23338342</div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
           {[{ l: 'GDPR', h: '/gdpr' }, { l: 'Podmínky', h: '/obchodni-podminky' }, { l: 'Kontakt', h: '/kontakt' }].map(lk => (
-            <Link key={lk.l} href={lk.h} style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, color: G.mut, letterSpacing: 1.5, textTransform: 'uppercase', textDecoration: 'none', transition: 'color .2s' }} onMouseEnter={e => { (e.currentTarget as any).style.color = G.gold }} onMouseLeave={e => { (e.currentTarget as any).style.color = G.mut }}>{lk.l}</Link>
+            <Link key={lk.l} href={lk.h} style={{ fontFamily: "'Syne Mono', monospace", fontSize: 8, color: G.mut, letterSpacing: 1.5, textTransform: 'uppercase', textDecoration: 'none', transition: 'color .2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = G.gold }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = G.mut }}>{lk.l}</Link>
           ))}
         </div>
       </div>

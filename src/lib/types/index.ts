@@ -332,3 +332,50 @@ export const ROLE_META: Record<UserRole, { label: string; icon: string; color: s
   vip:   { label: 'VIP',   icon: '👑', color: '#F5B800' },
   admin: { label: 'Admin', icon: '⚙️', color: '#FF4444' },
 }
+
+export interface Listing {
+  id: string
+  user_id: string
+  title: string
+  description: string | null
+  price: number
+  original_price: number | null
+  category: string
+  condition: string
+  images: string[]
+  location: string | null
+  is_active: boolean
+  is_boosted: boolean
+  boost_until: string | null
+  boost_expires_at: string | null
+  view_count: number
+  views_count: number
+  save_count: number
+  price_negotiable: boolean
+  phone: string | null
+  email: string | null
+  created_at: string
+  updated_at: string
+  profiles?: Profile
+}
+
+export interface ListingMessage {
+  id: string
+  conversation_id: string
+  listing_id: string
+  sender_id: string
+  receiver_id: string
+  message: string
+  content: string | null
+  is_read: boolean
+  created_at: string
+  sender?: Profile
+}
+
+export interface ChatMessage {
+  id: string
+  session_id: string
+  role: 'user' | 'admin'
+  message: string
+  created_at: string
+}

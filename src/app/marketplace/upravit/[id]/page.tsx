@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import type { Listing } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -15,7 +16,7 @@ const inputStyle = { width: '100%', padding: '12px 16px', background: 'rgba(255,
 const labelStyle = { display: 'block' as const, fontFamily: 'Syne Mono, monospace', fontSize: 8, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' as const, color: G.mut, marginBottom: 6 }
 
 export default function EditListingPage({ params }: { params: { id: string } }) {
-  const [listing, setListing] = useState<any>(null)
+  const [listing, setListing] = useState<Listing | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)

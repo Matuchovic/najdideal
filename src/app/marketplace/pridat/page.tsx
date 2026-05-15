@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import type { Profile } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -33,7 +34,7 @@ const inputStyle = { width: '100%', padding: '12px 16px', background: 'rgba(255,
 const labelStyle = { display: 'block' as const, fontFamily: 'Syne Mono, monospace', fontSize: 8, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' as const, color: G.mut, marginBottom: 6 }
 
 export default function AddListingPage() {
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -245,7 +246,7 @@ export default function AddListingPage() {
         <div style={{ background: G.gl, backdropFilter: 'blur(24px)', border: `1px solid ${G.br}`, borderRadius: 14, padding: 22, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ fontFamily: 'Syne Mono, monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.gold }}>📸 Fotografie (max. 8)</div>
           <p style={{ fontSize: 11, color: G.mut, fontWeight: 300, marginTop: -8 }}>Přidej fotky produktu. Inzeráty s fotkami se prodávají rychleji.</p>
-          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '28px 20px', border: '2px dashed rgba(240,180,41,.25)', borderRadius: 12, cursor: 'pointer', background: 'rgba(240,180,41,.03)', transition: 'all .2s' }} onMouseEnter={e => { (e.currentTarget as any).style.borderColor = 'rgba(240,180,41,.5)'; (e.currentTarget as any).style.background = 'rgba(240,180,41,.06)' }} onMouseLeave={e => { (e.currentTarget as any).style.borderColor = 'rgba(240,180,41,.25)'; (e.currentTarget as any).style.background = 'rgba(240,180,41,.03)' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '28px 20px', border: '2px dashed rgba(240,180,41,.25)', borderRadius: 12, cursor: 'pointer', background: 'rgba(240,180,41,.03)', transition: 'all .2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(240,180,41,.5)'; (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,.06)' }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(240,180,41,.25)'; (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,.03)' }}>
             <div style={{ fontSize: 32 }}>📁</div>
             <div style={{ fontFamily: 'Syne Mono, monospace', fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.gold }}>Klikni pro výběr fotek</div>
             <div style={{ fontFamily: 'Syne Mono, monospace', fontSize: 8, color: G.mut }}>JPG, PNG, WEBP · Max 8 fotek</div>

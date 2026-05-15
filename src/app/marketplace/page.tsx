@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import type { Profile, Listing } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -38,7 +39,7 @@ function canAdd(userRole: string, category: string) {
 
 export default function MarketplacePage() {
   const [listings, setListings] = useState<any[]>([])
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [cat, setCat] = useState('all')
   const [search, setSearch] = useState('')
@@ -150,7 +151,7 @@ export default function MarketplacePage() {
   )
 }
 
-function ListingCard({ listing: l, idx, userRole, canContact }: any) {
+function ListingCard({ listing: l, idx, userRole, canContact }: { listing: Listing; idx: number; userRole: string; canContact: boolean }) {
   const [hov, setHov] = useState(false)
   const G2 = { gold:'#F0B429', grn:'#00E676', blu:'#4D9FFF', wht:'#F0EBE1', mut:'rgba(240,235,225,.38)', gl:'rgba(255,255,255,.026)', br:'rgba(255,255,255,.07)' }
   const catEmoji: Record<string,string> = { nemovitosti:'🏠', auta:'🚗', elektronika:'📱', obleceni:'👗', ostatni:'🛒' }

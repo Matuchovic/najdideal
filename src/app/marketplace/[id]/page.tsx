@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import type { Profile, Listing } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -18,8 +19,8 @@ function hasAccess(userRole: string, required: string) {
 }
 
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
-  const [listing, setListing] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [listing, setListing] = useState<Listing | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [messages, setMessages] = useState<any[]>([])
   const [newMsg, setNewMsg] = useState('')
   const [sending, setSending] = useState(false)

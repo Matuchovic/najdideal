@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import type { Listing } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -18,7 +19,7 @@ const PLANS = [
 ]
 
 export default function BoostPage({ params }: { params: { id: string } }) {
-  const [listing, setListing] = useState<any>(null)
+  const [listing, setListing] = useState<Listing | null>(null)
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState('boost_30')
   const [step, setStep] = useState<'select'|'payment'|'success'|'error'>('select')
@@ -253,11 +254,11 @@ export default function BoostPage({ params }: { params: { id: string } }) {
 
             {/* APPLE PAY + GOOGLE PAY */}
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:10,marginBottom:4}}>
-              <button type="button" onClick={()=>alert('Apple Pay bude brzy dostupné. Připojujeme platební bránu.')} style={{padding:'13px',borderRadius:10,border:'1px solid rgba(255,255,255,.12)',background:'#000',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,transition:'all .2s'}} onMouseEnter={e=>{(e.currentTarget as any).style.borderColor='rgba(255,255,255,.3)'}} onMouseLeave={e=>{(e.currentTarget as any).style.borderColor='rgba(255,255,255,.12)'}}>
+              <button type="button" onClick={()=>alert('Apple Pay bude brzy dostupné. Připojujeme platební bránu.')} style={{padding:'13px',borderRadius:10,border:'1px solid rgba(255,255,255,.12)',background:'#000',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,transition:'all .2s'}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,.3)'}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,.12)'}}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 <span style={{color:'#fff',fontFamily:'Syne Mono,monospace',fontSize:10,fontWeight:700,letterSpacing:1}}>Apple Pay</span>
               </button>
-              <button type="button" onClick={()=>alert('Google Pay bude brzy dostupné. Připojujeme platební bránu.')} style={{padding:'13px',borderRadius:10,border:'1px solid rgba(255,255,255,.12)',background:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,transition:'all .2s'}} onMouseEnter={e=>{(e.currentTarget as any).style.borderColor='rgba(240,180,41,.4)'}} onMouseLeave={e=>{(e.currentTarget as any).style.borderColor='rgba(255,255,255,.12)'}}>
+              <button type="button" onClick={()=>alert('Google Pay bude brzy dostupné. Připojujeme platební bránu.')} style={{padding:'13px',borderRadius:10,border:'1px solid rgba(255,255,255,.12)',background:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,transition:'all .2s'}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(240,180,41,.4)'}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,.12)'}}>
                 <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" fill="#4285F4"/></svg>
                 <span style={{color:'#000',fontFamily:'Syne Mono,monospace',fontSize:10,fontWeight:700,letterSpacing:1}}>Google Pay</span>
               </button>

@@ -1,3 +1,4 @@
+import type { Deal } from '@/lib/types'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DealCard } from '@/components/deals/DealCard'
@@ -40,7 +41,7 @@ export default async function SavedPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-          {deals.map((deal: any) => (
+          {deals.map((deal: Deal) => (
             <DealCard key={deal.id} deal={deal} isSaved={true} isVip={isVip} />
           ))}
         </div>

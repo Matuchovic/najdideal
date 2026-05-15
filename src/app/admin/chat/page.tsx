@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import type { ChatMessage } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
@@ -8,9 +9,9 @@ const G = { bg:'#020208', gl:'rgba(255,255,255,.04)', br:'rgba(255,255,255,.08)'
 
 export default function AdminChat() {
   const supabase = createClient()
-  const [sessions, setSessions] = useState<any[]>([])
+  const [sessions, setSessions] = useState<ChatMessage[]>([])
   const [activeSession, setActiveSession] = useState<string|null>(null)
-  const [messages, setMessages] = useState<any[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -47,7 +48,7 @@ export default function AdminChat() {
     const { data } = await supabase.from('chat_messages').select('*').eq('session_id', sid).order('created_at', { ascending: true })
     setMessages(data || [])
     // Pošli uvítací zprávu pokud admin ještě neodpověděl
-    const hasAdminMsg = (data || []).some((m: any) => m.role === 'admin')
+    const hasAdminMsg = (data || []).some((m: ChatMessage) => m.role === 'admin')
     if (!hasAdminMsg) {
       await supabase.from('chat_messages').insert({ session_id: sid, role: 'admin', message: 'Dobrý den! Jak vám můžeme pomoci? 👋' })
     }
