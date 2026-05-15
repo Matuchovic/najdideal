@@ -502,7 +502,6 @@ function ChatWidget() {
   const [input, setInput] = useState('')
   const [sessionId] = useState(() => Math.random().toString(36).slice(2))
   const bottomRef = useRef<HTMLDivElement>(null)
-  const G = { g:'#F0B429', gl:'rgba(255,255,255,.06)', br:'rgba(255,255,255,.12)', wht:'#F0EBE1', mut:'rgba(240,235,225,.5)', bg:'#0D0D18' }
 
   useEffect(() => {
     if (step !== 'waiting' && step !== 'chat') return
@@ -533,82 +532,134 @@ function ChatWidget() {
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: msg })
   }
 
-  function toggle() {
-    if (step === 'closed') setStep('form')
-    else setStep('closed')
-  }
+  const isOpen = step !== 'closed'
 
   return (
-    <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 9999, fontFamily: 'system-ui,sans-serif' }}>
-      {step !== 'closed' && (
-        <div style={{ width: 340, background: G.bg, border: `1px solid ${G.br}`, borderRadius: 20, marginBottom: 12, boxShadow: '0 24px 64px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+    <div style={{ position: 'fixed', bottom: 28, left: 28, zIndex: 9999, fontFamily: "'SF Pro Display', -apple-system, sans-serif" }}>
+      {isOpen && (
+        <div style={{ width: 360, marginBottom: 16, borderRadius: 24, overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.06)', background: 'linear-gradient(160deg, #0D0D1A 0%, #080810 100%)', animation: 'chatSlideUp .3s cubic-bezier(.34,1.56,.64,1)' }}>
+          <style>{`@keyframes chatSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}} @keyframes chatPulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1)}} @keyframes chatShimmer{0%{background-position:200% center}100%{background-position:-200% center}}`}</style>
+
           {/* Header */}
-          <div style={{ padding: '14px 16px', background: 'rgba(240,180,41,.08)', borderBottom: `1px solid ${G.br}`, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: step === 'waiting' ? '#F0B429' : '#00E676', boxShadow: `0 0 8px ${step === 'waiting' ? '#F0B429' : '#00E676'}`, animation: step === 'waiting' ? 'ping 1.5s infinite' : 'none' }} />
-            <span style={{ fontFamily: 'Syne Mono,monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.g, flex: 1 }}>
-              {step === 'form' ? 'Podpora' : step === 'waiting' ? 'Hledáme operátora...' : 'Operátor online'}
-            </span>
-            <button onClick={() => setStep('closed')} style={{ background: 'none', border: 'none', color: G.mut, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+          <div style={{ padding: '20px 20px 16px', background: 'linear-gradient(135deg, rgba(240,180,41,.08) 0%, rgba(240,180,41,.02) 100%)', borderBottom: '1px solid rgba(255,255,255,.05)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg, transparent, rgba(240,180,41,.4), transparent)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'linear-gradient(135deg, #F0B429, #C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: '0 4px 16px rgba(240,180,41,.3)' }}>👑</div>
+                  {step === 'chat' && <div style={{ position: 'absolute', bottom: -2, right: -2, width: 12, height: 12, borderRadius: '50%', background: '#00E676', border: '2px solid #080810', boxShadow: '0 0 8px #00E676' }} />}
+                </div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#F0EBE1', letterSpacing: .3 }}>NajdiDeal Podpora</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                    {step === 'waiting' ? (
+                      <>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#F0B429', animation: 'chatPulse 1.5s infinite' }} />
+                        <span style={{ fontSize: 10, color: 'rgba(240,180,41,.8)', letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Hledáme operátora</span>
+                      </>
+                    ) : step === 'chat' ? (
+                      <>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 6px #00E676' }} />
+                        <span style={{ fontSize: 10, color: '#00E676', letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Online · Připraven pomoci</span>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 6px #00E676' }} />
+                        <span style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Odpovídáme do 5 min</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setStep('closed')} style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(240,235,225,.5)', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>×</button>
+            </div>
           </div>
 
-          {/* Form */}
+          {/* FORM */}
           {step === 'form' && (
-            <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <p style={{ fontSize: 12, color: G.mut, margin: 0, lineHeight: 1.6 }}>Zadej svůj email a popis požadavku. Živý operátor se připojí co nejdříve.</p>
-              <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Tvůj email" type="email"
-                style={{ background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '10px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
-              <textarea value={request} onChange={e => setRequest(e.target.value)} placeholder="Popis tvého požadavku..." rows={3}
-                style={{ background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '10px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit', resize: 'none' }} />
-              <button onClick={submitForm} style={{ background: G.g, color: '#000', border: 'none', borderRadius: 8, padding: '12px', fontFamily: 'Syne Mono,monospace', fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', cursor: 'pointer' }}>
-                Kontaktovat podporu →
-              </button>
-            </div>
-          )}
-
-          {/* Waiting */}
-          {step === 'waiting' && (
-            <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-              <div style={{ fontSize: 32, marginBottom: 16 }}>⏳</div>
-              <div style={{ fontFamily: 'Syne Mono,monospace', fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: G.g, marginBottom: 8 }}>Hledáme volného operátora</div>
-              <p style={{ fontSize: 12, color: G.mut, margin: 0, lineHeight: 1.6 }}>Obvyklá čekací doba je do 5 minut. Zůstaň na stránce.</p>
-              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 6 }}>
-                {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: G.g, opacity: 0.4, animation: `ping ${1 + i * 0.3}s infinite` }} />)}
+            <div style={{ padding: 20 }}>
+              <p style={{ fontSize: 12, color: 'rgba(240,235,225,.55)', margin: '0 0 18px', lineHeight: 1.7 }}>Vyplň své údaje a živý operátor se připojí během chvilky.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div>
+                  <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,180,41,.7)', display: 'block', marginBottom: 6 }}>Email</label>
+                  <input value={email} onChange={e => setEmail(e.target.value)} placeholder="vas@email.cz" type="email"
+                    style={{ width: '100%', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '11px 14px', color: '#F0EBE1', fontSize: 13, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box', transition: 'border-color .2s' }}
+                    onFocus={e => (e.target.style.borderColor = 'rgba(240,180,41,.4)')}
+                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,.08)')} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(240,180,41,.7)', display: 'block', marginBottom: 6 }}>Váš požadavek</label>
+                  <textarea value={request} onChange={e => setRequest(e.target.value)} placeholder="Popište co potřebujete..." rows={3}
+                    style={{ width: '100%', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '11px 14px', color: '#F0EBE1', fontSize: 13, outline: 'none', fontFamily: 'inherit', resize: 'none', boxSizing: 'border-box', transition: 'border-color .2s' }}
+                    onFocus={e => (e.target.style.borderColor = 'rgba(240,180,41,.4)')}
+                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,.08)')} />
+                </div>
+                <button onClick={submitForm} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #F0B429, #C8880A)', border: 'none', borderRadius: 10, color: '#000', fontSize: 10, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 8px 24px rgba(240,180,41,.25)', transition: 'all .2s' }}
+                  onMouseEnter={e => { (e.currentTarget as any).style.transform = 'translateY(-1px)'; (e.currentTarget as any).style.boxShadow = '0 12px 32px rgba(240,180,41,.35)' }}
+                  onMouseLeave={e => { (e.currentTarget as any).style.transform = ''; (e.currentTarget as any).style.boxShadow = '0 8px 24px rgba(240,180,41,.25)' }}>
+                  Spojit s operátorem →
+                </button>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 14 }}>
+                {['🔒 Bezpečné', '⚡ Rychlé', '✓ Zdarma'].map(t => <span key={t} style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: .5 }}>{t}</span>)}
               </div>
             </div>
           )}
 
-          {/* Chat */}
+          {/* WAITING */}
+          {step === 'waiting' && (
+            <div style={{ padding: '40px 24px', textAlign: 'center' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(240,180,41,.08)', border: '1px solid rgba(240,180,41,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, margin: '0 auto 20px' }}>⏳</div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', color: '#F0B429', marginBottom: 10 }}>Hledáme volného operátora</div>
+              <p style={{ fontSize: 12, color: 'rgba(240,235,225,.45)', margin: '0 0 24px', lineHeight: 1.7 }}>Obvyklá čekací doba je do 5 minut.<br/>Prosím zůstaň na stránce.</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+                {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: '#F0B429', animation: `chatPulse ${1 + i * 0.2}s infinite`, animationDelay: `${i * 0.15}s` }} />)}
+              </div>
+              <div style={{ marginTop: 24, padding: '12px 16px', background: 'rgba(255,255,255,.03)', borderRadius: 10, border: '1px solid rgba(255,255,255,.05)' }}>
+                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.35)', letterSpacing: .5 }}>Tvá zpráva byla doručena</div>
+                <div style={{ fontSize: 11, color: 'rgba(240,235,225,.6)', marginTop: 4, fontWeight: 600 }}>{email}</div>
+              </div>
+            </div>
+          )}
+
+          {/* CHAT */}
           {step === 'chat' && (
             <>
-              <div style={{ padding: '8px 16px', background: 'rgba(0,230,118,.08)', borderBottom: '1px solid rgba(0,230,118,.15)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 6px #00E676' }} />
-                <span style={{ fontFamily: 'Syne Mono,monospace', fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#00E676' }}>Operátor připojen</span>
+              <div style={{ padding: '10px 16px', background: 'rgba(0,230,118,.05)', borderBottom: '1px solid rgba(0,230,118,.1)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676' }} />
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#00E676' }}>Operátor připojen · Živý chat</span>
               </div>
-              <div style={{ height: 260, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ height: 280, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {messages.filter(m => !m.message.startsWith('📧')).map((m, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                    <div style={{ maxWidth: '80%', padding: '9px 13px', borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px', background: m.role === 'user' ? G.g : G.gl, color: m.role === 'user' ? '#000' : G.wht, fontSize: 13, lineHeight: 1.5 }}>
+                  <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
+                    {m.role === 'admin' && <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0 }}>👑</div>}
+                    <div style={{ maxWidth: '75%', padding: '10px 14px', borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: m.role === 'user' ? 'linear-gradient(135deg,#F0B429,#C8880A)' : 'rgba(255,255,255,.06)', color: m.role === 'user' ? '#000' : '#F0EBE1', fontSize: 13, lineHeight: 1.5, fontWeight: m.role === 'user' ? 500 : 400, boxShadow: m.role === 'user' ? '0 4px 16px rgba(240,180,41,.2)' : 'none' }}>
                       {m.message}
                     </div>
                   </div>
                 ))}
                 <div ref={bottomRef} />
               </div>
-              <div style={{ padding: '12px', borderTop: `1px solid ${G.br}`, display: 'flex', gap: 8 }}>
+              <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,.05)', display: 'flex', gap: 8, background: 'rgba(255,255,255,.02)' }}>
                 <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
-                  placeholder="Napiš zprávu..." style={{ flex: 1, background: G.gl, border: `1px solid ${G.br}`, borderRadius: 8, padding: '9px 12px', color: G.wht, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
-                <button onClick={send} style={{ background: G.g, color: '#000', border: 'none', borderRadius: 8, padding: '9px 14px', fontWeight: 700, cursor: 'pointer', fontSize: 16 }}>↑</button>
+                  placeholder="Napiš zprávu..." style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '10px 14px', color: '#F0EBE1', fontSize: 13, outline: 'none', fontFamily: 'inherit', transition: 'border-color .2s' }}
+                  onFocus={e => (e.target.style.borderColor = 'rgba(240,180,41,.4)')}
+                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,.08)')} />
+                <button onClick={send} style={{ width: 42, height: 42, borderRadius: 10, background: 'linear-gradient(135deg,#F0B429,#C8880A)', border: 'none', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(240,180,41,.25)', flexShrink: 0 }}>↑</button>
               </div>
             </>
           )}
         </div>
       )}
-      <button onClick={toggle} style={{ width: 56, height: 56, borderRadius: '50%', background: G.g, border: 'none', cursor: 'pointer', fontSize: 22, boxShadow: '0 8px 28px rgba(240,180,41,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform .2s', transform: step !== 'closed' ? 'scale(.9)' : 'scale(1)' }}>
-        {step !== 'closed' ? '×' : '💬'}
+
+      {/* FAB button */}
+      <button onClick={() => setStep(isOpen ? 'closed' : 'form')} style={{ width: 60, height: 60, borderRadius: '50%', background: isOpen ? 'rgba(255,255,255,.08)' : 'linear-gradient(135deg,#F0B429,#C8880A)', border: isOpen ? '1px solid rgba(255,255,255,.12)' : 'none', cursor: 'pointer', fontSize: isOpen ? 20 : 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isOpen ? 'none' : '0 8px 32px rgba(240,180,41,.4), 0 0 0 8px rgba(240,180,41,.08)', transition: 'all .3s cubic-bezier(.34,1.56,.64,1)', color: isOpen ? 'rgba(240,235,225,.6)' : '#000' }}>
+        {isOpen ? '×' : '💬'}
       </button>
     </div>
   )
 }
+
 
 export default function HomePage() {
   const [aiStatus, setAiStatus] = useState('AI analyzuje 2 341 nabídek právě teď')
