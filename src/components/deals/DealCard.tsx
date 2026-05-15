@@ -124,18 +124,20 @@ export function DealCard({ deal, isSaved = false, onSave, isVip = false, compact
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              {/* Emoji icon */}
+              {/* Thumbnail / Emoji icon */}
               <div style={{
                 width: 48, height: 48, borderRadius: 13,
                 background: 'rgba(255,255,255,.05)',
                 border: `1px solid ${hov ? accentColor + '33' : 'rgba(255,255,255,.06)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 24, flexShrink: 0,
+                fontSize: 24, flexShrink: 0, overflow: 'hidden',
                 transition: 'all .35s cubic-bezier(.34,1.56,.64,1)',
                 transform: hov ? 'scale(1.12) rotate(-6deg)' : 'scale(1)',
                 boxShadow: hov ? `0 0 18px ${accentColor}44` : 'none',
               }}>
-                {deal.emoji || '💰'}
+                {deal.image_url
+                  ? <img src={deal.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; if (e.currentTarget.parentElement) e.currentTarget.parentElement.textContent = deal.emoji || '💰' }} />
+                  : (deal.emoji || '💰')}
               </div>
 
               {/* Badges */}
