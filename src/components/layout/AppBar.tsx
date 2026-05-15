@@ -4,7 +4,9 @@ import Link from 'next/link'
 import { BackButton } from '@/components/ui/BackButton'
 import { LogoutButton } from '@/components/ui/LogoutButton'
 
-export function AppBar() {
+interface AppBarProps { isAdmin?: boolean }
+
+export function AppBar({ isAdmin = false }: AppBarProps) {
   return (
     <>
       <style>{`
@@ -32,6 +34,7 @@ export function AppBar() {
         </Link>
         <div className="appbar-right">
           <Link href="/" className="appbar-btn" title="Domů">🏠</Link>
+          {isAdmin && <Link href="/admin" className="appbar-btn" title="Admin panel">🔧</Link>}
           <Link href="/settings" className="appbar-btn" title="Nastavení">⚙️</Link>
           <LogoutButton />
         </div>
