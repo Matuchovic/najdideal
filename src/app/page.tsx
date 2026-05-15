@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import FaqSection from '@/components/sections/FaqSection'
-import ScannerStatus from '@/components/sections/ScannerStatus'
-import PhoneMockup from '@/components/sections/PhoneMockup'
-import ChatWidget from '@/components/ui/ChatWidget'
+import dynamic from 'next/dynamic'
+const ScannerStatus = dynamic(() => import('@/components/sections/ScannerStatus'), { ssr: false })
+const PhoneMockup = dynamic(() => import('@/components/sections/PhoneMockup'), { ssr: false })
+const ChatWidget = dynamic(() => import('@/components/ui/ChatWidget'), { ssr: false })
 import { createClient } from '@/lib/supabase/client'
 import NajdiLogo from '@/components/ui/NajdiLogo'
 import NajdiBot from '@/components/ui/NajdiBot'
