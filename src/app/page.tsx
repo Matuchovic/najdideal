@@ -606,7 +606,7 @@ function ChatWidget() {
   )
 }
 
-export default function Homeexport default function HomePage() {
+export default function HomePage() {
   const [aiStatus, setAiStatus] = useState('AI analyzuje 2 341 nabídek právě teď')
   const [online, setOnline] = useState(47)
   const [members, setMembers] = useState(2341)
