@@ -299,7 +299,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Recent deals + Quick actions */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             <div style={{ background: G.gl, border: `1px solid ${G.br}`, borderRadius: 16, padding: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: G.mut }}>Nejnovější dealy</span>
@@ -321,7 +321,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Quick actions */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 180 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
                 { href: '/admin/deals/new', icon: '➕', label: 'Nový deal', color: G.gold },
                 { href: '/admin/deals', icon: '📋', label: 'Správa dealů', color: G.blu },
