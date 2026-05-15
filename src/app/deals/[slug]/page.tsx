@@ -48,8 +48,10 @@ export default async function DealDetailPage({ params }: Props) {
           <div className="card p-6 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/50 to-transparent" />
             <div className="flex items-start gap-4 mb-5">
-              <div className="w-16 h-16 rounded-2xl bg-void-800 border border-white/[0.06] flex items-center justify-center text-3xl flex-shrink-0">
-                {deal.emoji}
+              <div className="w-16 h-16 rounded-2xl bg-void-800 border border-white/[0.06] flex items-center justify-center text-3xl flex-shrink-0 overflow-hidden">
+                {deal.image_url
+                  ? <img src={deal.image_url} alt="" className="w-full h-full object-cover" onError={e => { (e.currentTarget as HTMLImageElement).style.display='none'; if(e.currentTarget.parentElement) e.currentTarget.parentElement.textContent = deal.emoji }} />
+                  : deal.emoji}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-2">
