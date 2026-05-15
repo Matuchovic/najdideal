@@ -502,6 +502,8 @@ function ChatWidget() {
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState('')
   const [sessionId] = useState(() => Math.random().toString(36).slice(2))
+  const [connecting, setConnecting] = useState(false)
+  const [connectStep, setConnectStep] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -521,6 +523,15 @@ function ChatWidget() {
 
   async function submitForm() {
     if (!email.trim() || !request.trim()) return
+    setConnecting(true)
+    setConnectStep(0)
+    const steps = [0,1,2,3,4]
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, 520))
+      setConnectStep(i + 1)
+    }
+    await new Promise(r => setTimeout(r, 300))
+    setConnecting(false)
     setStep('waiting')
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: `📧 ${email} | ${request}` })
   }
@@ -614,8 +625,46 @@ function ChatWidget() {
 
           <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent)' }} />
 
+          {/* CONNECTING SCREEN */}
+          {connecting && (
+            <div style={{ padding: '40px 24px 48px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 60% at 50% 100%, rgba(240,180,41,.06) 0%, transparent 70%)' }} />
+              
+              {/* Orbiting rings */}
+              <div style={{ position: 'relative', width: 120, height: 120, margin: '0 auto 28px' }}>
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(240,180,41,.08)', animation: 'cwSpin 8s linear infinite' }} />
+                <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '1px solid rgba(240,180,41,.12)', animation: 'cwSpin 5s linear infinite reverse' }} />
+                <div style={{ position: 'absolute', inset: 18, borderRadius: '50%', border: '1.5px solid rgba(240,180,41,.18)', borderTopColor: '#F0B429', animation: 'cwSpin 2.5s linear infinite' }} />
+                <div style={{ position: 'absolute', inset: 28, borderRadius: '50%', border: '1.5px solid rgba(240,180,41,.25)', borderBottomColor: '#FFD97D', animation: 'cwSpin 1.8s linear infinite reverse' }} />
+                <div style={{ position: 'absolute', inset: 38, borderRadius: '50%', background: 'radial-gradient(circle, rgba(240,180,41,.15), rgba(240,180,41,.03))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>👑</div>
+              </div>
+
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', color: '#F0B429', marginBottom: 6, fontFamily: 'Syne Mono,monospace' }}>Navazujeme spojení</div>
+              <div style={{ fontSize: 12, color: 'rgba(240,235,225,.35)', marginBottom: 32, letterSpacing: .3 }}>Připojujeme tě k operátorovi...</div>
+
+              {/* Steps */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left' }}>
+                {[
+                  'Ověřování identity',
+                  'Šifrování spojení',
+                  'Hledání operátora',
+                  'Příprava chatu',
+                  'Připojeno',
+                ].map((label, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 14px', borderRadius: 12, background: connectStep > i ? 'rgba(240,180,41,.06)' : 'rgba(255,255,255,.02)', border: `1px solid ${connectStep > i ? 'rgba(240,180,41,.15)' : 'rgba(255,255,255,.04)'}`, transition: 'all .4s' }}>
+                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: connectStep > i ? 'linear-gradient(135deg,#F0B429,#C8880A)' : connectStep === i ? 'rgba(240,180,41,.1)' : 'rgba(255,255,255,.04)', border: connectStep === i ? '1.5px solid #F0B429' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, flexShrink: 0, transition: 'all .4s', boxShadow: connectStep > i ? '0 2px 10px rgba(240,180,41,.3)' : 'none' }}>
+                      {connectStep > i ? '✓' : connectStep === i ? <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#F0B429', animation: 'cwPulse 1s infinite' }} /> : ''}
+                    </div>
+                    <span style={{ fontSize: 11, color: connectStep > i ? 'rgba(240,235,225,.8)' : connectStep === i ? '#F0B429' : 'rgba(240,235,225,.25)', fontFamily: 'Syne Mono,monospace', letterSpacing: .5, transition: 'all .4s', fontWeight: connectStep === i ? 700 : 400 }}>{label}</span>
+                    {connectStep > i && <div style={{ marginLeft: 'auto', fontSize: 10, color: '#00E676' }}>✓</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* FORM */}
-          {step === 'form' && (
+          {!connecting && step === 'form' && (
             <div style={{ padding: '20px 20px 24px' }}>
               <div style={{ marginBottom: 18, padding: '12px 14px', background: 'rgba(240,180,41,.04)', borderRadius: 14, border: '1px solid rgba(240,180,41,.1)', display: 'flex', gap: 10 }}>
                 <span style={{ fontSize: 16 }}>💎</span>
