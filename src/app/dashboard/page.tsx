@@ -354,7 +354,7 @@ function DealMessage({ deal, idx, userRole }: { deal: any; idx: number; userRole
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {/* Profit */}
           <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: 1, color: isLocked ? 'transparent' : G.grn, filter: isLocked ? 'blur(8px)' : `drop-shadow(0 0 6px ${G.grn}66)`, lineHeight: 1 }}>
-            {deal.profit_amount ? `+${Number(deal.profit_amount).toLocaleString('cs-CZ')} Kč` : deal.short_desc?.split('·')[0]?.trim() || '+??? Kč'}
+            {deal.profit_amount ? `+${Number(deal.profit_amount).toLocaleString('cs-CZ')} Kč` : deal.sell_price ? `${Number(deal.sell_price).toLocaleString('cs-CZ')} Kč` : deal.source_name === 'Bazoš.cz' ? '→ Bazoš.cz' : '+??? Kč'}
           </div>
 
           {deal.is_hot && (
