@@ -3,21 +3,18 @@ on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/bazos-sync.yml'
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync all categories
+      - name: Sync categories rotationally
         run: |
-          for cat in mobily pc elektro auto sport obleceni nabytek motorky detske; do
-            echo "Syncing $cat..."
-            curl -s -X POST https://najdideal-app.vercel.app/api/bazos-sync \
-              -H "Content-Type: application/json" \
-              -H "x-admin-secret: ${{ secrets.ADMIN_SECRET_KEY }}" \
-              -d "{\"kategorie\":\"$cat\",\"pages\":5}" | head -c 200
-            echo ""
-          done
+          MINUTE=$(date +%M)
+          IDX=$(( (10#$MINUTE / 5) % 9 ))
+          CATS=(mobily pc elektro auto sport obleceni nabytek motorky detske)
+          CAT=${CATS[$IDX]}
+          echo "Minute: $MINUTE, Index: $IDX, Category: $CAT"
+          curl -s -X POST https://najdideal-app.vercel.app/api/bazos-sync \
+            -H "Content-Type: application/json" \
+            -H "x-admin-secret: ${{ secrets.ADMIN_SECRET_KEY }}" \
+            -d "{\"kategorie\":\"$CAT\",\"pages\":5}"
