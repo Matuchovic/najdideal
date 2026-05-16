@@ -86,6 +86,7 @@ export default function HomePage() {
             n: 'AI Skener',
             b: `našla výhodný deal: ${d.title.slice(0, 30)}`,
             a: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : '🔥 Nový',
+            img: d.image_url || '',
           }))
           alertsRef.current = newAlerts
           setAlerts(newAlerts)
@@ -583,7 +584,13 @@ export default function HomePage() {
       {/* LIVE NOTIFICATION */}
       {liveAlert && (
         <div style={{position:'fixed',bottom:28,left:28,zIndex:800,display:'flex',alignItems:'center',gap:13,background:'rgba(6,6,14,.9)',backdropFilter:'blur(40px)',border:'1px solid rgba(255,255,255,.07)',borderLeft:'2px solid #00E676',borderRadius:13,padding:'16px 20px',maxWidth:330,transform:showAlert?'translateX(0)':'translateX(-120%)',opacity:showAlert?1:0,transition:'transform .65s cubic-bezier(.34,1.56,.64,1),opacity .4s',boxShadow:'0 22px 72px rgba(0,0,0,.65)'}}>
-          <span style={{fontSize:26,flexShrink:0}}>{liveAlert.e}</span>
+          {liveAlert.img ? (
+            <div style={{width:44,height:44,borderRadius:9,overflow:'hidden',flexShrink:0,border:'1px solid rgba(255,255,255,.1)'}}>
+              <img src={liveAlert.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+            </div>
+          ) : (
+            <span style={{fontSize:26,flexShrink:0}}>{liveAlert.e}</span>
+          )}
           <div>
             <div style={{fontSize:11,fontWeight:700,marginBottom:2}}>{liveAlert.n}</div>
             <div style={{fontSize:10,color:G.mut}}>{liveAlert.b}</div>
