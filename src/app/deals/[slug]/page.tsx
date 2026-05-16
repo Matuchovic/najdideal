@@ -33,6 +33,7 @@ async function getAiScore(title: string, description: string, price: number | nu
     })
     const data = await res.json()
     const text = (data.content?.[0]?.text || '{}').replace(/```json|```/g, '').trim()
+    console.log('AI raw response:', text)
     const parsed = JSON.parse(text)
     return {
       score: Math.min(100, Math.max(1, parsed.score || 75)),
