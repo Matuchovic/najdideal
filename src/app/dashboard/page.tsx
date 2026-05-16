@@ -571,27 +571,22 @@ export default function DashboardPage() {
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push('/login'); return }
-      const [pR, dR, sR, nR, cR] = await Promise.all([
+      const [pR, dR] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),
         supabase.from('deals').select('*').in('status', ['active', 'featured']).order('created_at', { ascending: false }).limit(8),
-        supabase.from('deals').select('*', { count: 'exact', head: true }).in('status', ['active', 'featured']),
-        supabase.from('saved_deals').select('deal_id').eq('user_id', user.id),
-        supabase.from('notifications').select('id').eq('user_id', user.id).eq('is_read', false),
       ])
       setProfile(pR.data)
       setDeals(dR.data ?? [])
-      // Fetch real counts via API route (bypasses RLS)
+      setLoading(false)
+      // Fetch real counts via admin API (bypasses RLS)
       fetch('/api/dashboard-stats')
         .then(r => r.json())
         .then(stats => {
-          if (stats.totalDeals !== undefined) setTotalDeals(stats.totalDeals)
-          if (stats.savedCount !== undefined) setSavedCount(stats.savedCount)
-          if (stats.unreadCount !== undefined) setUnreadCount(stats.unreadCount)
+          if (typeof stats.totalDeals === 'number') setTotalDeals(stats.totalDeals)
+          if (typeof stats.savedCount === 'number') setSavedCount(stats.savedCount)
+          if (typeof stats.unreadCount === 'number') setUnreadCount(stats.unreadCount)
         })
         .catch(() => {})
-      setSavedCount(sR.data?.length ?? 0)
-      setUnreadCount(nR.data?.length ?? 0)
-      setLoading(false)
     })
 
     const i1 = setInterval(() => setLiveCount(p => Math.max(40, p + (Math.random() > .5 ? 1 : -1))), 4200)
