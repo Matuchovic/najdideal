@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Bookmark, BookmarkCheck, Clock, Eye, Tag, Zap } from 'lucide-react'
 import { formatCZK, formatRelative, formatDate } from '@/lib/utils'
 import { CATEGORY_META } from '@/lib/types'
+import { AiScoreWidget } from '@/components/deals/AiScoreWidget'
 
 interface Props { params: { slug: string } }
 
