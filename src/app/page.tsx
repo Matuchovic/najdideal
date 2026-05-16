@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import FaqSection from '@/components/sections/FaqSection'
 import dynamic from 'next/dynamic'
@@ -58,14 +59,46 @@ export default function HomePage() {
 
   const G = { g:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5', wht:'#F0EBE1', mut:'rgba(240,235,225,.38)', gl:'rgba(255,255,255,.026)', br:'rgba(255,255,255,.07)' }
 
-  const deals = [
-    {e:'📱',b:'TOP DEAL',bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G.g,n:'iPhone 15 Pro 256GB',buy:'15 000 Kč',sell:'22 500 Kč',p:'+7 000 Kč',s:'Marketplace Flip'},
-    {e:'🤖',b:'AI TOOL',bc:'rgba(77,159,255,.08)',bc2:'rgba(77,159,255,.18)',bc3:G.blu,n:'Jasper AI Affiliate',buy:'Provize 35%',sell:'Recurring',p:'Pasivní příjem',s:'Affiliate'},
-    {e:'💻',b:'VIP ONLY',bc:'rgba(155,93,229,.08)',bc2:'rgba(155,93,229,.18)',bc3:G.pur,n:'MacBook Air M2',buy:'26 000 Kč',sell:'34 990 Kč',p:'+8 990 Kč',s:'Marketplace Flip'},
-    {e:'🎮',b:'FLIP ALERT',bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G.g,n:'RTX 3060 Ti 8GB',buy:'5 200 Kč',sell:'8 500 Kč',p:'+3 300 Kč',s:'Marketplace Flip'},
-    {e:'🎧',b:'HOT DEAL',bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C',n:'AirPods Pro 2',buy:'4 200 Kč',sell:'6 990 Kč',p:'+2 790 Kč',s:'Marketplace Flip'},
-    {e:'🌀',b:'TREND',bc:'rgba(0,230,118,.06)',bc2:'rgba(0,230,118,.14)',bc3:G.grn,n:'Dyson V15 Detect',buy:'8 900 Kč',sell:'14 200 Kč',p:'+4 800 Kč',s:'Trend Produkt'},
-  ]
+  const [deals, setDeals] = React.useState([
+    {e:'📱',b:'TOP DEAL',bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G.g,n:'iPhone 15 Pro 256GB',buy:'15 000 Kč',sell:'22 500 Kč',p:'+7 000 Kč',s:'Marketplace Flip',slug:'',img:''},
+    {e:'🤖',b:'AI TOOL',bc:'rgba(77,159,255,.08)',bc2:'rgba(77,159,255,.18)',bc3:G.blu,n:'Jasper AI Affiliate',buy:'Provize 35%',sell:'Recurring',p:'Pasivní příjem',s:'Affiliate',slug:'',img:''},
+    {e:'💻',b:'VIP ONLY',bc:'rgba(155,93,229,.08)',bc2:'rgba(155,93,229,.18)',bc3:G.pur,n:'MacBook Air M2',buy:'26 000 Kč',sell:'34 990 Kč',p:'+8 990 Kč',s:'Marketplace Flip',slug:'',img:''},
+    {e:'🎮',b:'FLIP ALERT',bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G.g,n:'RTX 3060 Ti 8GB',buy:'5 200 Kč',sell:'8 500 Kč',p:'+3 300 Kč',s:'Marketplace Flip',slug:'',img:''},
+    {e:'🎧',b:'HOT DEAL',bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C',n:'AirPods Pro 2',buy:'4 200 Kč',sell:'6 990 Kč',p:'+2 790 Kč',s:'Marketplace Flip',slug:'',img:''},
+    {e:'🌀',b:'TREND',bc:'rgba(0,230,118,.06)',bc2:'rgba(0,230,118,.14)',bc3:G.grn,n:'Dyson V15 Detect',buy:'8 900 Kč',sell:'14 200 Kč',p:'+4 800 Kč',s:'Trend Produkt',slug:'',img:''},
+  ])
+
+  React.useEffect(() => {
+    fetch('/api/landing-deals')
+      .then(r => r.json())
+      .then(data => {
+        if (data?.deals?.length >= 6) {
+          const G2 = { g:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5' }
+          const badges = ['TOP DEAL','HOT DEAL','NOVÉ','FLIP ALERT','HOT DEAL','TREND']
+          const colors = [
+            {bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G2.g},
+            {bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C'},
+            {bc:'rgba(0,230,118,.06)',bc2:'rgba(0,230,118,.14)',bc3:G2.grn},
+            {bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G2.g},
+            {bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C'},
+            {bc:'rgba(77,159,255,.08)',bc2:'rgba(77,159,255,.18)',bc3:G2.blu},
+          ]
+          setDeals(data.deals.slice(0, 6).map((d: any, i: number) => ({
+            e: d.emoji || '💰',
+            b: d.is_hot ? 'HOT DEAL' : badges[i],
+            ...colors[i],
+            n: d.title,
+            buy: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : 'Dohodou',
+            sell: '',
+            p: d.is_hot ? '🔥 Hot' : '✓ Nové',
+            s: 'Bazoš Deal',
+            slug: d.slug || '',
+            img: d.image_url || '',
+          })))
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const tickerItems = ['iPhone 15 Pro +7 000 Kč','Jasper AI 35% provize','RTX 3060 Ti +3 300 Kč','MacBook Air M2 +8 990 Kč','AirPods Pro 2 +2 790 Kč','PS5 Slim +3 800 Kč','Dyson V15 +4 800 Kč']
   const mq1 = ['MARKETPLACE FLIPY','AI PŘÍLEŽITOSTI','TREND PRODUKTY','PROFIT ALERTY','VIP KOMUNITA','LIVE DEALY']
