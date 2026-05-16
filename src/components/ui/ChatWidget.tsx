@@ -70,7 +70,6 @@ export default function ChatWidget() {
     if (!input.trim()) return
     const msg = input.trim()
     setInput('')
-    setMessages(prev => [...prev, { id: Date.now(), role: 'user', message: msg }])
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: msg })
   }
 
@@ -79,7 +78,6 @@ export default function ChatWidget() {
     if (!file) return
     const isImage = file.type.startsWith('image/')
     const label = isImage ? `🖼️ ${file.name}` : `📎 ${file.name}`
-    setMessages(prev => [...prev, { id: Date.now(), role: 'user', message: label }])
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: label })
     e.target.value = ''
   }
