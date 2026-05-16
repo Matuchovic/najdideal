@@ -28,7 +28,7 @@ const CAT_COLORS: Record<string, string> = {
 }
 
 export default async function DealsPage({ searchParams }: Props) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
