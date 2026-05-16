@@ -13,7 +13,7 @@ export async function GET() {
     .eq('status', 'active')
     .eq('source_name', 'Bazoš.cz')
     .order('created_at', { ascending: false })
-    .limit(6)
+    .not('image_url', 'is', null).limit(6)
 
   return NextResponse.json({ deals: data ?? [] })
 }

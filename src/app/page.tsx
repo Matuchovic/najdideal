@@ -24,7 +24,7 @@ export default function HomePage() {
   const statsRef = useRef<HTMLDivElement>(null)
 
   const statuses = ['AI analyzuje 2 341 nabídek právě teď','Nový deal detekován – marketplace flip','AI skener: 94% confidence score','Filtrování: 18 příležitostí prošlo','VIP alert odesílán členům…']
-  const alerts = [
+  const [alerts, setAlerts] = React.useState([
     {e:'📱',n:'Tomáš P.',b:'právě flipoval iPhone 15 Pro',a:'+7 200 Kč'},
     {e:'🤖',n:'Jakub M.',b:'registroval Jasper AI affiliate',a:'+35% provize'},
     {e:'🎮',n:'Petra K.',b:'prodala RTX 3060 Ti',a:'+4 100 Kč'},
@@ -100,7 +100,20 @@ export default function HomePage() {
       .catch(() => {})
   }, [])
 
-  const tickerItems = ['iPhone 15 Pro +7 000 Kč','Jasper AI 35% provize','RTX 3060 Ti +3 300 Kč','MacBook Air M2 +8 990 Kč','AirPods Pro 2 +2 790 Kč','PS5 Slim +3 800 Kč','Dyson V15 +4 800 Kč']
+  const [tickerItems, setTickerItems] = React.useState(['Načítám dealy...'])
+
+  React.useEffect(() => {
+    fetch('/api/landing-deals?limit=20')
+      .then(r => r.json())
+      .then(data => {
+        if (data?.deals?.length) {
+          setTickerItems(data.deals.map((d: any) => 
+            d.sell_price ? `${d.title.slice(0,30)} · ${d.sell_price.toLocaleString('cs-CZ')} Kč` : d.title.slice(0,40)
+          ))
+        }
+      })
+      .catch(() => {})
+  }, [])
   const mq1 = ['MARKETPLACE FLIPY','AI PŘÍLEŽITOSTI','TREND PRODUKTY','PROFIT ALERTY','VIP KOMUNITA','LIVE DEALY']
   const mq2 = ['PASIVNÍ PŘÍJEM','ČESKÁ KOMUNITA','DŘÍV NEŽ OSTATNÍ','ONLINE PROFIT','REAL DEALS ONLY','VERIFIED PROFITS']
 
@@ -268,10 +281,16 @@ export default function HomePage() {
         </div>
         <div className="deals-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:12}}>
           {deals.map((d,i) => (
-            <div key={i} className="dc" style={{position:'relative',overflow:'hidden',background:G.gl,backdropFilter:'blur(32px) saturate(180%)',border:`1px solid ${G.br}`,borderRadius:16,padding:24,transition:'transform .5s cubic-bezier(.34,1.56,.64,1),border-color .3s,box-shadow .5s'}}>
+            <div key={i} className="dc" onClick={() => d.slug && (window.location.href = `/deals/${d.slug}`)} style={{position:'relative',overflow:'hidden',background:G.gl,backdropFilter:'blur(32px) saturate(180%)',border:`1px solid ${G.br}`,borderRadius:16,padding:24,transition:'transform .5s cubic-bezier(.34,1.56,.64,1),border-color .3s,box-shadow .5s',cursor: d.slug ? 'pointer' : 'default'}}>
               <div style={{position:'absolute',top:0,left:0,right:0,height:'55%',background:'linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 100%)',borderRadius:'16px 16px 0 0',pointerEvents:'none'}} />
               <span style={{display:'inline-flex',alignItems:'center',gap:4,fontFamily:'Syne Mono,monospace',fontSize:8,fontWeight:700,letterSpacing:2,textTransform:'uppercase',padding:'4px 10px',borderRadius:100,marginBottom:16,background:d.bc,color:d.bc3,border:`1px solid ${d.bc2}`}}>{d.b}</span>
-              <span style={{fontSize:44,display:'block',marginBottom:14,filter:'drop-shadow(0 0 8px rgba(240,180,41,.15))'}}>{d.e}</span>
+              {d.img ? (
+                <div style={{width:64,height:64,borderRadius:12,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,255,255,.08)'}}>
+                  <img src={d.img} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                </div>
+              ) : (
+                <span style={{fontSize:44,display:'block',marginBottom:14,filter:'drop-shadow(0 0 8px rgba(240,180,41,.15))'}}>{d.e}</span>
+              )}
               <div style={{fontFamily:'Syne,sans-serif',fontSize:15,fontWeight:700,marginBottom:16,lineHeight:1.3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{d.n}</div>
               <div style={{height:1,background:'rgba(255,255,255,.055)',marginBottom:14}} />
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:'1px solid rgba(255,255,255,.04)'}}><span style={{color:G.mut,fontFamily:'Syne Mono,monospace',fontSize:8,textTransform:'uppercase',letterSpacing:1}}>Koupeno za</span><span style={{color:G.g,fontWeight:500,fontSize:13}}>{d.buy}</span></div>
