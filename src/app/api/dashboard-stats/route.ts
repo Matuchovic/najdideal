@@ -12,24 +12,24 @@ export async function GET(req: Request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    const promises: Promise<any>[] = [
-      admin.from('deals').select('*', { count: 'exact', head: true }).in('status', ['active', 'featured']),
-    ]
+    const { count: totalDeals } = await admin
+      .from('deals')
+      .select('*', { count: 'exact', head: true })
+      .in('status', ['active', 'featured'])
+
+    let savedCount = 0
+    let unreadCount = 0
 
     if (uid) {
-      promises.push(
+      const [{ count: sc }, { count: uc }] = await Promise.all([
         admin.from('saved_deals').select('*', { count: 'exact', head: true }).eq('user_id', uid),
         admin.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', uid).eq('is_read', false),
-      )
+      ])
+      savedCount = sc ?? 0
+      unreadCount = uc ?? 0
     }
 
-    const [dealsRes, savedRes, notifRes] = await Promise.all(promises)
-
-    return NextResponse.json({
-      totalDeals: dealsRes.count ?? 0,
-      savedCount: savedRes?.count ?? 0,
-      unreadCount: notifRes?.count ?? 0,
-    })
+    return NextResponse.json({ totalDeals: totalDeals ?? 0, savedCount, unreadCount })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
