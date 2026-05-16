@@ -653,7 +653,7 @@ export default function DashboardPage() {
         {/* ── LIVE TICKER ── */}
         <div style={{ margin: '0 -16px', overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,.04)', background: 'rgba(255,255,255,.015)' }}
           onMouseEnter={() => setTickerPaused(true)} onMouseLeave={() => setTickerPaused(false)}>
-          <div style={{ display: 'flex', animation: `tickerScroll 28s linear infinite`, animationPlayState: tickerPaused ? 'paused' : 'running', width: 'max-content' }}>
+          <div style={{ display: 'flex', animation: `tickerScroll 60s linear infinite`, animationPlayState: tickerPaused ? 'paused' : 'running', width: 'max-content' }}>
             {tickerAll.map((t, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 28px', borderRight: '1px solid rgba(255,255,255,.04)', flexShrink: 0 }}>
                 <span>{t.e}</span>
