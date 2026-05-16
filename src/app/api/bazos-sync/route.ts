@@ -109,6 +109,7 @@ async function fetchOgImage(url: string): Promise<string | null> {
 async function insertItem(
   item: { title: string; link: string; description: string; price: number | null; pubDate?: string; imageUrl?: string | null },
   kat: { emoji: string; label: string },
+  katKey: string,
   adminSupabase: ReturnType<typeof createAdminClient<any>>,
   supabase: Awaited<ReturnType<typeof createClient>>
 ) {
@@ -219,7 +220,7 @@ export async function POST(req: Request) {
     const toProcess = allItems.slice(0, 200)
 
     for (const item of toProcess) {
-      const result = await insertItem(item, kat, adminSupabase, supabase)
+      const result = await insertItem(item, kat, katKey, adminSupabase, supabase)
       if (result === 'inserted') { inserted++; if (item.imageUrl) imagesUploaded++ }
       else if (result === 'skipped') skipped++
       else errors++
