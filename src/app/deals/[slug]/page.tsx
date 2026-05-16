@@ -7,6 +7,44 @@ import { CATEGORY_META } from '@/lib/types'
 
 interface Props { params: { slug: string } }
 
+function priceFromTitle(title: string): number | null {
+  const m = title.match(/:\s*(\d[\d\s]{1,8})\s*$/)
+  if (m) return parseInt(m[1].replace(/\s/g, ''), 10)
+  return null
+}
+
+async function getAiScore(title: string, description: string, price: number | null) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY!,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 150,
+        messages: [{
+          role: 'user',
+          content: `Ohodnoť tento bazar inzerát jako zkušený deal hunter. Odpověz POUZE validní JSON bez markdown backticks: {"score": číslo 1-100, "condition": "výborný" nebo "dobrý" nebo "průměrný", "sellDays": "1-3 dní" nebo "2-5 dní" nebo "5-14 dní", "belowMarket": číslo 0-50 kolik procent pod tržní cenou}. Inzerát: "${title.slice(0, 100)}". Popis: "${(description || '').slice(0, 150)}". Cena: ${price || 'neuvedena'} Kč.`
+        }]
+      })
+    })
+    const data = await res.json()
+    const text = (data.content?.[0]?.text || '{}').replace(/```json|```/g, '').trim()
+    const parsed = JSON.parse(text)
+    return {
+      score: Math.min(100, Math.max(1, parsed.score || 75)),
+      condition: parsed.condition || 'dobrý',
+      sellDays: parsed.sellDays || '2-5 dní',
+      belowMarket: Math.min(50, Math.max(0, parsed.belowMarket || 0))
+    }
+  } catch {
+    return { score: 75, condition: 'dobrý', sellDays: '2-5 dní', belowMarket: 0 }
+  }
+}
+
 export async function generateMetadata({ params }: Props) {
   try {
     const supabase = await createClient()
@@ -35,23 +73,22 @@ export default async function DealDetailPage({ params }: Props) {
   await supabase.from('deals').update({ view_count: (deal.view_count ?? 0) + 1 }).eq('id', deal.id)
 
   const meta = CATEGORY_META[deal.category as keyof typeof CATEGORY_META] ?? { label: 'Deal', icon: '💰', color: '#F0B429', badgeClass: 'badge-gold' }
+  const displayPrice = deal.sell_price ?? priceFromTitle(deal.title ?? '')
 
-  const { data: similar } = await supabase
-    .from('deals')
-    .select('id, title, slug, sell_price, emoji, image_url, created_at')
-    .eq('category', deal.category)
-    .eq('status', 'active')
-    .neq('id', deal.id)
-    .order('created_at', { ascending: false })
-    .limit(3)
+  const [aiScore, similarResult] = await Promise.all([
+    getAiScore(deal.title ?? '', deal.description ?? '', displayPrice),
+    supabase
+      .from('deals')
+      .select('id, title, slug, sell_price, emoji, image_url, created_at')
+      .eq('category', deal.category)
+      .eq('status', 'active')
+      .neq('id', deal.id)
+      .order('created_at', { ascending: false })
+      .limit(3)
+  ])
 
-  const priceFromTitle = (title: string) => {
-    const m = title.match(/:\s*(\d[\d\s]{1,8})\s*$/)
-    if (m) return parseInt(m[1].replace(/\s/g, ''), 10)
-    return null
-  }
-
-  const displayPrice = deal.sell_price ?? priceFromTitle(deal.title)
+  const similar = similarResult.data ?? []
+  const scoreWidth = `${aiScore.score}%`
 
   return (
     <>
@@ -66,17 +103,13 @@ export default async function DealDetailPage({ params }: Props) {
         @keyframes glow-btn { 0%,100%{box-shadow:0 0 20px rgba(240,180,41,.3)} 50%{box-shadow:0 0 50px rgba(240,180,41,.7),0 0 80px rgba(240,180,41,.2)} }
         @keyframes score-glow { 0%,100%{box-shadow:0 0 8px rgba(0,230,118,.4)} 50%{box-shadow:0 0 24px rgba(0,230,118,.8),0 0 40px rgba(240,180,41,.3)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
-
         .gc { position:relative; border-radius:14px; overflow:hidden; }
         .gc::before { content:''; position:absolute; inset:-2px; border-radius:16px; background:conic-gradient(from var(--a,0deg),transparent 0deg,#F0B429 50deg,#FFD97D 70deg,transparent 120deg); animation:spin1 4s linear infinite; z-index:0; }
         .gc::after { content:''; position:absolute; inset:1.5px; border-radius:13px; background:#0a0a0e; z-index:1; }
         .gc > * { position:relative; z-index:2; }
-
         .gc-green::before { background:conic-gradient(from var(--a2,0deg),transparent 0deg,#00E676 50deg,#69FFB8 70deg,transparent 120deg); animation:spin2 3s linear infinite; }
         .gc-green::after { background:#080c0a; }
-
         .gc-fast::before { animation:spin3 2.5s linear infinite; background:conic-gradient(from var(--a3,0deg),transparent 0deg,#F0B429 30deg,#FF9500 55deg,#FFD97D 75deg,transparent 130deg); }
-
         .score-bar { height:6px; background:rgba(255,255,255,.06); border-radius:100px; overflow:hidden; margin-top:8px; }
         .score-fill { height:100%; background:linear-gradient(90deg,#00E676,#F0B429); border-radius:100px; animation:score-glow 2s ease-in-out infinite; }
         .pulse { animation:pulse-dot 1.8s infinite; }
@@ -89,8 +122,6 @@ export default async function DealDetailPage({ params }: Props) {
         </Link>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 16 }}>
-
-          {/* LEFT */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
             {/* HEADER */}
@@ -111,26 +142,26 @@ export default async function DealDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 16 }}>
-                {displayPrice && (
+              {displayPrice && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 16 }}>
                   <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: 14 }}>
                     <div style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Prodejní cena</div>
                     <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#F0B429', letterSpacing: 1, textShadow: '0 0 20px rgba(240,180,41,.4)' }}>{displayPrice.toLocaleString('cs-CZ')} Kč</div>
                   </div>
-                )}
-                {deal.sell_price && (
-                  <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Tržní hodnota</div>
-                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#F0EBE1', letterSpacing: 1 }}>{formatCZK(deal.sell_price)}</div>
-                  </div>
-                )}
-                {deal.profit_amount && (
-                  <div style={{ background: 'rgba(0,230,118,.05)', border: '1px solid rgba(0,230,118,.15)', borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 9, color: 'rgba(0,230,118,.5)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Potenciál</div>
-                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#00E676', letterSpacing: 1, textShadow: '0 0 20px rgba(0,230,118,.5)' }}>+{formatCZK(deal.profit_amount)}</div>
-                  </div>
-                )}
-              </div>
+                  {aiScore.belowMarket > 0 && (
+                    <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: 14 }}>
+                      <div style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Tržní hodnota (est.)</div>
+                      <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#F0EBE1', letterSpacing: 1 }}>{Math.round(displayPrice / (1 - aiScore.belowMarket / 100)).toLocaleString('cs-CZ')} Kč</div>
+                    </div>
+                  )}
+                  {aiScore.belowMarket > 0 && (
+                    <div style={{ background: 'rgba(0,230,118,.05)', border: '1px solid rgba(0,230,118,.15)', borderRadius: 12, padding: 14 }}>
+                      <div style={{ fontSize: 9, color: 'rgba(0,230,118,.5)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Úspora</div>
+                      <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#00E676', letterSpacing: 1, textShadow: '0 0 20px rgba(0,230,118,.5)' }}>-{aiScore.belowMarket}%</div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {deal.description && (
                 <p style={{ fontSize: 12, color: 'rgba(240,235,225,.55)', lineHeight: 1.75 }}>{deal.description}</p>
@@ -144,18 +175,18 @@ export default async function DealDetailPage({ params }: Props) {
                   <span className="pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', display: 'inline-block' }} />
                   <span style={{ fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#00E676', fontWeight: 700 }}>AI Hodnocení dealu</span>
                 </div>
-                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, color: '#00E676', letterSpacing: 3, textShadow: '0 0 30px rgba(0,230,118,.6)' }}>97 / 100</div>
+                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, color: aiScore.score >= 80 ? '#00E676' : aiScore.score >= 60 ? '#F0B429' : '#FF3B5C', letterSpacing: 3, textShadow: `0 0 30px ${aiScore.score >= 80 ? 'rgba(0,230,118,.6)' : 'rgba(240,180,41,.6)'}` }}>{aiScore.score} / 100</div>
               </div>
-              <div className="score-bar"><div className="score-fill" style={{ width: '97%' }} /></div>
+              <div className="score-bar"><div className="score-fill" style={{ width: scoreWidth }} /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 14 }}>
-                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Cena pod tržní hodnotou o <strong style={{ color: '#00E676' }}>23%</strong></div>
-                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Stav <strong style={{ color: '#F0B429' }}>výborný</strong></div>
-                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Prodej <strong style={{ color: '#00E676' }}>2–5 dní</strong></div>
+                {aiScore.belowMarket > 0 && <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Cena pod tržní hodnotou o <strong style={{ color: '#00E676' }}>{aiScore.belowMarket}%</strong></div>}
+                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Stav <strong style={{ color: '#F0B429' }}>{aiScore.condition}</strong></div>
+                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Prodej <strong style={{ color: '#00E676' }}>{aiScore.sellDays}</strong></div>
               </div>
             </div>
 
             {/* SIMILAR */}
-            {similar && similar.length > 0 && (
+            {similar.length > 0 && (
               <div className="gc" style={{ padding: 18 }}>
                 <div style={{ fontSize: 9, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'rgba(240,235,225,.3)', marginBottom: 12, fontFamily: "'Syne Mono',monospace" }}>Podobné dealy</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -190,8 +221,6 @@ export default async function DealDetailPage({ params }: Props) {
 
           {/* RIGHT */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-
-            {/* CTA */}
             <div className="gc gc-fast" style={{ padding: 18 }}>
               <div style={{ fontSize: 9, letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(240,235,225,.25)', marginBottom: 12, fontFamily: "'Syne Mono',monospace" }}>Akce</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -215,7 +244,6 @@ export default async function DealDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* INFO */}
             <div className="gc" style={{ padding: 18 }}>
               <div style={{ fontSize: 9, letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(240,235,225,.25)', marginBottom: 12, fontFamily: "'Syne Mono',monospace" }}>Informace</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -226,7 +254,6 @@ export default async function DealDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* ALERT */}
             <div className="gc gc-green" style={{ padding: 18 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                 <span className="pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', display: 'inline-block' }} />
@@ -237,7 +264,6 @@ export default async function DealDetailPage({ params }: Props) {
                 <Zap size={12} /> Nastavit alert
               </Link>
             </div>
-
           </div>
         </div>
       </div>
