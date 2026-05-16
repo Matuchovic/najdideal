@@ -130,13 +130,7 @@ async function insertItem(
 
   const { error } = await supabase.from('deals').insert({
     title: item.title.slice(0, 200), slug, description: item.description,
-    category: (katKey === 'auto' || katKey === 'motorky' ? 'trend_product' :
-      katKey === 'obleceni' ? 'affiliate' :
-      katKey === 'sport' ? 'profit_alert' :
-      katKey === 'nabytek' ? 'dropshipping' :
-      katKey === 'detske' ? 'crypto' :
-      katKey === 'pc' || katKey === 'elektro' || katKey === 'mobily' || katKey === 'hudba' ? 'ai_opportunity' :
-      'marketplace_flip') as any, status: 'active' as const, access_level: 'free' as const,
+    category: getCategory(katKey), status: 'active' as const, access_level: 'free' as const,
     emoji: kat.emoji, source_url: item.link, image_url: storedImageUrl, source_name: 'Bazoš.cz',
     sell_price: item.price, tags: [kat.label, 'bazoš', 'bazar'],
     is_featured: isFeatured, is_hot: isHot, is_trending: false,
@@ -145,6 +139,17 @@ async function insertItem(
   })
 
   return error ? 'error' : 'inserted'
+}
+
+
+function getCategory(katKey: string): 'marketplace_flip' | 'ai_opportunity' | 'trend_product' | 'profit_alert' | 'affiliate' | 'dropshipping' | 'crypto' | 'other' {
+  if (katKey === 'auto' || katKey === 'motorky') return 'trend_product'
+  if (katKey === 'obleceni') return 'affiliate'
+  if (katKey === 'sport') return 'profit_alert'
+  if (katKey === 'nabytek') return 'dropshipping'
+  if (katKey === 'detske') return 'crypto'
+  if (katKey === 'pc' || katKey === 'elektro' || katKey === 'mobily' || katKey === 'hudba') return 'ai_opportunity'
+  return 'marketplace_flip'
 }
 
 export async function POST(req: Request) {
