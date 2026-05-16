@@ -541,6 +541,7 @@ export default function DashboardPage() {
   const [showBoot, setShowBoot] = useState(false)
   const [profile, setProfile] = useState<any>(null)
   const [deals, setDeals] = useState<any[]>([])
+  const [totalDeals, setTotalDeals] = useState(0)
   const [alerts, setAlerts] = useState<any[]>([])
   const [savedCount, setSavedCount] = useState(0)
   const [unreadCount, setUnreadCount] = useState(0)
@@ -570,14 +571,16 @@ export default function DashboardPage() {
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push('/login'); return }
-      const [pR, dR, sR, nR] = await Promise.all([
+      const [pR, dR, sR, nR, cR] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),
         supabase.from('deals').select('*').in('status', ['active', 'featured']).order('created_at', { ascending: false }).limit(8),
+        supabase.from('deals').select('*', { count: 'exact', head: true }).in('status', ['active', 'featured']),
         supabase.from('saved_deals').select('deal_id').eq('user_id', user.id),
         supabase.from('notifications').select('id').eq('user_id', user.id).eq('is_read', false),
       ])
       setProfile(pR.data)
       setDeals(dR.data ?? [])
+      setTotalDeals(cR.count ?? 0)
       setSavedCount(sR.data?.length ?? 0)
       setUnreadCount(nR.data?.length ?? 0)
       setLoading(false)
@@ -693,7 +696,7 @@ export default function DashboardPage() {
 
         {/* ── STATS ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, animation: 'fadeUp .8s ease both', animationDelay: '.2s' }}>
-          <StatCard label="Dostupné dealy" numVal={deals.length} icon={Flame} accent={G.gold} delay={0} />
+          <StatCard label="Dostupné dealy" numVal={totalDeals} icon={Flame} accent={G.gold} delay={0} />
           <StatCard label="Uložené dealy" numVal={savedCount} icon={Bookmark} accent={G.blu} delay={80} />
           <StatCard label="Oznámení" numVal={unreadCount} icon={Bell} accent={G.grn} delay={160} />
           <StatCard label="Přístup" value={tier.label} icon={Crown} accent={tier.color} delay={240} />
