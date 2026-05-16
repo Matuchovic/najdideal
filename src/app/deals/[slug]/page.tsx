@@ -31,7 +31,7 @@ export default async function DealDetailPage({ params }: Props) {
   // Increment view
   await supabase.from('deals').update({ view_count: deal.view_count + 1 }).eq('id', deal.id)
 
-  const meta = CATEGORY_META[deal.category as keyof typeof CATEGORY_META]
+  const meta = CATEGORY_META[deal.category as keyof typeof CATEGORY_META] ?? { label: 'Deal', icon: '💰', color: '#F0B429', badgeClass: 'badge-gold' }
 
   return (
     <div className="max-w-4xl pb-24 lg:pb-8">
