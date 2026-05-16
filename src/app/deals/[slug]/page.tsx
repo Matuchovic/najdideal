@@ -115,17 +115,7 @@ export default async function DealDetailPage({ params }: Props) {
                   <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: 14 }}>
                     <div style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Prodejní cena</div>
                     <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#F0B429', letterSpacing: 1, textShadow: '0 0 20px rgba(240,180,41,.4)' }}>{displayPrice.toLocaleString('cs-CZ')} Kč</div>
-                  </div>
-                  {aiScore.belowMarket > 0 && (
-                    <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: 14 }}>
-                      <div style={{ fontSize: 9, color: 'rgba(240,235,225,.35)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Tržní hodnota (est.)</div>
-                      <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#F0EBE1', letterSpacing: 1 }}>{Math.round(displayPrice / (1 - aiScore.belowMarket / 100)).toLocaleString('cs-CZ')} Kč</div>
-                    </div>
-                  )}
-                  {aiScore.belowMarket > 0 && (
-                    <div style={{ background: 'rgba(0,230,118,.05)', border: '1px solid rgba(0,230,118,.15)', borderRadius: 12, padding: 14 }}>
-                      <div style={{ fontSize: 9, color: 'rgba(0,230,118,.5)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 5 }}>Úspora</div>
-                      <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#00E676', letterSpacing: 1, textShadow: '0 0 20px rgba(0,230,118,.5)' }}>-{aiScore.belowMarket}%</div>
+                  </div> Kč</div>
                     </div>
                   )}
                 </div>
