@@ -72,66 +72,64 @@ export default function HomePage() {
     {e:'🌀',b:'TREND',bc:'rgba(0,230,118,.06)',bc2:'rgba(0,230,118,.14)',bc3:G.grn,n:'Dyson V15 Detect',buy:'8 900 Kč',sell:'14 200 Kč',p:'+4 800 Kč',s:'Trend Produkt',slug:'',img:''},
   ])
 
-  React.useEffect(() => {
-    fetch('/api/landing-deals?limit=20')
-      .then(r => r.json())
-      .then(data => {
-        if (data?.deals?.length >= 3) {
-          const emojis: Record<string, string> = {
-            ai_opportunity: '📱', trend_product: '🚗', profit_alert: '⚽',
-            affiliate: '👕', dropshipping: '🛋️', crypto: '🧸', marketplace_flip: '🔄'
-          }
-          const newAlerts = data.deals.slice(0, 8).map((d: any) => ({
-            e: emojis[d.category] || d.emoji || '💰',
-            n: 'AI Skener',
-            b: `našla výhodný deal: ${d.title.slice(0, 30)}`,
-            a: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : '🔥 Nový',
-            img: d.image_url || '',
-          }))
-          alertsRef.current = newAlerts
-          setAlerts(newAlerts)
-        }
-        if (data?.deals?.length >= 6) {
-          const G2 = { g:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5' }
-          const badges = ['TOP DEAL','HOT DEAL','NOVÉ','FLIP ALERT','HOT DEAL','TREND']
-          const colors = [
-            {bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G2.g},
-            {bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C'},
-            {bc:'rgba(0,230,118,.06)',bc2:'rgba(0,230,118,.14)',bc3:G2.grn},
-            {bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G2.g},
-            {bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C'},
-            {bc:'rgba(77,159,255,.08)',bc2:'rgba(77,159,255,.18)',bc3:G2.blu},
-          ]
-          setDeals(data.deals.slice(0, 6).map((d: any, i: number) => ({
-            e: d.emoji || '💰',
-            b: d.is_hot ? 'HOT DEAL' : badges[i],
-            ...colors[i],
-            n: d.title,
-            buy: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : 'Dohodou',
-            sell: '',
-            p: d.is_hot ? '🔥 Hot' : '✓ Nové',
-            s: 'Bazoš Deal',
-            slug: d.slug || '',
-            img: d.image_url || '',
-          })))
-        }
-      })
-      .catch(() => {})
-  }, [])
-
   const [tickerItems, setTickerItems] = React.useState(['Načítám dealy...'])
 
   React.useEffect(() => {
-    fetch('/api/landing-deals?limit=20')
-      .then(r => r.json())
-      .then(data => {
-        if (data?.deals?.length) {
-          setTickerItems(data.deals.map((d: any) => 
+    const G2 = { g:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5' }
+    const badges = ['TOP DEAL','HOT DEAL','NOVÉ','FLIP ALERT','HOT DEAL','TREND']
+    const colors = [
+      {bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G2.g},
+      {bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C'},
+      {bc:'rgba(0,230,118,.06)',bc2:'rgba(0,230,118,.14)',bc3:G2.grn},
+      {bc:'rgba(240,180,41,.08)',bc2:'rgba(240,180,41,.2)',bc3:G2.g},
+      {bc:'rgba(255,59,92,.08)',bc2:'rgba(255,59,92,.18)',bc3:'#FF3B5C'},
+      {bc:'rgba(77,159,255,.08)',bc2:'rgba(77,159,255,.18)',bc3:G2.blu},
+    ]
+    const emojis: Record<string, string> = {
+      ai_opportunity: '📱', trend_product: '🚗', profit_alert: '⚽',
+      affiliate: '👕', dropshipping: '🛋️', crypto: '🧸', marketplace_flip: '🔄'
+    }
+
+    const fetchDeals = () => {
+      fetch('/api/landing-deals?limit=20')
+        .then(r => r.json())
+        .then(data => {
+          if (!data?.deals?.length) return
+          setTickerItems(data.deals.map((d: any) =>
             d.sell_price ? `${d.title.slice(0,30)} · ${d.sell_price.toLocaleString('cs-CZ')} Kč` : d.title.slice(0,40)
           ))
-        }
-      })
-      .catch(() => {})
+          if (data.deals.length >= 3) {
+            const newAlerts = data.deals.slice(0, 8).map((d: any) => ({
+              e: emojis[d.category] || d.emoji || '💰',
+              n: 'AI Skener',
+              b: `našla výhodný deal: ${d.title.slice(0, 30)}`,
+              a: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : '🔥 Nový',
+              img: d.image_url || '',
+            }))
+            alertsRef.current = newAlerts
+            setAlerts(newAlerts)
+          }
+          if (data.deals.length >= 6) {
+            setDeals(data.deals.slice(0, 6).map((d: any, i: number) => ({
+              e: d.emoji || '💰',
+              b: d.is_hot ? 'HOT DEAL' : badges[i],
+              ...colors[i],
+              n: d.title,
+              buy: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : 'Dohodou',
+              sell: '',
+              p: d.is_hot ? '🔥 Hot' : '✓ Nové',
+              s: 'Bazoš Deal',
+              slug: d.slug || '',
+              img: d.image_url || '',
+            })))
+          }
+        })
+        .catch(() => {})
+    }
+
+    fetchDeals()
+    const iv = setInterval(fetchDeals, 30000)
+    return () => clearInterval(iv)
   }, [])
   const mq1 = ['MARKETPLACE FLIPY','AI PŘÍLEŽITOSTI','TREND PRODUKTY','PROFIT ALERTY','VIP KOMUNITA','LIVE DEALY']
   const mq2 = ['PASIVNÍ PŘÍJEM','ČESKÁ KOMUNITA','DŘÍV NEŽ OSTATNÍ','ONLINE PROFIT','REAL DEALS ONLY','VERIFIED PROFITS']
