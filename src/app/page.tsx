@@ -84,8 +84,8 @@ export default function HomePage() {
           const newAlerts = data.deals.slice(0, 8).map((d: any) => ({
             e: emojis[d.category] || d.emoji || '💰',
             n: 'AI Skener',
-            b: \`našla výhodný deal: \${d.title.slice(0, 30)}\`,
-            a: d.sell_price ? \`\${d.sell_price.toLocaleString('cs-CZ')} Kč\` : '🔥 Nový',
+            b: `našla výhodný deal: ${d.title.slice(0, 30)}`,
+            a: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : '🔥 Nový',
           }))
           alertsRef.current = newAlerts
           setAlerts(newAlerts)
