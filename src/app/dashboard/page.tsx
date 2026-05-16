@@ -542,6 +542,7 @@ export default function DashboardPage() {
   const [scanResult, setScanResult] = useState<any>(null)
   const [tourKey, setTourKey] = useState(0)
   const [tickerPaused, setTickerPaused] = useState(false)
+  const [supportUnread, setSupportUnread] = useState(0)
   const [tickerItems, setTickerItems] = useState<{e:string;n:string;p:string;c:string}[]>([
     { e: '🔄', n: 'Načítám dealy...', p: '', c: '#F0B429' },
   ])
@@ -573,6 +574,20 @@ export default function DashboardPage() {
       setDeals(dR.data ?? [])
       setLoading(false)
       // Fetch ticker dealy
+      // Unread support zprávy
+      supabase.from('chat_messages')
+        .select('session_id', { count: 'exact', head: false })
+        .eq('role', 'admin')
+        .then(async ({ data }) => {
+          if (!data || !user.email) return
+          // Najdi sessions kde user psal a admin odpověděl
+          const { data: userSessions } = await supabase
+            .from('chat_messages')
+            .select('session_id')
+            .ilike('message', `📧 ${user.email}%`)
+          const sids = [...new Set((userSessions || []).map((m: any) => m.session_id))]
+          setSupportUnread(sids.length)
+        })
       fetch('/api/landing-deals?limit=20')
         .then(r => r.json())
         .then(data => {
@@ -730,8 +745,11 @@ export default function DashboardPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(77,159,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>💬</div>
               <div>
-                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 3, color: '#4D9FFF', lineHeight: 1 }}>MOJE POŽADAVKY</div>
-                <div style={{ fontSize: 11, color: 'rgba(240,235,225,.4)', marginTop: 3 }}>Historie vašich požadavků na podporu</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 3, color: '#4D9FFF', lineHeight: 1 }}>MOJE POŽADAVKY</div>
+                  {supportUnread > 0 && <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#FF3B5C', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: '#fff', animation: 'cwPulse 1.4s infinite' }}>{supportUnread}</div>}
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(240,235,225,.4)', marginTop: 3 }}>{supportUnread > 0 ? `${supportUnread} aktivní ${supportUnread === 1 ? 'případ' : 'případy'}` : 'Historie vašich požadavků na podporu'}</div>
               </div>
             </div>
             <div style={{ fontSize: 20, color: 'rgba(77,159,255,.5)' }}>→</div>
