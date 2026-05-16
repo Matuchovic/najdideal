@@ -172,14 +172,14 @@ function GoldParticles() {
 
 /* ═══════════ CATEGORY CARDS ═══════════ */
 const CATEGORIES = [
-  { icon: '🔄', label: 'MARKETPLACE FLIP', sub: 'Flipni to & vydělej', color: G.gold, href: '/deals?cat=marketplace_flip', glow: 'rgba(240,180,41,.2)', hot: true },
-  { icon: '🤖', label: 'AI PŘÍLEŽITOST', sub: 'AI nalezené dealy', color: G.blu, href: '/deals?cat=ai_opportunity', glow: 'rgba(77,159,255,.2)' },
-  { icon: '📈', label: 'TREND PRODUKT', sub: 'Trendující produkty', color: G.grn, href: '/deals?cat=trend_product', glow: 'rgba(0,230,118,.2)' },
-  { icon: '⚡', label: 'PROFIT ALERT', sub: 'Rychlé příležitosti', color: G.red, href: '/deals?cat=profit_alert', glow: 'rgba(255,59,92,.2)' },
-  { icon: '💎', label: 'AFFILIATE', sub: 'Pasivní příjem', color: G.pur, href: '/deals?cat=affiliate', glow: 'rgba(155,93,229,.2)' },
-  { icon: '📦', label: 'DROPSHIPPING', sub: 'Bez skladu & zásob', color: G.org, href: '/deals?cat=dropshipping', glow: 'rgba(255,107,53,.2)' },
-  { icon: '₿', label: 'KRYPTO', sub: 'Crypto příležitosti', color: '#FFD97D', href: '/deals?cat=crypto', glow: 'rgba(255,217,125,.2)' },
-  { icon: '🎯', label: 'OSTATNÍ', sub: 'Různé příležitosti', color: G.mut, href: '/deals', glow: 'rgba(240,235,225,.1)' },
+  { icon: '🔄', label: 'BAZAR & FLIP',     sub: 'Flipni to & vydělej',   color: '#F0B429', href: '/deals?cat=marketplace_flip', glow: 'rgba(240,180,41,.2)', hot: true },
+  { icon: '📱', label: 'ELEKTRONIKA',       sub: 'AI nalezené dealy',      color: '#4D9FFF', href: '/deals?cat=ai_opportunity',   glow: 'rgba(77,159,255,.2)' },
+  { icon: '🚗', label: 'AUTA & MOTO',       sub: 'Vozidla & díly',         color: '#00E676', href: '/deals?cat=trend_product',    glow: 'rgba(0,230,118,.2)' },
+  { icon: '⚽', label: 'SPORT & OUTDOOR',   sub: 'Rychlé příležitosti',    color: '#FF4444', href: '/deals?cat=profit_alert',     glow: 'rgba(255,59,92,.2)' },
+  { icon: '👕', label: 'OBLEČENÍ',          sub: 'Pasivní příjem',         color: '#9C6FE4', href: '/deals?cat=affiliate',        glow: 'rgba(155,93,229,.2)' },
+  { icon: '🛋️', label: 'NÁBYTEK & DŮM',    sub: 'Bez skladu & zásob',     color: '#00BFA5', href: '/deals?cat=dropshipping',     glow: 'rgba(0,191,165,.2)' },
+  { icon: '🧸', label: 'DĚTSKÉ',            sub: 'Hračky & vybavení',      color: '#F7931A', href: '/deals?cat=crypto',           glow: 'rgba(247,147,26,.2)' },
+  { icon: '📦', label: 'OSTATNÍ',           sub: 'Různé příležitosti',     color: '#888888', href: '/deals?cat=other',            glow: 'rgba(136,136,136,.1)' },
 ]
 
 function CategoryCard({ cat, idx }: { cat: typeof CATEGORIES[0]; idx: number }) {
