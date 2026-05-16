@@ -1,3 +1,5 @@
+export const maxDuration = 30
+
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
@@ -11,43 +13,6 @@ function priceFromTitle(title: string): number | null {
   const m = title.match(/:\s*(\d[\d\s]{1,8})\s*$/)
   if (m) return parseInt(m[1].replace(/\s/g, ''), 10)
   return null
-}
-
-async function getAiScore(title: string, description: string, price: number | null) {
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY!,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 100,
-        messages: [{
-          role: 'user',
-          content: 'Rate this Czech marketplace listing. Reply ONLY with valid JSON, no markdown: {"score":75,"condition":"dobrý","sellDays":"2-5 dní","belowMarket":10}. Listing: "' + title.slice(0, 80) + '" Price: ' + (price || 'unknown') + ' CZK.'
-        }]
-      }),
-      signal: AbortSignal.timeout(8000)
-    })
-    const data = await res.json()
-    console.log('AI status:', res.status, 'data:', JSON.stringify(data).slice(0, 200))
-    const text = (data.content?.[0]?.text || '').replace(/```json|```/g, '').trim()
-    console.log('AI text:', text)
-    if (!text) return { score: 75, condition: 'dobrý', sellDays: '2-5 dní', belowMarket: 0 }
-    const parsed = JSON.parse(text)
-    return {
-      score: Math.min(100, Math.max(1, parsed.score || 75)),
-      condition: parsed.condition || 'dobrý',
-      sellDays: parsed.sellDays || '2-5 dní',
-      belowMarket: Math.min(50, Math.max(0, parsed.belowMarket || 0))
-    }
-  } catch (e) {
-    console.error('AI Score error:', e)
-    return { score: 75, condition: 'dobrý', sellDays: '2-5 dní', belowMarket: 0 }
-  }
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -80,8 +45,8 @@ export default async function DealDetailPage({ params }: Props) {
   const meta = CATEGORY_META[deal.category as keyof typeof CATEGORY_META] ?? { label: 'Deal', icon: '💰', color: '#F0B429', badgeClass: 'badge-gold' }
   const displayPrice = deal.sell_price ?? priceFromTitle(deal.title ?? '')
 
-  const [aiScore, similarResult] = await Promise.all([
-    getAiScore(deal.title ?? '', deal.description ?? '', displayPrice),
+  const aiScore = { score: 0, condition: '', sellDays: '', belowMarket: 0 }
+  const [similarResult] = await Promise.all([
     supabase
       .from('deals')
       .select('id, title, slug, sell_price, emoji, image_url, created_at')
