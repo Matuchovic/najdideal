@@ -8,13 +8,13 @@ import { CATEGORY_META } from '@/lib/types'
 interface Props { params: { slug: string } }
 
 export async function generateMetadata({ params }: Props) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data } = await supabase.from('deals').select('title,short_desc').eq('slug', params.slug).single()
   return { title: data?.title ?? 'Deal', description: data?.short_desc }
 }
 
 export default async function DealDetailPage({ params }: Props) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
