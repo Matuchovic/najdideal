@@ -115,12 +115,17 @@ export async function POST(req: Request) {
         storedImageUrl = await fetchAndUploadImage(ogImageUrl, slug, adminSupabase)
         if (storedImageUrl) imagesUploaded++
       }
+      // Hot deal = ma cenu + obrazek + klic slova
+      const hotKeywords = ['nový','nové','zánovní','záruka','top','výborný','perfekt','nepoužitý','nerozbalený']
+      const titleLower = item.title.toLowerCase()
+      const isHot = !!(item.price && item.price > 0 && storedImageUrl && hotKeywords.some(k => titleLower.includes(k)))
+      const isFeatured = !!(item.price && item.price > 500 && storedImageUrl)
       const { error } = await supabase.from('deals').insert({
         title: item.title.slice(0, 200), slug, description: item.description,
         category: 'marketplace_flip' as const, status: 'active' as const, access_level: 'free' as const,
         emoji: kat.emoji, source_url: item.link, image_url: storedImageUrl, source_name: 'Bazoš.cz',
         sell_price: item.price, tags: [kat.label, 'bazoš', 'bazar'],
-        is_featured: false, is_hot: false, is_trending: false,
+        is_featured: isFeatured, is_hot: isHot, is_trending: false,
         image_urls: storedImageUrl ? [storedImageUrl] : [],
         created_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
       })
