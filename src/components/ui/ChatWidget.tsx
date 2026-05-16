@@ -244,7 +244,7 @@ export default function ChatWidget() {
                 <span style={{ fontSize: 8, color: 'rgba(240,235,225,.2)', fontFamily: 'Syne Mono,monospace' }}>#{sessionId.slice(0,6).toUpperCase()}</span>
               </div>
               <div className="cw-scroll" style={{ height: 285, overflowY: 'auto', padding: '14px 16px 8px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {messages.filter(m => !m.message.startsWith('📧')).map((m, i) => (
+                {messages.map((m, i) => ({ ...m, message: m.message.startsWith('📧') ? m.message.split('| ')[1] || m.message : m.message })).map((m, i) => (
                   <div key={i} className="cw-msg" style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
                     {m.role === 'admin' && <div style={{ width: 28, height: 28, borderRadius: 9, background: 'linear-gradient(135deg,#F0B429,#C8880A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0 }}>👑</div>}
                     <div>
