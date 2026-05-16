@@ -24,6 +24,7 @@ export default function HomePage() {
   const statsRef = useRef<HTMLDivElement>(null)
 
   const statuses = ['AI analyzuje 2 341 nabídek právě teď','Nový deal detekován – marketplace flip','AI skener: 94% confidence score','Filtrování: 18 příležitostí prošlo','VIP alert odesílán členům…']
+  const alertsRef = useRef<{e:string,n:string,b:string,a:string}[]>([])
   const [alerts, setAlerts] = React.useState([
     {e:'📱',n:'Tomáš P.',b:'právě flipoval iPhone 15 Pro',a:'+7 200 Kč'},
     {e:'🤖',n:'Jakub M.',b:'registroval Jasper AI affiliate',a:'+35% provize'},
@@ -31,6 +32,8 @@ export default function HomePage() {
     {e:'💻',n:'Martin V.',b:'flipoval MacBook Air M2',a:'+8 990 Kč'},
     {e:'👑',n:'Eliška R.',b:'vstoupila do VIP komunity',a:'🎉 Vítej!'},
   ])
+
+  useEffect(() => { alertsRef.current = alerts }, [alerts])
 
   useEffect(() => {
     let si = 0
@@ -40,7 +43,8 @@ export default function HomePage() {
     const iv4 = setInterval(() => setViews(p => p.map((v) => Math.random()>.6 ? v + Math.floor(Math.random()*3)+1 : v)), 2500)
     let ai = 0
     const showN = () => {
-      setLiveAlert(alerts[ai++ % alerts.length])
+      const list = alertsRef.current.length ? alertsRef.current : alerts
+      setLiveAlert(list[ai++ % list.length])
       setShowAlert(true)
       setTimeout(() => setShowAlert(false), 5200)
     }
@@ -77,12 +81,14 @@ export default function HomePage() {
             ai_opportunity: '📱', trend_product: '🚗', profit_alert: '⚽',
             affiliate: '👕', dropshipping: '🛋️', crypto: '🧸', marketplace_flip: '🔄'
           }
-          setAlerts(data.deals.slice(0, 8).map((d: any) => ({
+          const newAlerts = data.deals.slice(0, 8).map((d: any) => ({
             e: emojis[d.category] || d.emoji || '💰',
             n: 'AI Skener',
-            b: `našla výhodný deal: ${d.title.slice(0, 30)}`,
-            a: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : '🔥 Nový',
-          })))
+            b: \`našla výhodný deal: \${d.title.slice(0, 30)}\`,
+            a: d.sell_price ? \`\${d.sell_price.toLocaleString('cs-CZ')} Kč\` : '🔥 Nový',
+          }))
+          alertsRef.current = newAlerts
+          setAlerts(newAlerts)
         }
         if (data?.deals?.length >= 6) {
           const G2 = { g:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5' }
