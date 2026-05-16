@@ -23,17 +23,20 @@ async function getAiScore(title: string, description: string, price: number | nu
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 150,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 100,
         messages: [{
           role: 'user',
-          content: `Ohodnoť tento bazar inzerát jako zkušený deal hunter. Odpověz POUZE validní JSON bez markdown backticks: {"score": číslo 1-100, "condition": "výborný" nebo "dobrý" nebo "průměrný", "sellDays": "1-3 dní" nebo "2-5 dní" nebo "5-14 dní", "belowMarket": číslo 0-50 kolik procent pod tržní cenou}. Inzerát: "${title.slice(0, 100)}". Popis: "${(description || '').slice(0, 150)}". Cena: ${price || 'neuvedena'} Kč.`
+          content: 'Rate this Czech marketplace listing. Reply ONLY with valid JSON, no markdown: {"score":75,"condition":"dobrý","sellDays":"2-5 dní","belowMarket":10}. Listing: "' + title.slice(0, 80) + '" Price: ' + (price || 'unknown') + ' CZK.'
         }]
-      })
+      }),
+      signal: AbortSignal.timeout(8000)
     })
     const data = await res.json()
-    const text = (data.content?.[0]?.text || '{}').replace(/```json|```/g, '').trim()
-    console.log('AI raw response:', text)
+    console.log('AI status:', res.status, 'data:', JSON.stringify(data).slice(0, 200))
+    const text = (data.content?.[0]?.text || '').replace(/```json|```/g, '').trim()
+    console.log('AI text:', text)
+    if (!text) return { score: 75, condition: 'dobrý', sellDays: '2-5 dní', belowMarket: 0 }
     const parsed = JSON.parse(text)
     return {
       score: Math.min(100, Math.max(1, parsed.score || 75)),
@@ -41,7 +44,8 @@ async function getAiScore(title: string, description: string, price: number | nu
       sellDays: parsed.sellDays || '2-5 dní',
       belowMarket: Math.min(50, Math.max(0, parsed.belowMarket || 0))
     }
-  } catch {
+  } catch (e) {
+    console.error('AI Score error:', e)
     return { score: 75, condition: 'dobrý', sellDays: '2-5 dní', belowMarket: 0 }
   }
 }
