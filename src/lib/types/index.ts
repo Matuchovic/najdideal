@@ -308,14 +308,14 @@ export interface FilterOptions {
 // ============================================================
 
 export const CATEGORY_META: Record<DealCategory, { label: string; icon: string; color: string; badgeClass: string }> = {
-  marketplace_flip: { label: 'Marketplace Flip', icon: '🔄', color: '#F5B800', badgeClass: 'badge-gold' },
-  ai_opportunity:   { label: 'AI Příležitost',   icon: '🤖', color: '#4D9FFF', badgeClass: 'badge-blue' },
-  trend_product:    { label: 'Trend Produkt',    icon: '📈', color: '#00E676', badgeClass: 'badge-green' },
-  profit_alert:     { label: 'Profit Alert',     icon: '⚡', color: '#FF4444', badgeClass: 'badge-red' },
-  affiliate:        { label: 'Affiliate',        icon: '💎', color: '#9C6FE4', badgeClass: 'badge-purple' },
-  dropshipping:     { label: 'Dropshipping',     icon: '📦', color: '#00BFA5', badgeClass: 'badge-teal' },
-  crypto:           { label: 'Krypto',           icon: '₿',  color: '#F7931A', badgeClass: 'badge-orange' },
-  other:            { label: 'Ostatní',           icon: '🎯', color: '#888',    badgeClass: 'badge-gray' },
+  marketplace_flip: { label: 'Bazar & Flip',     icon: '🔄', color: '#F0B429', badgeClass: 'badge-gold' },
+  ai_opportunity:   { label: 'Elektronika',      icon: '📱', color: '#4D9FFF', badgeClass: 'badge-blue' },
+  trend_product:    { label: 'Auta & Moto',      icon: '🚗', color: '#00E676', badgeClass: 'badge-green' },
+  profit_alert:     { label: 'Sport & Outdoor',  icon: '⚽', color: '#FF4444', badgeClass: 'badge-red' },
+  affiliate:        { label: 'Oblečení',         icon: '👕', color: '#9C6FE4', badgeClass: 'badge-purple' },
+  dropshipping:     { label: 'Nábytek & Dům',   icon: '🛋️', color: '#00BFA5', badgeClass: 'badge-teal' },
+  crypto:           { label: 'Dětské',           icon: '🧸', color: '#F7931A', badgeClass: 'badge-orange' },
+  other:            { label: 'Ostatní',          icon: '📦', color: '#888',    badgeClass: 'badge-gray' },
 }
 
 export const ALERT_TYPE_META: Record<AlertType, { label: string; icon: string; color: string }> = {
