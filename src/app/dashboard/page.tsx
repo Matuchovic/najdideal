@@ -434,16 +434,7 @@ function StatCard({ label, numVal, value, icon: Icon, accent, delay }: any) {
 }
 
 /* ═══════════ LIVE TICKER ═══════════ */
-const TICKER_ITEMS = [
-  { e: '🚗', n: 'BMW M3', p: '+45 000 Kč', c: '#F0B429' },
-  { e: '💻', n: 'MacBook Air M2', p: '+8 990 Kč', c: '#4D9FFF' },
-  { e: '🏠', n: 'Byt 3+kk Praha', p: 'AI 94%', c: '#00E676' },
-  { e: '⌚', n: 'Rolex Sub', p: '+22 000 Kč', c: '#F0B429' },
-  { e: '🎮', n: 'RTX 4070', p: '+5 300 Kč', c: '#9B5DE5' },
-  { e: '👟', n: 'Jordan 1 Retro', p: '+3 800 Kč', c: '#FF6B35' },
-  { e: '🏍️', n: 'Porsche 911', p: 'VIP DEAL', c: '#FF3B5C' },
-  { e: '📱', n: 'iPhone 15 Pro', p: '+6 200 Kč', c: '#4D9FFF' },
-]
+const TICKER_ITEMS: { e: string; n: string; p: string; c: string }[] = []
 
 /* ═══════════ SCANNER SECTION ═══════════ */
 function ScannerSection({ userRole, onScan, scanning, scanResult }: any) {
@@ -551,6 +542,9 @@ export default function DashboardPage() {
   const [scanResult, setScanResult] = useState<any>(null)
   const [tourKey, setTourKey] = useState(0)
   const [tickerPaused, setTickerPaused] = useState(false)
+  const [tickerItems, setTickerItems] = useState<{e:string;n:string;p:string;c:string}[]>([
+    { e: '🔄', n: 'Načítám dealy...', p: '', c: '#F0B429' },
+  ])
   const router = useRouter()
   const resetTour = () => { localStorage.removeItem('nd_tour_done'); setTourKey(k => k + 1) }
 
@@ -578,6 +572,21 @@ export default function DashboardPage() {
       setProfile(pR.data)
       setDeals(dR.data ?? [])
       setLoading(false)
+      // Fetch ticker dealy
+      fetch('/api/landing-deals?limit=20')
+        .then(r => r.json())
+        .then(data => {
+          if (data?.deals?.length) {
+            const colors = ['#F0B429','#4D9FFF','#00E676','#9B5DE5','#FF6B35','#FF3B5C']
+            setTickerItems(data.deals.map((d: any, i: number) => ({
+              e: d.emoji || '💰',
+              n: d.title.slice(0, 25),
+              p: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : 'Nový deal',
+              c: colors[i % colors.length],
+            })))
+          }
+        })
+        .catch(() => {})
       fetch('/api/dashboard-stats?uid=' + user.id)
         .then(r => r.json())
         .then(s => {
@@ -602,7 +611,7 @@ export default function DashboardPage() {
   const tier = getTier(userRole)
   const isVip = tier.level >= 2
 
-  const tickerAll = [...TICKER_ITEMS, ...TICKER_ITEMS]
+  const tickerAll = [...tickerItems, ...tickerItems]
 
   return (
     <>
