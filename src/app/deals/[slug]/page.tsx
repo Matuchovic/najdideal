@@ -46,7 +46,6 @@ export default async function DealDetailPage({ params }: Props) {
   const meta = CATEGORY_META[deal.category as keyof typeof CATEGORY_META] ?? { label: 'Deal', icon: '💰', color: '#F0B429', badgeClass: 'badge-gold' }
   const displayPrice = deal.sell_price ?? priceFromTitle(deal.title ?? '')
 
-  const aiScore = { score: 0, condition: '', sellDays: '', belowMarket: 0 }
   const [similarResult] = await Promise.all([
     supabase
       .from('deals')
@@ -59,8 +58,6 @@ export default async function DealDetailPage({ params }: Props) {
   ])
 
   const similar = similarResult.data ?? []
-  const scoreWidth = `${aiScore.score}%`
-
   return (
     <>
       <style>{`
@@ -140,21 +137,7 @@ export default async function DealDetailPage({ params }: Props) {
             </div>
 
             {/* AI SCORE */}
-            <div className="gc gc-green" style={{ padding: 18 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className="pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#00E676', display: 'inline-block' }} />
-                  <span style={{ fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#00E676', fontWeight: 700 }}>AI Hodnocení dealu</span>
-                </div>
-                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, color: aiScore.score >= 80 ? '#00E676' : aiScore.score >= 60 ? '#F0B429' : '#FF3B5C', letterSpacing: 3, textShadow: `0 0 30px ${aiScore.score >= 80 ? 'rgba(0,230,118,.6)' : 'rgba(240,180,41,.6)'}` }}>{aiScore.score} / 100</div>
-              </div>
-              <div className="score-bar"><div className="score-fill" style={{ width: scoreWidth }} /></div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 14 }}>
-                {aiScore.belowMarket > 0 && <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Cena pod tržní hodnotou o <strong style={{ color: '#00E676' }}>{aiScore.belowMarket}%</strong></div>}
-                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Stav <strong style={{ color: '#F0B429' }}>{aiScore.condition}</strong></div>
-                <div style={{ fontSize: 10, color: 'rgba(240,235,225,.5)', lineHeight: 1.5 }}>✓ Prodej <strong style={{ color: '#00E676' }}>{aiScore.sellDays}</strong></div>
-              </div>
-            </div>
+            <AiScoreWidget title={deal.title ?? ''} description={deal.description ?? ''} price={displayPrice} />
 
             {/* SIMILAR */}
             {similar.length > 0 && (
