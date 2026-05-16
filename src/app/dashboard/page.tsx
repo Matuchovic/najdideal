@@ -724,6 +724,20 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* ── MOJE POŽADAVKY LINK ── */}
+        <Link href="/moje-pozadavky" style={{ textDecoration: 'none', animation: 'fadeUp .8s ease both', animationDelay: '.4s', display: 'block' }}>
+          <div style={{ padding: '18px 24px', background: 'rgba(77,159,255,.04)', border: '1px solid rgba(77,159,255,.12)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'all .2s' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(77,159,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>💬</div>
+              <div>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 3, color: '#4D9FFF', lineHeight: 1 }}>MOJE POŽADAVKY</div>
+                <div style={{ fontSize: 11, color: 'rgba(240,235,225,.4)', marginTop: 3 }}>Historie vašich požadavků na podporu</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 20, color: 'rgba(77,159,255,.5)' }}>→</div>
+          </div>
+        </Link>
+
         {/* ── MARKETPLACE LINK ── */}
         <Link href="/marketplace" style={{ textDecoration: 'none', animation: 'fadeUp .8s ease both', animationDelay: '.35s', display: 'block' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', background: 'rgba(240,180,41,.04)', border: '1px solid rgba(240,180,41,.18)', borderRadius: 16, position: 'relative', overflow: 'hidden', transition: 'all .3s' }}
