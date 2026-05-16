@@ -69,9 +69,21 @@ export default function HomePage() {
   ])
 
   React.useEffect(() => {
-    fetch('/api/landing-deals')
+    fetch('/api/landing-deals?limit=20')
       .then(r => r.json())
       .then(data => {
+        if (data?.deals?.length >= 3) {
+          const emojis: Record<string, string> = {
+            ai_opportunity: '📱', trend_product: '🚗', profit_alert: '⚽',
+            affiliate: '👕', dropshipping: '🛋️', crypto: '🧸', marketplace_flip: '🔄'
+          }
+          setAlerts(data.deals.slice(0, 8).map((d: any) => ({
+            e: emojis[d.category] || d.emoji || '💰',
+            n: 'AI Skener',
+            b: `našla výhodný deal: ${d.title.slice(0, 30)}`,
+            a: d.sell_price ? `${d.sell_price.toLocaleString('cs-CZ')} Kč` : '🔥 Nový',
+          })))
+        }
         if (data?.deals?.length >= 6) {
           const G2 = { g:'#F0B429', grn:'#00E676', blu:'#4D9FFF', pur:'#9B5DE5' }
           const badges = ['TOP DEAL','HOT DEAL','NOVÉ','FLIP ALERT','HOT DEAL','TREND']
