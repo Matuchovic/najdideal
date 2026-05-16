@@ -34,7 +34,7 @@ export default function ChatWidget() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
         const m = payload.new as any
         if (m.role === 'admin') { setStep('chat'); setMinimized(false) }
-        setMessages(prev => [...prev, m])
+        if (m.role === 'admin') setMessages(prev => [...prev, m])
       })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
@@ -70,6 +70,8 @@ export default function ChatWidget() {
     if (!input.trim()) return
     const msg = input.trim()
     setInput('')
+    const tempId = Date.now()
+    setMessages(prev => [...prev, { id: tempId, role: 'user', message: msg }])
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: msg })
   }
 
@@ -78,6 +80,7 @@ export default function ChatWidget() {
     if (!file) return
     const isImage = file.type.startsWith('image/')
     const label = isImage ? `🖼️ ${file.name}` : `📎 ${file.name}`
+    setMessages(prev => [...prev, { id: Date.now(), role: 'user', message: label }])
     await supabase.from('chat_messages').insert({ session_id: sessionId, role: 'user', message: label })
     e.target.value = ''
   }
