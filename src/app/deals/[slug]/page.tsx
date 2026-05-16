@@ -132,19 +132,9 @@ export default async function DealDetailPage({ params }: Props) {
                   Zobrazit zdroj
                 </a>
               )}
-              <form action={async () => {
-                'use server'
-                const sb = createClient()
-                if (isSaved) {
-                  await sb.from('saved_deals').delete().eq('user_id', user!.id).eq('deal_id', deal.id)
-                } else {
-                  await sb.from('saved_deals').insert({ user_id: user!.id, deal_id: deal.id })
-                }
-              }}>
-                <button type="submit" className="btn btn-outline w-full justify-center">
-                  {isSaved ? <><BookmarkCheck className="w-4 h-4" /> Uloženo</> : <><Bookmark className="w-4 h-4" /> Uložit deal</>}
-                </button>
-              </form>
+              <Link href={`/api/save-deal?deal_id=${deal.id}&saved=${isSaved}`} className="btn btn-outline w-full justify-center" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+                {isSaved ? <><BookmarkCheck className="w-4 h-4" /> Uloženo</> : <><Bookmark className="w-4 h-4" /> Uložit deal</>}
+              </Link>
             </div>
           </div>
 
