@@ -577,16 +577,16 @@ export default function DashboardPage() {
       ])
       setProfile(pR.data)
       setDeals(dR.data ?? [])
+      // Counts přímo ze Supabase
+      const [{ count: td }, { count: sc }, { count: uc }] = await Promise.all([
+        supabase.from('deals').select('*', { count: 'exact', head: true }).in('status', ['active', 'featured']),
+        supabase.from('saved_deals').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('is_read', false),
+      ])
+      setTotalDeals(td ?? 0)
+      setSavedCount(sc ?? 0)
+      setUnreadCount(uc ?? 0)
       setLoading(false)
-      // Fetch real counts via admin API (bypasses RLS)
-      fetch('/api/dashboard-stats')
-        .then(r => r.json())
-        .then(stats => {
-          if (typeof stats.totalDeals === 'number') setTotalDeals(stats.totalDeals)
-          if (typeof stats.savedCount === 'number') setSavedCount(stats.savedCount)
-          if (typeof stats.unreadCount === 'number') setUnreadCount(stats.unreadCount)
-        })
-        .catch(() => {})
     })
 
     const i1 = setInterval(() => setLiveCount(p => Math.max(40, p + (Math.random() > .5 ? 1 : -1))), 4200)
