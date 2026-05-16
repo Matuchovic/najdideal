@@ -20,6 +20,14 @@ export default function ChatWidget() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  // Vyčisti starý localStorage stav který způsoboval auto-open
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem('nd_chat_step')
+    localStorage.removeItem('nd_chat_session')
+    localStorage.removeItem('nd_chat_email')
+  }, [])
+
   useEffect(() => {
     if (step !== 'waiting' && step !== 'chat') return
     const ch = supabase.channel('chat-' + sessionId)
