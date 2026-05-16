@@ -62,7 +62,7 @@ export default async function DealsPage({ searchParams }: Props) {
   const sort = sortMap[searchParams.sort ?? 'newest'] ?? sortMap.newest
   query = query.order(sort.col, { ascending: sort.asc })
 
-  const { data: deals } = await query.limit(48)
+  const { data: deals } = await query.limit(200)
   const { data: savedRaw } = await supabase.from('saved_deals').select('deal_id').eq('user_id', user.id)
   const savedIds = new Set((savedRaw ?? []).map(d => d.deal_id))
 
