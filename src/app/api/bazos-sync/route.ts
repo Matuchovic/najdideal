@@ -130,7 +130,13 @@ async function insertItem(
 
   const { error } = await supabase.from('deals').insert({
     title: item.title.slice(0, 200), slug, description: item.description,
-    category: 'marketplace_flip' as const, status: 'active' as const, access_level: 'free' as const,
+    category: (katKey === 'auto' || katKey === 'motorky' ? 'trend_product' :
+      katKey === 'obleceni' ? 'affiliate' :
+      katKey === 'sport' ? 'profit_alert' :
+      katKey === 'nabytek' ? 'dropshipping' :
+      katKey === 'detske' ? 'crypto' :
+      katKey === 'pc' || katKey === 'elektro' || katKey === 'mobily' || katKey === 'hudba' ? 'ai_opportunity' :
+      'marketplace_flip') as any, status: 'active' as const, access_level: 'free' as const,
     emoji: kat.emoji, source_url: item.link, image_url: storedImageUrl, source_name: 'Bazoš.cz',
     sell_price: item.price, tags: [kat.label, 'bazoš', 'bazar'],
     is_featured: isFeatured, is_hot: isHot, is_trending: false,
