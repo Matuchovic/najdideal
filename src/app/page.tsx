@@ -30,7 +30,7 @@ export default function HomePage() {
     {e:'🎮',n:'Petra K.',b:'prodala RTX 3060 Ti',a:'+4 100 Kč'},
     {e:'💻',n:'Martin V.',b:'flipoval MacBook Air M2',a:'+8 990 Kč'},
     {e:'👑',n:'Eliška R.',b:'vstoupila do VIP komunity',a:'🎉 Vítej!'},
-  ]
+  ])
 
   useEffect(() => {
     let si = 0
