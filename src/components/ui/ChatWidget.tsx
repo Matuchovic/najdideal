@@ -33,8 +33,16 @@ export default function ChatWidget() {
     const ch = supabase.channel('chat-' + sessionId)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
         const m = payload.new as any
-        if (m.role === 'admin') { setStep('chat'); setMinimized(false) }
-        if (m.role === 'admin') setMessages(prev => [...prev, m])
+        if (m.role === 'admin') {
+          setStep('chat')
+          setMinimized(false)
+          // Načti celou historii včetně původního požadavku
+          supabase.from('chat_messages').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }).then(({ data }) => {
+            if (data) setMessages(data)
+          })
+        } else {
+          setMessages(prev => [...prev, m])
+        }
       })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
