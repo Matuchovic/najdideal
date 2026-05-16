@@ -1,0 +1,19 @@
+name: Bazos Auto Sync
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync all categories
+        run: |
+          for cat in mobily pc elektro auto sport obleceni nabytek motorky detske; do
+            echo "Syncing $cat..."
+            curl -s -X POST https://najdideal-app.vercel.app/api/bazos-sync \
+              -H "Content-Type: application/json" \
+              -H "x-admin-secret: ${{ secrets.ADMIN_SECRET_KEY }}" \
+              -d "{\"kategorie\":\"$cat\"}" | head -c 200
+            echo ""
+          done
