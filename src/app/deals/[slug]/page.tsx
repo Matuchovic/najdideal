@@ -21,7 +21,7 @@ export default async function DealDetailPage({ params }: Props) {
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
   const isVip = profile?.role === 'vip' || profile?.role === 'admin'
 
-  const { data: deal } = await supabase.from('deals').select('*').eq('slug', params.slug).single()
+  const { data: deal } = await supabase.from('deals').select('*').or(`slug.eq.${params.slug},id.eq.${params.slug}`).single()
   if (!deal) notFound()
   if (deal.access_level === 'vip' && !isVip) redirect('/membership')
 

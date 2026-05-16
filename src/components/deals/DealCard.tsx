@@ -57,7 +57,7 @@ export function DealCard({ deal, isSaved = false, onSave, isVip = false, compact
   }
 
   return (
-    <Link href={isLocked ? '/membership' : `/deals/${deal.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+    <Link href={isLocked ? '/membership' : `/deals/${deal.slug || deal.id}`} style={{ textDecoration: 'none', display: 'block' }}>
       <style>{GLOW_STYLE}</style>
 
       <div
